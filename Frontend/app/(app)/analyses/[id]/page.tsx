@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import { useSearchParams } from "next/navigation";
+import Link from "next/link";
 import { AppShell } from "@/components/layout/app-shell";
 import { Button } from "@/components/ui/button";
 import { RiskBadge, RiskLevel } from "@/components/ui/risk-badge";
@@ -9,9 +10,6 @@ import { CopyButton } from "@/components/ui/copy-button";
 import { ScoreRing } from "@/components/analysis/score-ring";
 import { EmailDialog } from "@/components/analysis/email-dialog";
 import {
-  ShieldAlert,
-  AlertTriangle,
-  CheckCircle2,
   Check,
   X,
   Edit3,
@@ -20,8 +18,8 @@ import {
   Mail,
   Calendar as CalendarIcon,
   AlertCircle,
-  Keyboard,
   Sparkles,
+  ArrowLeft,
 } from "lucide-react";
 
 type DecisionStatus = "pending" | "accepted" | "rejected" | "edited";
@@ -40,6 +38,32 @@ interface ClauseItem {
     del: string;
     ins: string;
   };
+}
+
+interface MissingProtection {
+  title: string;
+  description: string;
+  severity: "critical" | "recommended" | "optional";
+  suggestedClause: string;
+}
+
+interface DbClause {
+  id: string;
+  title?: string;
+  clause_type?: string;
+  risk_level?: string;
+  explanation?: string;
+  impact?: string;
+  original_text?: string;
+  suggested_redline?: string;
+  user_decision?: string;
+  edited_redline?: string;
+}
+
+interface DbObligation {
+  description?: string;
+  due_date?: string;
+  type?: "contractor" | "client" | "mutual";
 }
 
 const MOCK_CLAUSES: ClauseItem[] = [
@@ -81,38 +105,38 @@ const MOCK_CLAUSES: ClauseItem[] = [
   },
   {
     id: "c3",
-    title: "IP Assignment & Pre-Existing Tools",
+    title: "Intellectual Property Ownership",
     riskLevel: "high",
     explanation:
-      "Assigns all copyright and patentable inventions to client upon creation without excluding your own reusable code or libraries.",
+      "Assigns all code and inventions to the client upon creation, even if the client never pays you.",
     impact:
-      "You will lose the legal right to reuse your own starter code, libraries, and design systems for future clients.",
+      "If the client ghosts or cancels payment, they legally own your code and you cannot withhold or reuse it.",
     originalText:
-      "All work product, code, documentation, and inventions conceived by Contractor shall immediately become the sole property of Client as work made for hire.",
+      "All work product, code, documentation, and inventions shall be deemed work made for hire and owned exclusively by Client from the moment of creation.",
     suggestedRedline:
-      "Client shall own custom deliverables upon receipt of full payment. Contractor retains all ownership of pre-existing tools, libraries, and frameworks.",
+      "Ownership of deliverables shall transfer to Client exclusively upon receipt of full and final payment. Contractor retains all rights to pre-existing libraries and tools.",
     decision: "pending",
     isDiffSnippet: {
-      del: "immediately become the sole property of Client as work made for hire",
-      ins: "become Client property upon receipt of full payment, excluding Contractor's pre-existing tools",
+      del: "from the moment of creation",
+      ins: "exclusively upon receipt of full and final payment",
     },
   },
   {
     id: "c4",
-    title: "Payment Terms & Withholding",
+    title: "Payment Terms & Acceptance",
     riskLevel: "medium",
     explanation:
-      "Net 60 payment terms with client right to withhold disputed fees indefinitely without milestones.",
+      "Net 60 payment terms with undefined subjective client approval criteria.",
     impact:
-      "You may wait two full months to get paid, while client can freeze invoices arbitrarily.",
+      "Client can delay payment for months by simply withholding informal sign-off.",
     originalText:
-      "Invoices shall be paid within sixty (60) days of receipt. Client reserves the right to withhold disputed sums.",
+      "Payment shall be made Net 60 days following Client's subjective satisfaction and written acceptance of the Deliverables.",
     suggestedRedline:
-      "Invoices shall be paid within thirty (30) days of receipt. Undisputed amounts must be released promptly on schedule.",
+      "Payment shall be made Net 15 days upon receipt of invoice. Deliverables shall be deemed accepted if no written feedback is provided within five (5) business days.",
     decision: "pending",
     isDiffSnippet: {
-      del: "within sixty (60) days",
-      ins: "within thirty (30) days",
+      del: "Net 60 days following Client's subjective satisfaction",
+      ins: "Net 15 days upon invoice; deemed accepted if no notice within 5 business days",
     },
   },
   {
@@ -120,13 +144,13 @@ const MOCK_CLAUSES: ClauseItem[] = [
     title: "Termination for Convenience",
     riskLevel: "medium",
     explanation:
-      "Client can cancel on 24 hours notice without paying for work in progress.",
+      "Client can terminate the agreement immediately with 24 hours notice with zero cancellation compensation.",
     impact:
-      "You could invest weeks of effort and be terminated with no compensation.",
+      "You could reserve weeks of your schedule only to be cancelled without notice or pay.",
     originalText:
-      "Client may terminate this Agreement at any time with one (1) day written notice.",
+      "Client may terminate this Agreement at any time for any reason upon one (1) day written notice without penalty.",
     suggestedRedline:
-      "Either party may terminate upon fourteen (14) days written notice, with Client paying for all work completed up to the date of termination.",
+      "Client may terminate this Agreement for convenience upon fourteen (14) days written notice, provided Client pays Contractor for all work completed plus a 20% kill fee.",
     decision: "pending",
     isDiffSnippet: {
       del: "one (1) day written notice",
@@ -147,12 +171,66 @@ const MOCK_CLAUSES: ClauseItem[] = [
   },
 ];
 
-function AnalysisResultsContent() {
+function AnalysisResultsContent({ analysisId }: { analysisId: string }) {
   const searchParams = useSearchParams();
   const isAnalyzingInitial = searchParams.get("analyzing") === "true";
 
   const [analyzingStage, setAnalyzingStage] = React.useState<number>(isAnalyzingInitial ? 1 : 4);
+  const [contractTitle, setContractTitle] = React.useState<string>("Acme Corp Master Services Agreement");
+  const [contractType, setContractType] = React.useState<string>("Service Agreement");
+  const [overallScore, setOverallScore] = React.useState<number>(78);
+  const [overallRisk, setOverallRisk] = React.useState<RiskLevel>("high");
+  const [summary, setSummary] = React.useState<string>(
+    "Uncapped liability and perpetual IP assignment create critical exposure for independent software development."
+  );
+
   const [clauses, setClauses] = React.useState<ClauseItem[]>(MOCK_CLAUSES);
+  const [missingProtections, setMissingProtections] = React.useState<MissingProtection[]>([
+    {
+      title: "Late Payment Interest",
+      severity: "recommended",
+      description: "Protects cash flow if the client delays invoicing.",
+      suggestedClause: "Invoices overdue beyond 30 days shall accrue interest at 1.5% per month.",
+    },
+    {
+      title: "Kill Fee & Cancellation",
+      severity: "critical",
+      description: "Compensates for reserved scheduling if client abruptly cancels.",
+      suggestedClause: "If project is terminated without cause, Client pays for all work performed plus a 20% cancellation fee.",
+    },
+    {
+      title: "Revision Limits Cap",
+      severity: "optional",
+      description: "Prevents scope creep and endless review cycles.",
+      suggestedClause: "Fees include two (2) rounds of revision. Additional revisions billed at standard hourly rates.",
+    },
+  ]);
+  const [obligations, setObligations] = React.useState<{
+    title: string;
+    dueDate: string;
+    party: "contractor" | "client" | "mutual";
+    description: string;
+  }[]>([
+    {
+      title: "Auto-Renewal Notice Window",
+      dueDate: "Dec 15, 2026",
+      party: "mutual",
+      description: "Must give 30 days written notice to prevent automatic 12-month extension.",
+    },
+    {
+      title: "Phase 1 Final Acceptance",
+      dueDate: "Nov 30, 2026",
+      party: "client",
+      description: "Client has 10 business days to request revisions before automatic sign-off.",
+    },
+    {
+      title: "Invoice Milestone Submission",
+      dueDate: "Nov 15, 2026",
+      party: "contractor",
+      description: "Submit 50% midpoint invoice for milestone completion.",
+    },
+  ]);
+
   const [selectedId, setSelectedId] = React.useState<string>("c1");
   const [filter, setFilter] = React.useState<"all" | "high" | "medium" | "low">("all");
   const [isEditing, setIsEditing] = React.useState(false);
@@ -160,6 +238,80 @@ function AnalysisResultsContent() {
   const [isEmailModalOpen, setIsEmailModalOpen] = React.useState(false);
   const [showKeyboardHelp, setShowKeyboardHelp] = React.useState(false);
   const [exportNotification, setExportNotification] = React.useState<string | null>(null);
+
+  const [isLoadingFromDb, setIsLoadingFromDb] = React.useState(analysisId !== "acme-msa");
+  const [fetchError, setFetchError] = React.useState<string | null>(null);
+
+  // Load live analysis from Supabase API if not the demo id
+  React.useEffect(() => {
+    if (analysisId === "acme-msa") {
+      return;
+    }
+
+    let isMounted = true;
+
+    async function fetchAnalysis() {
+      try {
+        const res = await fetch(`/api/analyses/${analysisId}`);
+        if (!res.ok) {
+          throw new Error("Could not find this contract analysis.");
+        }
+        const data = await res.json();
+        const a = data.analysis;
+
+        if (!isMounted) return;
+
+        setContractTitle(a.title || "Contract Analysis");
+        setContractType(a.contract_type || "Agreement");
+        setOverallScore(a.risk_score || 50);
+        setOverallRisk((a.overall_risk as RiskLevel) || "medium");
+        setSummary(a.summary || "");
+
+        if (a.missing_protections && Array.isArray(a.missing_protections)) {
+          setMissingProtections(a.missing_protections);
+        }
+
+        if (a.obligations && Array.isArray(a.obligations)) {
+          setObligations(
+            (a.obligations as DbObligation[]).map((o: DbObligation) => ({
+              title: o.description?.split(":")[0] || "Obligation",
+              dueDate: o.due_date || "Milestone",
+              party: o.type || "contractor",
+              description: o.description?.split(":")[1]?.trim() || o.description || "",
+            }))
+          );
+        }
+
+        if (a.clauses && Array.isArray(a.clauses) && a.clauses.length > 0) {
+          const mappedClauses: ClauseItem[] = (a.clauses as DbClause[]).map((c: DbClause) => ({
+            id: c.id,
+            title: c.title || c.clause_type || "Clause",
+            riskLevel: (c.risk_level as RiskLevel) || "medium",
+            explanation: c.explanation || "",
+            impact: c.impact || "",
+            originalText: c.original_text || "",
+            suggestedRedline: c.suggested_redline || "",
+            decision: (c.user_decision as DecisionStatus) || "pending",
+            editedRedline: c.edited_redline || undefined,
+          }));
+          setClauses(mappedClauses);
+          setSelectedId(mappedClauses[0].id);
+        }
+      } catch (err: unknown) {
+        console.error("Failed to load analysis:", err);
+        const message = err instanceof Error ? err.message : "Failed to load analysis.";
+        if (isMounted) setFetchError(message);
+      } finally {
+        if (isMounted) setIsLoadingFromDb(false);
+      }
+    }
+
+    fetchAnalysis();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [analysisId]);
 
   // Simulate analyzing progression if arriving with ?analyzing=true
   React.useEffect(() => {
@@ -182,22 +334,41 @@ function AnalysisResultsContent() {
     return c.riskLevel === filter;
   });
 
-  // Decision Handlers
-  const handleDecision = (id: string, decision: DecisionStatus, newText?: string) => {
-    setClauses((prev) =>
-      prev.map((c) => {
-        if (c.id === id) {
-          return {
-            ...c,
-            decision,
-            editedRedline: newText !== undefined ? newText : c.editedRedline,
-          };
+  // Decision Handlers: updates state and syncs to Supabase database
+  const handleDecision = React.useCallback(
+    async (id: string, decision: DecisionStatus, newText?: string) => {
+      setClauses((prev) =>
+        prev.map((c) => {
+          if (c.id === id) {
+            return {
+              ...c,
+              decision,
+              editedRedline: newText !== undefined ? newText : c.editedRedline,
+            };
+          }
+          return c;
+        })
+      );
+      setIsEditing(false);
+
+      // Save decision to Supabase if live analysis
+      if (analysisId !== "acme-msa") {
+        try {
+          await fetch(`/api/analyses/${analysisId}/clauses/${id}`, {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              user_decision: decision,
+              edited_redline: newText,
+            }),
+          });
+        } catch (err) {
+          console.error("Failed to persist clause decision:", err);
         }
-        return c;
-      })
-    );
-    setIsEditing(false);
-  };
+      }
+    },
+    [analysisId]
+  );
 
   // Jump to Next Unresolved Issue
   const handleNextIssue = () => {
@@ -210,7 +381,6 @@ function AnalysisResultsContent() {
     if (nextUnresolved) {
       setSelectedId(nextUnresolved.id);
     } else {
-      // Loop to first clause if all resolved
       const anyOther = clauses.find((c) => c.id !== selectedId);
       if (anyOther) setSelectedId(anyOther.id);
     }
@@ -219,8 +389,11 @@ function AnalysisResultsContent() {
   // Keyboard navigation: J/K to move, A to accept, C to copy
   React.useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      // Don't trigger when typing in inputs/textareas
-      if (["INPUT", "TEXTAREA"].includes((e.target as HTMLElement)?.tagName)) {
+      if (
+        e.target instanceof HTMLInputElement ||
+        e.target instanceof HTMLTextAreaElement ||
+        isEmailModalOpen
+      ) {
         return;
       }
 
@@ -235,11 +408,11 @@ function AnalysisResultsContent() {
           setSelectedId(filteredClauses[currentIndex - 1].id);
         }
       } else if (e.key === "a" || e.key === "A") {
-        if (selectedClause.suggestedRedline) {
+        if (selectedClause?.suggestedRedline) {
           handleDecision(selectedClause.id, "accepted");
         }
       } else if (e.key === "c" || e.key === "C") {
-        if (selectedClause.suggestedRedline) {
+        if (selectedClause?.suggestedRedline) {
           navigator.clipboard.writeText(
             selectedClause.editedRedline || selectedClause.suggestedRedline
           );
@@ -251,7 +424,7 @@ function AnalysisResultsContent() {
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [filteredClauses, selectedId, selectedClause]);
+  }, [filteredClauses, selectedId, selectedClause, isEmailModalOpen, handleDecision]);
 
   const acceptedClauses = clauses
     .filter((c) => c.decision === "accepted" || c.decision === "edited")
@@ -265,8 +438,28 @@ function AnalysisResultsContent() {
     setTimeout(() => setExportNotification(null), 3000);
   };
 
-  // Analyzing Stage Screen
-  if (analyzingStage < 4) {
+  // Error Loading Screen
+  if (fetchError) {
+    return (
+      <AppShell userEmail="contractor@example.com">
+        <div className="min-h-[70vh] flex items-center justify-center p-4">
+          <div className="max-w-md w-full rounded-2xl bg-[var(--surface)] border border-[var(--border)] p-8 text-center space-y-5">
+            <AlertCircle className="w-12 h-12 text-[var(--danger)] mx-auto" />
+            <h1 className="heading-3 text-[var(--foreground)]">Analysis Not Found</h1>
+            <p className="text-sm text-[var(--muted)]">{fetchError}</p>
+            <Link href="/dashboard">
+              <Button variant="primary" className="w-full justify-center">
+                Return to Dashboard
+              </Button>
+            </Link>
+          </div>
+        </div>
+      </AppShell>
+    );
+  }
+
+  // Loading Screen
+  if (isLoadingFromDb || analyzingStage < 4) {
     return (
       <AppShell userEmail="contractor@example.com">
         <div className="min-h-[80vh] flex items-center justify-center p-4">
@@ -278,16 +471,15 @@ function AnalysisResultsContent() {
             <div className="space-y-2">
               <h1 className="heading-3 text-[var(--foreground)]">Analyzing your contract</h1>
               <p className="text-sm text-[var(--muted)]">
-                Our AI model is reviewing clause terms against your business rules.
+                Our Gemini AI engine is reviewing clause terms against freelancer protections.
               </p>
             </div>
 
-            {/* 3 Real Stages */}
             <div className="space-y-4 text-left border-t border-b border-[var(--border)] py-6">
               {[
-                { stage: 1, label: "Reading your contract" },
-                { stage: 2, label: "Checking each clause" },
-                { stage: 3, label: "Writing your redlines" },
+                { stage: 1, label: "Reading & extracting contract text" },
+                { stage: 2, label: "Identifying risks & predatory clauses" },
+                { stage: 3, label: "Generating redlines & obligations" },
               ].map((s) => {
                 const isComplete = analyzingStage > s.stage;
                 const isCurrent = analyzingStage === s.stage;
@@ -317,15 +509,16 @@ function AnalysisResultsContent() {
                 );
               })}
             </div>
-
-            <p className="text-xs text-[var(--muted)] leading-relaxed">
-              This usually takes under a minute. You can leave this page and come back from your dashboard.
-            </p>
           </div>
         </div>
       </AppShell>
     );
   }
+
+  // Count high, medium, low clauses
+  const highCount = clauses.filter((c) => c.riskLevel === "high").length;
+  const mediumCount = clauses.filter((c) => c.riskLevel === "medium").length;
+  const lowCount = clauses.filter((c) => c.riskLevel === "low").length;
 
   return (
     <AppShell userEmail="contractor@example.com">
@@ -337,39 +530,44 @@ function AnalysisResultsContent() {
             
             {/* Title & Score */}
             <div className="flex items-start sm:items-center gap-4">
-              <ScoreRing score={78} size={60} strokeWidth={5} />
+              <ScoreRing score={overallScore} size={60} strokeWidth={5} />
               <div className="space-y-1 min-w-0">
                 <div className="flex items-center gap-2.5 flex-wrap">
+                  <Link href="/dashboard" className="text-xs text-[var(--muted)] hover:text-[var(--foreground)] flex items-center gap-1">
+                    <ArrowLeft className="w-3.5 h-3.5" />
+                    <span>Dashboard</span>
+                  </Link>
+                  <span className="text-xs text-[var(--border)]">/</span>
                   <h1 className="heading-3 text-[var(--foreground)] truncate">
-                    Acme Corp Master Services Agreement
+                    {contractTitle}
                   </h1>
                   <span className="text-xs px-2 py-0.5 rounded bg-[var(--surface-raised)] border border-[var(--border)] text-[var(--muted)] font-sans">
-                    Service Agreement
+                    {contractType}
                   </span>
                 </div>
                 <p className="text-xs sm:text-sm text-[var(--muted)] line-clamp-1">
-                  <span className="text-[var(--risk-high)] font-bold mr-1.5">High risk (78):</span>
-                  Uncapped liability and perpetual IP assignment create critical exposure.
+                  <span className={`font-bold mr-1.5 ${overallRisk === 'high' ? 'text-[var(--risk-high)]' : overallRisk === 'medium' ? 'text-[var(--risk-medium)]' : 'text-[var(--risk-low)]'}`}>
+                    {overallRisk.toUpperCase()} risk ({overallScore}/100):
+                  </span>
+                  {summary}
                 </p>
               </div>
             </div>
 
             {/* Count Chips & Action Buttons */}
             <div className="flex items-center justify-between lg:justify-end gap-3 flex-wrap">
-              {/* Chips */}
               <div className="flex items-center gap-2">
                 <span className="px-2.5 py-1 rounded-md text-xs font-bold badge-risk-high">
-                  3 high
+                  {highCount} high
                 </span>
                 <span className="px-2.5 py-1 rounded-md text-xs font-bold badge-risk-medium">
-                  4 medium
+                  {mediumCount} medium
                 </span>
                 <span className="px-2.5 py-1 rounded-md text-xs font-bold badge-risk-low">
-                  7 low
+                  {lowCount} low
                 </span>
               </div>
 
-              {/* Actions */}
               <div className="flex items-center gap-2">
                 <Button
                   variant="primary"
@@ -381,7 +579,6 @@ function AnalysisResultsContent() {
                   <span>Write email ({acceptedClauses.length})</span>
                 </Button>
 
-                {/* Export Dropdown simulation */}
                 <div className="relative group">
                   <Button variant="secondary" size="sm" className="min-h-11 gap-1.5">
                     <Download className="w-4 h-4" />
@@ -411,91 +608,63 @@ function AnalysisResultsContent() {
                     </button>
                   </div>
                 </div>
-
-                {/* Keyboard Help trigger */}
-                <button
-                  type="button"
-                  onClick={() => setShowKeyboardHelp(!showKeyboardHelp)}
-                  className="p-2.5 rounded-lg text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--surface-raised)] min-h-11 min-w-11 flex items-center justify-center interactive-transition"
-                  title="Keyboard shortcuts (?)"
-                  aria-label="Keyboard shortcuts"
-                >
-                  <Keyboard className="w-4 h-4" />
-                </button>
               </div>
             </div>
           </div>
 
-          {/* Export Toast Notification */}
           {exportNotification && (
-            <div className="mt-3 p-2.5 rounded-lg bg-[rgba(95,211,160,0.12)] border border-[rgba(95,211,160,0.3)] text-[var(--risk-low)] text-xs font-sans font-bold flex items-center gap-2">
-              <Check className="w-4 h-4" />
+            <div className="mt-3 p-2.5 rounded-lg bg-[rgba(134,168,255,0.12)] border border-[rgba(134,168,255,0.25)] text-xs font-sans text-[var(--primary)] flex items-center justify-between animate-fade-in">
               <span>{exportNotification}</span>
-            </div>
-          )}
-
-          {/* Keyboard Shortcuts Popover */}
-          {showKeyboardHelp && (
-            <div className="mt-3 p-3 rounded-lg bg-[var(--surface-raised)] border border-[var(--border)] text-xs text-[var(--muted)] flex items-center justify-between gap-4">
-              <div className="flex items-center gap-4 flex-wrap">
-                <span><kbd className="px-1.5 py-0.5 rounded bg-[var(--surface)] border border-[var(--border)] text-[var(--foreground)] font-mono">J</kbd> Next clause</span>
-                <span><kbd className="px-1.5 py-0.5 rounded bg-[var(--surface)] border border-[var(--border)] text-[var(--foreground)] font-mono">K</kbd> Prev clause</span>
-                <span><kbd className="px-1.5 py-0.5 rounded bg-[var(--surface)] border border-[var(--border)] text-[var(--foreground)] font-mono">A</kbd> Accept</span>
-                <span><kbd className="px-1.5 py-0.5 rounded bg-[var(--surface)] border border-[var(--border)] text-[var(--foreground)] font-mono">C</kbd> Copy wording</span>
-              </div>
               <button
                 type="button"
-                onClick={() => setShowKeyboardHelp(false)}
+                onClick={() => setExportNotification(null)}
                 className="text-[var(--muted)] hover:text-[var(--foreground)]"
               >
-                Close
+                <X className="w-3.5 h-3.5" />
               </button>
             </div>
           )}
         </section>
 
-        {/* 2-Pane Desktop Workspace (340px Left Pane, Right Clause Detail) */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+        {/* Workspace: 2-Pane Interactive Clause Inspector */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
           
-          {/* Left Pane: Clause List & Filter Tabs (4 cols / ~340px) */}
-          <aside className="lg:col-span-4 rounded-2xl bg-[var(--surface)] border border-[var(--border)] p-4 space-y-4">
-            
-            {/* Filter Tabs */}
-            <div className="grid grid-cols-4 gap-1 p-1 rounded-lg bg-[var(--surface-raised)] border border-[var(--border)]">
-              {(["all", "high", "medium", "low"] as const).map((tab) => (
-                <button
-                  key={tab}
-                  type="button"
-                  onClick={() => setFilter(tab)}
-                  className={`py-1.5 rounded-md text-xs font-sans font-bold capitalize interactive-transition min-h-9 ${
-                    filter === tab
-                      ? "bg-[var(--primary)] text-[var(--primary-foreground)] shadow-xs"
-                      : "text-[var(--muted)] hover:text-[var(--foreground)]"
-                  }`}
-                >
-                  {tab}
-                </button>
-              ))}
+          {/* Left Pane (5 cols): Clauses List */}
+          <aside className="lg:col-span-5 rounded-2xl bg-[var(--surface)] border border-[var(--border)] overflow-hidden shadow-lg flex flex-col max-h-[820px]">
+            {/* Filter Bar */}
+            <div className="p-4 border-b border-[var(--border)] flex items-center justify-between gap-2 bg-[var(--surface)] shrink-0">
+              <div className="flex items-center gap-1">
+                {(["all", "high", "medium", "low"] as const).map((lvl) => (
+                  <button
+                    key={lvl}
+                    type="button"
+                    onClick={() => setFilter(lvl)}
+                    className={`px-2.5 py-1 rounded-md text-xs font-sans font-bold capitalize interactive-transition ${
+                      filter === lvl
+                        ? "bg-[var(--surface-raised)] text-[var(--foreground)] border border-[var(--border)]"
+                        : "text-[var(--muted)] hover:text-[var(--foreground)]"
+                    }`}
+                  >
+                    {lvl}
+                  </button>
+                ))}
+              </div>
+
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleNextIssue}
+                className="text-xs h-8 gap-1 font-bold"
+              >
+                <span>Next issue</span>
+                <ArrowRight className="w-3 h-3" />
+              </Button>
             </div>
 
-            {/* List of Clauses */}
-            <nav className="space-y-1.5 max-h-[600px] overflow-y-auto pr-1" aria-label="Clauses List">
+            {/* Scrollable Clause Rows */}
+            <div className="overflow-y-auto divide-y divide-[var(--border)] flex-1">
               {filteredClauses.map((clause) => {
                 const isSelected = clause.id === selectedId;
-                const Icon =
-                  clause.riskLevel === "high"
-                    ? ShieldAlert
-                    : clause.riskLevel === "medium"
-                    ? AlertTriangle
-                    : CheckCircle2;
-
-                const iconColor =
-                  clause.riskLevel === "high"
-                    ? "text-[#FF7A7A]"
-                    : clause.riskLevel === "medium"
-                    ? "text-[#F5C358]"
-                    : "text-[#5FD3A0]";
-
                 return (
                   <button
                     key={clause.id}
@@ -504,183 +673,180 @@ function AnalysisResultsContent() {
                       setSelectedId(clause.id);
                       setIsEditing(false);
                     }}
-                    className={`relative w-full text-left p-3.5 rounded-xl interactive-transition flex items-center justify-between gap-3 min-h-12 cursor-pointer ${
+                    className={`w-full text-left p-4 interactive-transition flex items-start justify-between gap-3 ${
                       isSelected
-                        ? "bg-[var(--surface-raised)] text-[var(--foreground)] shadow-xs"
-                        : "text-[var(--muted)] hover:bg-[var(--surface-raised)]/40 hover:text-[var(--foreground)]"
+                        ? "bg-[var(--surface-raised)] border-l-[3px] border-l-[var(--primary)]"
+                        : "hover:bg-[var(--surface-raised)]/50"
                     }`}
                   >
-                    {/* Primary Left Indicator Bar */}
-                    {isSelected && (
-                      <span
-                        className="absolute left-0 top-2 bottom-2 w-[3px] bg-[var(--primary)] rounded-r-full"
-                        aria-hidden="true"
-                      />
-                    )}
-
-                    <div className="flex items-center gap-2.5 min-w-0">
-                      <Icon className={`w-4 h-4 shrink-0 ${iconColor}`} strokeWidth={2} />
-                      <span className="text-sm font-sans font-bold truncate">
-                        {clause.title}
-                      </span>
+                    <div className="space-y-1.5 min-w-0 flex-1">
+                      <div className="flex items-center gap-2">
+                        <RiskBadge level={clause.riskLevel} />
+                        <h2 className="text-sm font-sans font-bold text-[var(--foreground)] truncate">
+                          {clause.title}
+                        </h2>
+                      </div>
+                      <p className="text-xs text-[var(--muted)] line-clamp-2 leading-relaxed">
+                        {clause.explanation}
+                      </p>
                     </div>
 
-                    {/* Decision Dot */}
-                    <div className="shrink-0 flex items-center gap-1.5">
+                    <div className="shrink-0 mt-1">
                       {clause.decision === "accepted" && (
-                        <span className="w-2 h-2 rounded-full bg-[var(--risk-low)]" title="Accepted" />
+                        <span className="w-6 h-6 rounded-full bg-[rgba(95,211,160,0.15)] text-[var(--risk-low)] border border-[rgba(95,211,160,0.3)] flex items-center justify-center">
+                          <Check className="w-3.5 h-3.5" strokeWidth={2.5} />
+                        </span>
                       )}
                       {clause.decision === "edited" && (
-                        <span className="w-2 h-2 rounded-full bg-[var(--primary)]" title="Edited" />
+                        <span className="w-6 h-6 rounded-full bg-[rgba(134,168,255,0.15)] text-[var(--primary)] border border-[rgba(134,168,255,0.3)] flex items-center justify-center">
+                          <Edit3 className="w-3 h-3" />
+                        </span>
                       )}
                       {clause.decision === "rejected" && (
-                        <span className="w-2 h-2 rounded-full bg-[var(--risk-high)]" title="Rejected" />
-                      )}
-                      {clause.decision === "pending" && (
-                        <span className="w-1.5 h-1.5 rounded-full bg-[var(--muted)]/40" title="Pending" />
+                        <span className="w-6 h-6 rounded-full bg-[rgba(255,107,107,0.15)] text-[var(--risk-high)] border border-[rgba(255,107,107,0.3)] flex items-center justify-center">
+                          <X className="w-3.5 h-3.5" strokeWidth={2.5} />
+                        </span>
                       )}
                     </div>
                   </button>
                 );
               })}
-            </nav>
+            </div>
           </aside>
 
-          {/* Right Pane: Clause Detail (8 cols) */}
-          <main className="lg:col-span-8 rounded-2xl bg-[var(--surface)] border border-[var(--border)] p-6 sm:p-8 space-y-8 shadow-xl">
-            
-            {/* Header: Clause Title with Risk Badge */}
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-[var(--border)]">
-              <div className="space-y-1">
-                <span className="text-xs uppercase tracking-wider text-[var(--muted)] font-bold">
-                  Clause Detail
-                </span>
-                <h2 className="heading-2 text-[var(--foreground)]">
-                  {selectedClause.title}
-                </h2>
-              </div>
-              <div className="flex items-center gap-2">
-                <RiskBadge level={selectedClause.riskLevel} />
-                {selectedClause.decision === "edited" && (
-                  <span className="text-xs px-2.5 py-1 rounded-md bg-[rgba(134,168,255,0.15)] text-[var(--primary)] font-bold border border-[rgba(134,168,255,0.3)]">
-                    Edited
-                  </span>
-                )}
-                {selectedClause.decision === "accepted" && (
-                  <span className="text-xs px-2.5 py-1 rounded-md bg-[rgba(95,211,160,0.15)] text-[var(--risk-low)] font-bold border border-[rgba(95,211,160,0.3)]">
-                    Accepted
-                  </span>
-                )}
-                {selectedClause.decision === "rejected" && (
-                  <span className="text-xs px-2.5 py-1 rounded-md bg-[rgba(255,122,122,0.15)] text-[var(--risk-high)] font-bold border border-[rgba(255,122,122,0.3)]">
-                    Rejected
-                  </span>
-                )}
-              </div>
-            </div>
+          {/* Right Pane (7 cols): Detailed Clause Inspector */}
+          <main className="lg:col-span-7 rounded-2xl bg-[var(--surface)] border border-[var(--border)] p-6 sm:p-8 space-y-6 shadow-lg min-h-[640px]">
+            {selectedClause ? (
+              <div className="space-y-6">
+                
+                {/* Header */}
+                <div className="flex items-start justify-between gap-4 border-b border-[var(--border)] pb-5">
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-2.5">
+                      <RiskBadge level={selectedClause.riskLevel} />
+                      <h2 className="heading-3 text-[var(--foreground)]">
+                        {selectedClause.title}
+                      </h2>
+                    </div>
+                    <p className="text-sm text-[var(--muted)]">
+                      {selectedClause.explanation}
+                    </p>
+                  </div>
 
-            {/* In Plain English (Explanation & Impact) */}
-            <div className="rounded-xl bg-[var(--surface-raised)] border border-[var(--border)] p-5 space-y-3">
-              <h3 className="text-sm font-sans font-bold uppercase tracking-wider text-[var(--primary)]">
-                In Plain English
-              </h3>
-              <p className="text-base leading-relaxed text-[var(--foreground)] font-sans">
-                {selectedClause.explanation}
-              </p>
-              <div className="pt-2 border-t border-[var(--border)]/60 text-sm leading-relaxed text-[var(--muted)] font-sans">
-                <span className="font-bold text-[var(--risk-medium)] mr-1.5">Impact:</span>
-                {selectedClause.impact}
-              </div>
-            </div>
-
-            {/* Original Wording Block (Serif with Red Left Margin Bar) */}
-            <div className="space-y-2">
-              <span className="text-xs font-sans font-bold uppercase tracking-wider text-[var(--muted)]">
-                Original Wording (From Contract)
-              </span>
-              <div className="rounded-xl bg-[var(--surface-raised)] border-l-4 border-l-[var(--risk-high)] border border-[var(--border)] p-5 font-serif text-base leading-relaxed text-[var(--foreground)]">
-                &ldquo;{selectedClause.originalText}&rdquo;
-              </div>
-            </div>
-
-            {/* Suggested Redline Block (Serif with Green Left Margin Bar) */}
-            {selectedClause.suggestedRedline && (
-              <div className="space-y-3">
-                <div className="flex items-center justify-between">
-                  <span className="text-xs font-sans font-bold uppercase tracking-wider text-[var(--risk-low)]">
-                    Suggested Replacement Wording
-                  </span>
-                  {selectedClause.isDiffSnippet && (
-                    <span className="text-xs text-[var(--muted)]">
-                      Shown as diff against original
-                    </span>
-                  )}
+                  <CopyButton
+                    textToCopy={
+                      selectedClause.editedRedline ||
+                      selectedClause.suggestedRedline ||
+                      selectedClause.originalText
+                    }
+                    label="Copy"
+                    size="sm"
+                  />
                 </div>
 
-                {!isEditing ? (
-                  <div className="rounded-xl bg-[var(--surface-raised)] border-l-4 border-l-[var(--risk-low)] border border-[var(--border)] p-5 font-serif text-base leading-relaxed text-[var(--foreground)] space-y-3">
-                    <p className="text-[var(--risk-low)]">
-                      &ldquo;{selectedClause.editedRedline || selectedClause.suggestedRedline}&rdquo;
-                    </p>
+                {/* Practical Impact Callout */}
+                <div className="rounded-xl bg-[var(--surface-raised)] border border-[var(--border)] p-4 space-y-1">
+                  <span className="text-xs uppercase tracking-wider font-bold text-[var(--muted)]">
+                    What this means for you
+                  </span>
+                  <p className="text-sm font-sans text-[var(--foreground)] leading-relaxed">
+                    {selectedClause.impact}
+                  </p>
+                </div>
 
-                    {/* Diff demonstration snippet */}
-                    {selectedClause.isDiffSnippet && !selectedClause.editedRedline && (
-                      <div className="pt-2 border-t border-[var(--border)]/60 text-xs font-sans text-[var(--muted)]">
-                        <span className="diff-del mr-2">{selectedClause.isDiffSnippet.del}</span>
-                        <span className="diff-ins">{selectedClause.isDiffSnippet.ins}</span>
+                {/* As Written (Original Clause) */}
+                <div className="space-y-2">
+                  <span className="text-xs font-sans font-bold uppercase tracking-wider text-[var(--muted)]">
+                    As written in contract
+                  </span>
+                  <div className="p-4 rounded-xl bg-[var(--surface-raised)] border border-[var(--border)] font-serif text-sm leading-relaxed text-[var(--foreground)]/80">
+                    &ldquo;{selectedClause.originalText}&rdquo;
+                  </div>
+                </div>
+
+                {/* Suggested Redline */}
+                {selectedClause.suggestedRedline && (
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs font-sans font-bold uppercase tracking-wider text-[var(--primary)] flex items-center gap-1.5">
+                        <Sparkles className="w-3.5 h-3.5" />
+                        <span>Recommended replacement</span>
+                      </span>
+                      <span className="text-xs text-[var(--muted)]">
+                        Legally balanced for contractors
+                      </span>
+                    </div>
+
+                    {isEditing ? (
+                      <div className="space-y-3">
+                        <textarea
+                          rows={5}
+                          value={editedText}
+                          onChange={(e) => setEditedText(e.target.value)}
+                          className="w-full px-4 py-3 rounded-xl bg-[var(--surface-raised)] border border-[var(--primary)] text-sm font-serif text-[var(--foreground)] leading-relaxed focus:outline-none"
+                        />
+                        <div className="flex items-center justify-end gap-2">
+                          <Button
+                            variant="secondary"
+                            size="sm"
+                            onClick={() => setIsEditing(false)}
+                          >
+                            Cancel
+                          </Button>
+                          <Button
+                            variant="primary"
+                            size="sm"
+                            onClick={() =>
+                              handleDecision(selectedClause.id, "edited", editedText)
+                            }
+                          >
+                            Save revision
+                          </Button>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="p-4 rounded-xl bg-[rgba(134,168,255,0.06)] border border-[rgba(134,168,255,0.2)] font-serif text-sm leading-relaxed text-[var(--foreground)] space-y-3">
+                        <p>
+                          &ldquo;
+                          {selectedClause.editedRedline || selectedClause.suggestedRedline}
+                          &rdquo;
+                        </p>
+
+                        {selectedClause.isDiffSnippet && (
+                          <div className="pt-2 border-t border-[rgba(134,168,255,0.15)] text-xs font-sans space-y-1">
+                            <p className="line-through text-[var(--danger)]">
+                              - {selectedClause.isDiffSnippet.del}
+                            </p>
+                            <p className="text-[var(--risk-low)]">
+                              + {selectedClause.isDiffSnippet.ins}
+                            </p>
+                          </div>
+                        )}
                       </div>
                     )}
                   </div>
-                ) : (
-                  /* Edit Mode: Textarea pre-filled with suggestion */
-                  <div className="space-y-3">
-                    <textarea
-                      rows={4}
-                      value={editedText}
-                      onChange={(e) => setEditedText(e.target.value)}
-                      className="w-full p-4 rounded-xl bg-[var(--surface-raised)] border border-[var(--primary)] font-serif text-base leading-relaxed text-[var(--foreground)] focus:outline-none"
-                    />
-                    <div className="flex items-center justify-end gap-2">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => setIsEditing(false)}
-                        className="min-h-11"
-                      >
-                        Cancel
-                      </Button>
-                      <Button
-                        variant="primary"
-                        size="sm"
-                        onClick={() => handleDecision(selectedClause.id, "edited", editedText)}
-                        className="min-h-11"
-                      >
-                        Save redline
-                      </Button>
-                    </div>
-                  </div>
                 )}
 
-                {/* Clause Action Row: Accept, Edit, Reject, Copy Wording */}
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pt-4 border-t border-[var(--border)]">
-                  <div className="flex items-center gap-2 flex-wrap">
+                {/* Decision Actions */}
+                <div className="pt-4 border-t border-[var(--border)] flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                  <div className="flex items-center gap-2">
                     <Button
-                      type="button"
-                      variant={selectedClause.decision === "accepted" ? "primary" : "secondary"}
+                      variant={selectedClause.decision === "accepted" ? "primary" : "outline"}
                       size="sm"
                       onClick={() => handleDecision(selectedClause.id, "accepted")}
                       className="min-h-11 gap-1.5"
                     >
                       <Check className="w-4 h-4" />
-                      <span>Accept</span>
+                      <span>{selectedClause.decision === "accepted" ? "Accepted" : "Accept redline"}</span>
                     </Button>
 
                     <Button
-                      type="button"
                       variant="outline"
                       size="sm"
                       onClick={() => {
-                        setEditedText(selectedClause.editedRedline || selectedClause.suggestedRedline || "");
+                        setEditedText(
+                          selectedClause.editedRedline || selectedClause.suggestedRedline || ""
+                        );
                         setIsEditing(true);
                       }}
                       className="min-h-11 gap-1.5"
@@ -690,43 +856,30 @@ function AnalysisResultsContent() {
                     </Button>
 
                     <Button
-                      type="button"
                       variant={selectedClause.decision === "rejected" ? "destructive" : "outline"}
                       size="sm"
                       onClick={() => handleDecision(selectedClause.id, "rejected")}
                       className="min-h-11 gap-1.5"
                     >
                       <X className="w-4 h-4" />
-                      <span>Reject</span>
+                      <span>Keep original</span>
                     </Button>
-
-                    <CopyButton
-                      textToCopy={selectedClause.editedRedline || selectedClause.suggestedRedline || ""}
-                      label="Copy wording"
-                      size="sm"
-                    />
                   </div>
 
-                  {/* Next Issue Jumper */}
                   <Button
-                    type="button"
-                    variant="outline"
+                    variant="secondary"
                     size="sm"
                     onClick={handleNextIssue}
-                    className="min-h-11 gap-1.5 text-xs font-bold text-[var(--primary)] hover:bg-[var(--surface-raised)]"
+                    className="min-h-11 gap-1.5 text-xs font-bold"
                   >
-                    <span>Next issue</span>
-                    <ArrowRight className="w-4 h-4" />
+                    <span>Next clause</span>
+                    <ArrowRight className="w-3.5 h-3.5" />
                   </Button>
                 </div>
               </div>
-            )}
-
-            {/* Low-Risk Clauses Note */}
-            {!selectedClause.suggestedRedline && (
-              <div className="p-4 rounded-xl bg-[rgba(95,211,160,0.08)] border border-[rgba(95,211,160,0.25)] flex items-center gap-3 text-sm text-[var(--risk-low)] font-bold">
-                <CheckCircle2 className="w-5 h-5 shrink-0" />
-                <span>Low risk clause: Terms are balanced. No redline replacement needed.</span>
+            ) : (
+              <div className="py-20 text-center text-sm text-[var(--muted)]">
+                Select a clause to review redlines
               </div>
             )}
           </main>
@@ -745,41 +898,30 @@ function AnalysisResultsContent() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            {[
-              {
-                title: "Late Payment Interest",
-                clause: "Invoices overdue beyond 30 days shall accrue interest at 1.5% per month.",
-                description: "Protects cash flow if the client delays invoicing.",
-              },
-              {
-                title: "Kill Fee & Cancellation",
-                clause: "If project is terminated without cause, Client pays for all work performed plus a 20% cancellation fee.",
-                description: "Compensates for reserved scheduling if client abruptly cancels.",
-              },
-              {
-                title: "Revision Limits Cap",
-                clause: "Fees include two (2) rounds of revision. Additional revisions billed at standard hourly rates.",
-                description: "Prevents scope creep and endless review cycles.",
-              },
-            ].map((item) => (
+            {missingProtections.map((item) => (
               <div
                 key={item.title}
                 className="p-5 rounded-xl bg-[var(--surface-raised)] border border-[var(--border)] space-y-3 flex flex-col justify-between"
               >
                 <div className="space-y-1.5">
-                  <h3 className="font-bold text-sm text-[var(--foreground)]">
-                    {item.title}
-                  </h3>
+                  <div className="flex items-center justify-between">
+                    <h3 className="font-bold text-sm text-[var(--foreground)]">
+                      {item.title}
+                    </h3>
+                    <span className={`text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded ${item.severity === 'critical' ? 'badge-risk-high' : 'badge-risk-medium'}`}>
+                      {item.severity}
+                    </span>
+                  </div>
                   <p className="text-xs text-[var(--muted)]">
                     {item.description}
                   </p>
                   <p className="font-serif text-xs leading-relaxed text-[var(--foreground)]/80 italic pt-1">
-                    &ldquo;{item.clause}&rdquo;
+                    &ldquo;{item.suggestedClause}&rdquo;
                   </p>
                 </div>
 
                 <CopyButton
-                  textToCopy={item.clause}
+                  textToCopy={item.suggestedClause}
                   label="Copy clause"
                   size="sm"
                   variant="outline"
@@ -803,36 +945,25 @@ function AnalysisResultsContent() {
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            {[
-              {
-                date: "Dec 15, 2026",
-                title: "Auto-Renewal Notice Window",
-                note: "Must give 30 days written notice to prevent automatic 12-month extension.",
-              },
-              {
-                date: "Nov 30, 2026",
-                title: "Phase 1 Final Acceptance",
-                note: "Client has 10 business days to request revisions before automatic sign-off.",
-              },
-              {
-                date: "Nov 15, 2026",
-                title: "Invoice Milestone Submission",
-                note: "Submit 50% midpoint invoice for milestone completion.",
-              },
-            ].map((d) => (
+            {obligations.map((d) => (
               <div
                 key={d.title}
                 className="p-5 rounded-xl bg-[var(--surface-raised)] border border-[var(--border)] space-y-3 flex flex-col justify-between"
               >
                 <div>
-                  <span className="text-xs font-mono font-bold text-[var(--primary)] uppercase">
-                    {d.date}
-                  </span>
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-mono font-bold text-[var(--primary)] uppercase">
+                      {d.dueDate}
+                    </span>
+                    <span className="text-[10px] px-1.5 py-0.5 rounded bg-[var(--surface)] border border-[var(--border)] text-[var(--muted)] uppercase font-bold">
+                      {d.party}
+                    </span>
+                  </div>
                   <h3 className="font-bold text-sm text-[var(--foreground)] mt-1">
                     {d.title}
                   </h3>
                   <p className="text-xs text-[var(--muted)] mt-1 leading-relaxed">
-                    {d.note}
+                    {d.description}
                   </p>
                 </div>
 
@@ -850,10 +981,39 @@ function AnalysisResultsContent() {
           </div>
         </section>
 
-        {/* Global Footer Legal Disclaimer */}
-        <footer className="text-center text-xs text-[var(--muted)] font-sans pt-6 border-t border-[var(--border)]">
-          General information only. Not legal advice.
+        {/* Global Footer Legal Disclaimer & Keyboard Hints */}
+        <footer className="flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-[var(--muted)] font-sans pt-6 border-t border-[var(--border)]">
+          <span>General information only. Not legal advice.</span>
+          <button
+            type="button"
+            onClick={() => setShowKeyboardHelp((prev) => !prev)}
+            className="hover:text-[var(--foreground)] underline flex items-center gap-1.5"
+          >
+            <span>Shortcuts (J / K / A / C / ?)</span>
+          </button>
         </footer>
+
+        {showKeyboardHelp && (
+          <div className="fixed bottom-6 right-6 z-40 p-4 rounded-xl bg-[var(--surface-raised)] border border-[var(--border)] shadow-2xl text-xs space-y-2 max-w-xs animate-in fade-in">
+            <div className="flex items-center justify-between font-bold text-[var(--foreground)] pb-1 border-b border-[var(--border)]">
+              <span>Keyboard Shortcuts</span>
+              <button
+                type="button"
+                onClick={() => setShowKeyboardHelp(false)}
+                className="text-[var(--muted)] hover:text-[var(--foreground)]"
+              >
+                ✕
+              </button>
+            </div>
+            <div className="grid grid-cols-2 gap-1 text-[var(--muted)]">
+              <span><kbd className="font-mono text-[var(--foreground)]">J</kbd> Next clause</span>
+              <span><kbd className="font-mono text-[var(--foreground)]">K</kbd> Prev clause</span>
+              <span><kbd className="font-mono text-[var(--foreground)]">A</kbd> Accept redline</span>
+              <span><kbd className="font-mono text-[var(--foreground)]">C</kbd> Copy text</span>
+              <span><kbd className="font-mono text-[var(--foreground)]">?</kbd> Toggle help</span>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Negotiation Email Generator Dialog */}
@@ -861,16 +1021,17 @@ function AnalysisResultsContent() {
         isOpen={isEmailModalOpen}
         onClose={() => setIsEmailModalOpen(false)}
         acceptedClauses={acceptedClauses}
-        contractTitle="Acme Corp Master Services Agreement"
+        contractTitle={contractTitle}
       />
     </AppShell>
   );
 }
 
-export default function AnalysisResultsPage() {
+export default function AnalysisResultsPage({ params }: { params: Promise<{ id: string }> }) {
+  const unwrappedParams = React.use(params);
   return (
     <React.Suspense fallback={<div className="min-h-screen bg-[var(--background)]" />}>
-      <AnalysisResultsContent />
+      <AnalysisResultsContent analysisId={unwrappedParams.id} />
     </React.Suspense>
   );
 }

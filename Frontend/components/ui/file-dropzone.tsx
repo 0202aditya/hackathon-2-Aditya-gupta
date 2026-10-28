@@ -5,7 +5,7 @@ import { UploadCloud, FileText, X } from "lucide-react";
 import { Button } from "./button";
 
 interface FileDropzoneProps {
-  onFileSelect: (file: { name: string; size: string }) => void;
+  onFileSelect: (file: { name: string; size: string; rawFile?: File }) => void;
   selectedFile: { name: string; size: string } | null;
   onRemoveFile: () => void;
   error?: string;
@@ -35,7 +35,7 @@ export function FileDropzone({
     if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
       const file = e.dataTransfer.files[0];
       const sizeMb = (file.size / (1024 * 1024)).toFixed(1);
-      onFileSelect({ name: file.name, size: `${sizeMb} MB` });
+      onFileSelect({ name: file.name, size: `${sizeMb} MB`, rawFile: file });
     }
   };
 
@@ -43,7 +43,7 @@ export function FileDropzone({
     if (e.target.files && e.target.files.length > 0) {
       const file = e.target.files[0];
       const sizeMb = (file.size / (1024 * 1024)).toFixed(1);
-      onFileSelect({ name: file.name, size: `${sizeMb} MB` });
+      onFileSelect({ name: file.name, size: `${sizeMb} MB`, rawFile: file });
     }
   };
 

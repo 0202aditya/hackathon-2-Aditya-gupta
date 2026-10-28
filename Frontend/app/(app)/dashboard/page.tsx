@@ -15,6 +15,7 @@ import {
   Plus,
   Calendar,
   Layers,
+  Loader2,
 } from "lucide-react";
 
 interface ContractReviewItem {
@@ -24,10 +25,10 @@ interface ContractReviewItem {
   date: string;
   riskLevel: RiskLevel;
   riskScore: number;
-  clauseCount: number;
+  clauseCount?: number;
 }
 
-const INITIAL_REVIEWS: ContractReviewItem[] = [
+const MOCK_REVIEWS: ContractReviewItem[] = [
   {
     id: "acme-msa",
     title: "Acme Corp Master Services Agreement",
@@ -66,22 +67,124 @@ const INITIAL_REVIEWS: ContractReviewItem[] = [
   },
 ];
 
+interface DbAnalysisItem {
+  id: string;
+  title?: string;
+  contract_type?: string;
+  created_at: string;
+  overall_risk?: string;
+  risk_score?: number;
+}
+
 export default function DashboardPage() {
   const router = useRouter();
-  const [reviews, setReviews] = React.useState<ContractReviewItem[]>(INITIAL_REVIEWS);
+  const [reviews, setReviews] = React.useState<ContractReviewItem[]>([]);
+  const [isLoading, setIsLoading] = React.useState(true);
   const [deletingId, setDeletingId] = React.useState<string | null>(null);
+  const [isDeleting, setIsDeleting] = React.useState(false);
+  const [isUsingMocks, setIsUsingMocks] = React.useState(false);
 
-  const handleDelete = (id: string) => {
-    setReviews((prev) => prev.filter((r) => r.id !== id));
-    setDeletingId(null);
+  React.useEffect(() => {
+    let isMounted = true;
+
+    async function loadInitialReviews() {
+      try {
+        const res = await fetch("/api/analyses");
+        if (!res.ok) {
+          throw new Error("Failed to fetch analyses");
+        }
+        const data = await res.json();
+        const list: DbAnalysisItem[] = data.analyses || [];
+
+        if (isMounted) {
+          if (list.length > 0) {
+            setReviews(
+              list.map((item) => ({
+                id: item.id,
+                title: item.title || "Untitled Contract",
+                type: item.contract_type || "Agreement",
+                date: new Date(item.created_at).toLocaleDateString("en-US", {
+                  month: "short",
+                  day: "numeric",
+                  year: "numeric",
+                }),
+                riskLevel: (item.overall_risk as RiskLevel) || "medium",
+                riskScore: item.risk_score || 50,
+              }))
+            );
+          } else {
+            setReviews([]);
+          }
+        }
+      } catch (err) {
+        console.error("Dashboard fetch error:", err);
+      } finally {
+        if (isMounted) {
+          setIsLoading(false);
+        }
+      }
+    }
+
+    loadInitialReviews();
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  const handleDelete = async (id: string) => {
+    if (isUsingMocks || id === "acme-msa") {
+      setReviews((prev) => prev.filter((r) => r.id !== id));
+      setDeletingId(null);
+      return;
+    }
+
+    try {
+      setIsDeleting(true);
+      const res = await fetch(`/api/analyses/${id}`, { method: "DELETE" });
+      if (!res.ok) throw new Error("Delete failed");
+      setReviews((prev) => prev.filter((r) => r.id !== id));
+      setDeletingId(null);
+    } catch (err) {
+      console.error("Delete error:", err);
+    } finally {
+      setIsDeleting(false);
+    }
   };
 
-  const handleReset = () => {
-    setReviews(INITIAL_REVIEWS);
-  };
-
-  const handleClearAll = () => {
-    setReviews([]);
+  const handleToggleMocks = async () => {
+    if (isUsingMocks) {
+      setIsLoading(true);
+      try {
+        const res = await fetch("/api/analyses");
+        if (res.ok) {
+          const data = await res.json();
+          const list: DbAnalysisItem[] = data.analyses || [];
+          setReviews(
+            list.map((item) => ({
+              id: item.id,
+              title: item.title || "Untitled Contract",
+              type: item.contract_type || "Agreement",
+              date: new Date(item.created_at).toLocaleDateString("en-US", {
+                month: "short",
+                day: "numeric",
+                year: "numeric",
+              }),
+              riskLevel: (item.overall_risk as RiskLevel) || "medium",
+              riskScore: item.risk_score || 50,
+            }))
+          );
+        }
+      } catch (err) {
+        console.error("Dashboard fetch error:", err);
+      } finally {
+        setIsLoading(false);
+        setIsUsingMocks(false);
+      }
+    } else {
+      setReviews(MOCK_REVIEWS);
+      setIsUsingMocks(true);
+    }
   };
 
   return (
@@ -97,14 +200,13 @@ export default function DashboardPage() {
           </div>
 
           <div className="flex items-center gap-3">
-            {/* Helper to toggle empty vs populated for UI testing */}
             <button
               type="button"
-              onClick={reviews.length === 0 ? handleReset : handleClearAll}
+              onClick={handleToggleMocks}
               className="text-xs font-sans text-[var(--muted)] hover:text-[var(--foreground)] underline p-2"
-              title="Toggle mock empty state"
+              title="Toggle preview demo data"
             >
-              {reviews.length === 0 ? "Show mock reviews" : "Preview empty state"}
+              {isUsingMocks ? "Show my actual reviews" : "Preview sample reviews"}
             </button>
 
             <Link href="/analyses/new">
@@ -117,7 +219,12 @@ export default function DashboardPage() {
         </div>
 
         {/* Reviews List or Empty State */}
-        {reviews.length === 0 ? (
+        {isLoading ? (
+          <div className="py-20 flex flex-col items-center justify-center gap-3">
+            <Loader2 className="w-6 h-6 animate-spin text-[var(--primary)]" />
+            <p className="text-sm text-[var(--muted)]">Loading your reviews...</p>
+          </div>
+        ) : reviews.length === 0 ? (
           <EmptyState
             icon={FileText}
             title="No contracts reviewed yet."
@@ -138,56 +245,55 @@ export default function DashboardPage() {
                     <div className="flex items-center gap-3 flex-wrap">
                       <Link
                         href={`/analyses/${review.id}`}
-                        className="font-serif font-semibold text-lg text-[var(--foreground)] hover:text-[var(--primary)] interactive-transition truncate"
+                        className="text-base sm:text-lg font-sans font-bold text-[var(--foreground)] hover:text-[var(--primary)] truncate interactive-transition"
                       >
                         {review.title}
                       </Link>
-                      <span className="text-xs px-2 py-0.5 rounded bg-[var(--surface-raised)] text-[var(--muted)] border border-[var(--border)] font-sans">
+                      <span className="text-xs px-2 py-0.5 rounded bg-[var(--surface-raised)] border border-[var(--border)] text-[var(--muted)] font-sans">
                         {review.type}
                       </span>
                     </div>
 
-                    <div className="flex items-center gap-4 text-xs text-[var(--muted)] font-sans">
+                    <div className="flex items-center gap-4 text-xs text-[var(--muted)] flex-wrap font-sans">
                       <span className="flex items-center gap-1.5">
                         <Calendar className="w-3.5 h-3.5" />
                         <span>{review.date}</span>
                       </span>
-                      <span>&bull;</span>
-                      <span className="flex items-center gap-1.5">
-                        <Layers className="w-3.5 h-3.5" />
-                        <span>{review.clauseCount} clauses analyzed</span>
-                      </span>
+                      {review.clauseCount && (
+                        <span className="flex items-center gap-1.5">
+                          <Layers className="w-3.5 h-3.5" />
+                          <span>{review.clauseCount} clauses analyzed</span>
+                        </span>
+                      )}
                     </div>
                   </div>
 
-                  {/* Right: Risk Badge & Actions */}
-                  <div className="flex items-center gap-4 shrink-0">
-                    <RiskBadge
-                      level={review.riskLevel}
-                      score={review.riskScore}
-                    />
+                  {/* Right: Risk Badge, Score, and Actions */}
+                  <div className="flex items-center justify-between sm:justify-end gap-4 shrink-0">
+                    <div className="text-right">
+                      <RiskBadge level={review.riskLevel} />
+                      <span className="block text-xs text-[var(--muted)] font-mono mt-1">
+                        Score: {review.riskScore}/100
+                      </span>
+                    </div>
 
-                    <div className="flex items-center gap-1">
+                    <div className="flex items-center gap-2">
                       <Link href={`/analyses/${review.id}`}>
-                        <Button
-                          variant="secondary"
-                          size="sm"
-                          className="min-h-11 gap-1.5 text-xs font-bold"
-                        >
-                          <ExternalLink className="w-4 h-4" />
+                        <Button variant="secondary" size="sm" className="min-h-11 gap-1.5">
                           <span>Open</span>
+                          <ExternalLink className="w-3.5 h-3.5" />
                         </Button>
                       </Link>
 
-                      <button
-                        type="button"
+                      <Button
+                        variant="outline"
+                        size="sm"
                         onClick={() => setDeletingId(review.id)}
-                        className="p-2.5 rounded-lg text-[var(--muted)] hover:text-[var(--risk-high)] hover:bg-[rgba(255,122,122,0.12)] min-h-11 min-w-11 flex items-center justify-center interactive-transition cursor-pointer"
+                        className="min-h-11 text-[var(--muted)] hover:text-[var(--danger)] hover:border-[var(--danger)]/50"
                         title="Delete review"
-                        aria-label={`Delete ${review.title}`}
                       >
                         <Trash2 className="w-4 h-4" />
-                      </button>
+                      </Button>
                     </div>
                   </div>
                 </div>
@@ -196,23 +302,20 @@ export default function DashboardPage() {
           </div>
         )}
 
-        {/* Global Footer Disclaimer */}
-        <footer className="text-center text-xs text-[var(--muted)] font-sans pt-6">
-          General information only. Not legal advice.
-        </footer>
+        {/* Delete Confirmation Dialog */}
+        <ConfirmDialog
+          isOpen={!!deletingId}
+          title="Delete contract review?"
+          description="Are you sure you want to delete this analysis? All saved redlines and obligations for this contract will be permanently removed."
+          confirmLabel={isDeleting ? "Deleting..." : "Delete review"}
+          cancelLabel="Cancel"
+          isDestructive={true}
+          onConfirm={() => {
+            if (deletingId) handleDelete(deletingId);
+          }}
+          onClose={() => setDeletingId(null)}
+        />
       </div>
-
-      {/* Delete Confirmation Dialog */}
-      <ConfirmDialog
-        isOpen={!!deletingId}
-        onClose={() => setDeletingId(null)}
-        onConfirm={() => deletingId && handleDelete(deletingId)}
-        title="Delete this review?"
-        description="Delete this review? This permanently removes the analysis and cannot be undone."
-        confirmLabel="Delete review"
-        cancelLabel="Keep it"
-        isDestructive={true}
-      />
     </AppShell>
   );
 }

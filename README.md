@@ -13,3 +13,4 @@ An AI-powered contract analysis, risk rating, automated redlining, deadline extr
 - **Frontend**: Next.js (App Router), React 19, TypeScript, Tailwind CSS, Lucide Icons
 - **Database & Auth**: Supabase (PostgreSQL, Row Level Security)
 - **AI**: Google Gemini API
+

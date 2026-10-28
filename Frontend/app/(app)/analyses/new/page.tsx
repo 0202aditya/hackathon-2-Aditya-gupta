@@ -13,6 +13,8 @@ import {
   Briefcase,
   Edit2,
   Lock,
+  Loader2,
+  AlertCircle,
 } from "lucide-react";
 
 export default function NewAnalysisPage() {
@@ -20,7 +22,7 @@ export default function NewAnalysisPage() {
 
   // Contract tab: "upload" | "paste"
   const [activeTab, setActiveTab] = React.useState<"upload" | "paste">("upload");
-  const [selectedFile, setSelectedFile] = React.useState<{ name: string; size: string } | null>(null);
+  const [selectedFile, setSelectedFile] = React.useState<{ name: string; size: string; rawFile?: File } | null>(null);
   const [pastedText, setPastedText] = React.useState("");
 
   // Business profile
@@ -37,12 +39,19 @@ export default function NewAnalysisPage() {
   const [redactionEnabled, setRedactionEnabled] = React.useState(false);
   const [consentChecked, setConsentChecked] = React.useState(false);
 
-  const hasContractInput =
-    activeTab === "upload" ? !!selectedFile : pastedText.trim().length > 50;
+  // Submission state
+  const [isSubmitting, setIsSubmitting] = React.useState(false);
+  const [submitError, setSubmitError] = React.useState<string | null>(null);
 
-  const isFormValid = hasContractInput && consentChecked;
+  const hasContractInput =
+    activeTab === "upload" ? !!selectedFile?.rawFile : pastedText.trim().length > 50;
+
+  const isFormValid = hasContractInput && consentChecked && !isSubmitting;
 
   const getDisabledReason = () => {
+    if (isSubmitting) {
+      return "Analyzing contract with Gemini AI... Please wait.";
+    }
     if (!hasContractInput && !consentChecked) {
       return "Add a contract file or paste text, and accept the AI processing notice.";
     }
@@ -55,9 +64,51 @@ export default function NewAnalysisPage() {
     return "";
   };
 
-  const handleStartAnalysis = () => {
+  const handleStartAnalysis = async () => {
     if (!isFormValid) return;
-    router.push("/analyses/acme-msa?analyzing=true");
+    setIsSubmitting(true);
+    setSubmitError(null);
+
+    try {
+      let res: Response;
+
+      if (activeTab === "upload" && selectedFile?.rawFile) {
+        const formData = new FormData();
+        formData.append("file", selectedFile.rawFile);
+        formData.append("contractType", "contract");
+        formData.append("redactPII", redactionEnabled ? "true" : "false");
+
+        res = await fetch("/api/analyses", {
+          method: "POST",
+          body: formData,
+        });
+      } else {
+        res = await fetch("/api/analyses", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            text: pastedText,
+            contractType: "contract",
+            redactPII: redactionEnabled,
+            fileName: "Pasted Contract",
+          }),
+        });
+      }
+
+      const data = await res.json();
+
+      if (!res.ok || !data.success) {
+        throw new Error(data.error || "Failed to analyze contract. Please try again.");
+      }
+
+      // Navigate to the analysis workspace with the created analysis ID
+      router.push(`/analyses/${data.analysisId}`);
+    } catch (err: unknown) {
+      console.error("Submission error:", err);
+      const message = err instanceof Error ? err.message : "Failed to analyze contract.";
+      setSubmitError(message);
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -75,6 +126,16 @@ export default function NewAnalysisPage() {
             Upload your document or paste text. We will analyze each clause for risk, extract obligations, and draft redlines.
           </p>
         </div>
+
+        {submitError && (
+          <div className="rounded-xl border border-[var(--danger)]/40 bg-[var(--danger)]/10 p-4 flex items-start gap-3">
+            <AlertCircle className="w-5 h-5 text-[var(--danger)] shrink-0 mt-0.5" />
+            <div className="text-sm text-[var(--foreground)]">
+              <p className="font-bold text-[var(--danger)]">Analysis Failed</p>
+              <p className="text-xs text-[var(--muted)] mt-1">{submitError}</p>
+            </div>
+          </div>
+        )}
 
         {/* Section 1: Your Contract */}
         <section className="space-y-4">
@@ -98,9 +159,8 @@ export default function NewAnalysisPage() {
                 }`}
               >
                 <FileText className="w-4 h-4" />
-                <span>Upload file</span>
+                <span>Upload document</span>
               </button>
-
               <button
                 type="button"
                 onClick={() => setActiveTab("paste")}
@@ -139,100 +199,147 @@ export default function NewAnalysisPage() {
           )}
         </section>
 
-        {/* Section 2: Your Business (Collapsed Profile Summary) */}
+        {/* Section 2: Business Profile Context */}
         <section className="space-y-4">
           <div className="flex items-center justify-between">
             <h2 className="heading-3 text-[var(--foreground)] flex items-center gap-2">
               <span className="w-7 h-7 rounded-full bg-[var(--surface-raised)] border border-[var(--border)] text-sm flex items-center justify-center text-[var(--primary)] font-bold">
                 2
               </span>
-              <span>Your business profile</span>
+              <span>Your profile context</span>
             </h2>
 
-            <button
+            <Button
               type="button"
+              variant="outline"
+              size="sm"
               onClick={() => setIsEditingProfile(!isEditingProfile)}
-              className="flex items-center gap-1.5 text-xs font-sans font-bold text-[var(--primary)] hover:underline p-1 min-h-9 cursor-pointer"
+              className="text-xs gap-1.5"
             >
               <Edit2 className="w-3.5 h-3.5" />
-              <span>{isEditingProfile ? "Done editing" : "Edit profile"}</span>
-            </button>
+              <span>{isEditingProfile ? "Done" : "Edit context"}</span>
+            </Button>
           </div>
 
-          <div className="rounded-2xl bg-[var(--surface)] border border-[var(--border)] p-6 space-y-4">
-            {!isEditingProfile ? (
-              <div className="flex items-start gap-4">
-                <div className="w-10 h-10 rounded-lg bg-[var(--surface-raised)] border border-[var(--border)] flex items-center justify-center text-[var(--primary)] shrink-0 mt-0.5">
-                  <Briefcase className="w-5 h-5" strokeWidth={1.75} />
-                </div>
-                <div className="space-y-1.5 text-sm font-sans flex-1">
-                  <div className="flex flex-wrap items-center gap-2 text-[var(--foreground)] font-bold">
-                    <span>{businessProfile.whatYouDo}</span>
-                    <span>&bull;</span>
-                    <span className="text-[var(--muted)] font-normal">{businessProfile.businessType}</span>
-                    <span>&bull;</span>
-                    <span className="text-[var(--muted)] font-normal">{businessProfile.typicalProjectValue}</span>
-                  </div>
-                  <p className="text-xs text-[var(--muted)]">
-                    <span className="font-bold text-[var(--foreground)]">Non-negotiables:</span> {businessProfile.mustKeep}
-                  </p>
-                  <p className="text-xs text-[var(--muted)]/70">
-                    Jurisdiction: {businessProfile.countryOrState}
-                  </p>
-                </div>
+          <div className="rounded-2xl bg-[var(--surface)] border border-[var(--border)] p-5 space-y-4">
+            <div className="flex items-start gap-3">
+              <Briefcase className="w-5 h-5 text-[var(--primary)] shrink-0 mt-0.5" />
+              <div className="space-y-1">
+                <p className="text-sm font-sans font-bold text-[var(--foreground)]">
+                  How we tailor this review
+                </p>
+                <p className="text-xs text-[var(--muted)] leading-relaxed">
+                  We evaluate IP retention, liability, and payment terms against what is standard for your specific role.
+                </p>
               </div>
-            ) : (
-              <div className="space-y-4 pt-2">
+            </div>
+
+            {isEditingProfile ? (
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
                 <Input
                   label="What you do"
                   value={businessProfile.whatYouDo}
                   onChange={(e) =>
-                    setBusinessProfile((p) => ({ ...p, whatYouDo: e.target.value }))
+                    setBusinessProfile({ ...businessProfile, whatYouDo: e.target.value })
                   }
                 />
                 <Input
-                  label="Non-negotiables to protect"
-                  value={businessProfile.mustKeep}
+                  label="Business entity"
+                  value={businessProfile.businessType}
                   onChange={(e) =>
-                    setBusinessProfile((p) => ({ ...p, mustKeep: e.target.value }))
+                    setBusinessProfile({ ...businessProfile, businessType: e.target.value })
                   }
                 />
+                <Input
+                  label="Typical project value"
+                  value={businessProfile.typicalProjectValue}
+                  onChange={(e) =>
+                    setBusinessProfile({
+                      ...businessProfile,
+                      typicalProjectValue: e.target.value,
+                    })
+                  }
+                />
+                <Input
+                  label="Jurisdiction / State"
+                  value={businessProfile.countryOrState}
+                  onChange={(e) =>
+                    setBusinessProfile({
+                      ...businessProfile,
+                      countryOrState: e.target.value,
+                    })
+                  }
+                />
+                <div className="sm:col-span-2">
+                  <Input
+                    label="Non-negotiables"
+                    value={businessProfile.mustKeep}
+                    onChange={(e) =>
+                      setBusinessProfile({ ...businessProfile, mustKeep: e.target.value })
+                    }
+                  />
+                </div>
+              </div>
+            ) : (
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-2 text-xs">
+                <div className="p-3 rounded-lg bg-[var(--surface-raised)] border border-[var(--border)]">
+                  <span className="text-[var(--muted)] block">Role</span>
+                  <span className="font-bold text-[var(--foreground)] truncate block mt-0.5">
+                    {businessProfile.whatYouDo}
+                  </span>
+                </div>
+                <div className="p-3 rounded-lg bg-[var(--surface-raised)] border border-[var(--border)]">
+                  <span className="text-[var(--muted)] block">Entity</span>
+                  <span className="font-bold text-[var(--foreground)] truncate block mt-0.5">
+                    {businessProfile.businessType}
+                  </span>
+                </div>
+                <div className="p-3 rounded-lg bg-[var(--surface-raised)] border border-[var(--border)]">
+                  <span className="text-[var(--muted)] block">Project Size</span>
+                  <span className="font-bold text-[var(--foreground)] truncate block mt-0.5">
+                    {businessProfile.typicalProjectValue}
+                  </span>
+                </div>
+                <div className="p-3 rounded-lg bg-[var(--surface-raised)] border border-[var(--border)]">
+                  <span className="text-[var(--muted)] block">Location</span>
+                  <span className="font-bold text-[var(--foreground)] truncate block mt-0.5">
+                    {businessProfile.countryOrState}
+                  </span>
+                </div>
               </div>
             )}
           </div>
         </section>
 
-        {/* Section 3: Privacy Controls */}
+        {/* Section 3: Privacy & Redaction */}
         <section className="space-y-4">
           <h2 className="heading-3 text-[var(--foreground)] flex items-center gap-2">
             <span className="w-7 h-7 rounded-full bg-[var(--surface-raised)] border border-[var(--border)] text-sm flex items-center justify-center text-[var(--primary)] font-bold">
               3
             </span>
-            <span>Privacy & security</span>
+            <span>Confidentiality & Privacy</span>
           </h2>
 
-          <div className="rounded-2xl bg-[var(--surface)] border border-[var(--border)] p-6 space-y-6">
-            {/* Redaction Switch */}
-            <div className="flex items-start justify-between gap-4">
+          <div className="rounded-2xl bg-[var(--surface)] border border-[var(--border)] p-5 space-y-4">
+            <div className="flex items-center justify-between gap-4">
               <div className="space-y-1">
                 <div className="flex items-center gap-2">
                   <Lock className="w-4 h-4 text-[var(--primary)]" />
-                  <span className="text-base font-sans font-bold text-[var(--foreground)]">
-                    Hide names, emails, and amounts before analysis
+                  <span className="text-sm font-sans font-bold text-[var(--foreground)]">
+                    In-browser PII Redaction
                   </span>
                 </div>
-                <p className="text-xs text-[var(--muted)] leading-relaxed max-w-[500px]">
-                  Automatically replaces client names, emails, and compensation sums with generic tokens before sending contract text to AI.
+                <p className="text-xs text-[var(--muted)]">
+                  Automatically masks email addresses, phone numbers, and identifying entity numbers before sending to AI.
                 </p>
               </div>
 
-              {/* Toggle Switch */}
               <button
                 type="button"
                 role="switch"
                 aria-checked={redactionEnabled}
                 onClick={() => setRedactionEnabled(!redactionEnabled)}
-                className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus-visible:outline-2 focus-visible:outline-[var(--primary)] focus-visible:outline-offset-[3px] ${
+                className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
                   redactionEnabled ? "bg-[var(--primary)]" : "bg-[var(--surface-raised)] border-[var(--border)]"
                 }`}
               >
@@ -271,8 +378,17 @@ export default function NewAnalysisPage() {
             onClick={handleStartAnalysis}
             className="w-full justify-center min-h-12 text-base font-bold gap-2"
           >
-            <ShieldCheck className="w-5 h-5" strokeWidth={2} />
-            <span>Analyze contract</span>
+            {isSubmitting ? (
+              <>
+                <Loader2 className="w-5 h-5 animate-spin" />
+                <span>Analyzing contract with Gemini...</span>
+              </>
+            ) : (
+              <>
+                <ShieldCheck className="w-5 h-5" strokeWidth={2} />
+                <span>Analyze contract</span>
+              </>
+            )}
           </Button>
 
           {!isFormValid && (
