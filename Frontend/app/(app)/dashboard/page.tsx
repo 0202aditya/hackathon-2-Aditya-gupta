@@ -191,10 +191,10 @@ export default function DashboardPage() {
     <AppShell userEmail="contractor@example.com">
       <div className="max-w-[1120px] mx-auto w-full px-4 sm:px-6 py-8 space-y-8">
         {/* Header Bar */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-[var(--border)]">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-(--border)">
           <div>
-            <h1 className="heading-2 text-[var(--foreground)]">Your reviews</h1>
-            <p className="text-sm text-[var(--muted)] mt-1">
+            <h1 className="heading-2 text-(--foreground)">Your reviews</h1>
+            <p className="text-sm text-(--muted) mt-1">
               Review what you signed, see flagged risks, and check replacement language.
             </p>
           </div>
@@ -203,7 +203,7 @@ export default function DashboardPage() {
             <button
               type="button"
               onClick={handleToggleMocks}
-              className="text-xs font-sans text-[var(--muted)] hover:text-[var(--foreground)] underline p-2"
+              className="text-xs font-sans text-(--muted) hover:text-(--foreground) underline p-2"
               title="Toggle preview demo data"
             >
               {isUsingMocks ? "Show my actual reviews" : "Preview sample reviews"}
@@ -221,8 +221,8 @@ export default function DashboardPage() {
         {/* Reviews List or Empty State */}
         {isLoading ? (
           <div className="py-20 flex flex-col items-center justify-center gap-3">
-            <Loader2 className="w-6 h-6 animate-spin text-[var(--primary)]" />
-            <p className="text-sm text-[var(--muted)]">Loading your reviews...</p>
+            <Loader2 className="w-6 h-6 animate-spin text-(--primary)" />
+            <p className="text-sm text-(--muted)">Loading your reviews...</p>
           </div>
         ) : reviews.length === 0 ? (
           <EmptyState
@@ -234,27 +234,27 @@ export default function DashboardPage() {
           />
         ) : (
           <div className="space-y-4">
-            <div className="rounded-2xl bg-[var(--surface)] border border-[var(--border)] divide-y divide-[var(--border)] overflow-hidden shadow-lg">
+            <div className="rounded-2xl bg-(--surface) border border-(--border) divide-y divide-(--border) overflow-hidden shadow-lg">
               {reviews.map((review) => (
                 <div
                   key={review.id}
-                  className="p-5 sm:p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:bg-[var(--surface-raised)]/40 interactive-transition"
+                  className="p-5 sm:p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:bg-(--surface-raised)/40 interactive-transition"
                 >
                   {/* Left: Title, Type, and Metadata */}
                   <div className="space-y-1.5 min-w-0 flex-1">
                     <div className="flex items-center gap-3 flex-wrap">
                       <Link
                         href={`/analyses/${review.id}`}
-                        className="text-base sm:text-lg font-sans font-bold text-[var(--foreground)] hover:text-[var(--primary)] truncate interactive-transition"
+                        className="text-base sm:text-lg font-sans font-bold text-(--foreground) hover:text-(--primary) truncate interactive-transition"
                       >
                         {review.title}
                       </Link>
-                      <span className="text-xs px-2 py-0.5 rounded bg-[var(--surface-raised)] border border-[var(--border)] text-[var(--muted)] font-sans">
+                      <span className="text-xs px-2 py-0.5 rounded bg-(--surface-raised) border border-(--border) text-(--muted) font-sans">
                         {review.type}
                       </span>
                     </div>
 
-                    <div className="flex items-center gap-4 text-xs text-[var(--muted)] flex-wrap font-sans">
+                    <div className="flex items-center gap-4 text-xs text-(--muted) flex-wrap font-sans">
                       <span className="flex items-center gap-1.5">
                         <Calendar className="w-3.5 h-3.5" />
                         <span>{review.date}</span>
@@ -272,7 +272,7 @@ export default function DashboardPage() {
                   <div className="flex items-center justify-between sm:justify-end gap-4 shrink-0">
                     <div className="text-right">
                       <RiskBadge level={review.riskLevel} />
-                      <span className="block text-xs text-[var(--muted)] font-mono mt-1">
+                      <span className="block text-xs text-(--muted) font-mono mt-1">
                         Score: {review.riskScore}/100
                       </span>
                     </div>
@@ -289,7 +289,7 @@ export default function DashboardPage() {
                         variant="outline"
                         size="sm"
                         onClick={() => setDeletingId(review.id)}
-                        className="min-h-11 text-[var(--muted)] hover:text-[var(--danger)] hover:border-[var(--danger)]/50"
+                        className="min-h-11 text-(--muted) hover:text-(--danger) hover:border-(--danger)/50"
                         title="Delete review"
                       >
                         <Trash2 className="w-4 h-4" />

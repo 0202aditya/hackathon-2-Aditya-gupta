@@ -18,7 +18,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
         {label && (
           <label
             htmlFor={inputId}
-            className="block text-sm font-sans font-bold text-[var(--foreground)]"
+            className="block text-sm font-sans font-bold text-(--foreground)"
           >
             {label}
           </label>
@@ -27,10 +27,10 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
           id={inputId}
           type={type}
           className={cn(
-            "w-full min-h-11 px-3.5 py-2.5 rounded-lg bg-[var(--surface-raised)] border text-base font-sans text-[var(--foreground)] placeholder:text-[var(--muted)]/60 transition-colors focus-visible:outline-2 focus-visible:outline-[var(--primary)] focus-visible:outline-offset-[3px] disabled:opacity-50 disabled:cursor-not-allowed",
+            "w-full min-h-11 px-3.5 py-2.5 rounded-lg bg-(--surface-raised) border text-base font-sans text-(--foreground) placeholder:text-(--muted)/60 transition-colors focus-visible:outline-2 focus-visible:outline-(--primary) focus-visible:outline-offset-[3px] disabled:opacity-50 disabled:cursor-not-allowed",
             error
-              ? "border-[var(--risk-high)] focus-visible:outline-[var(--risk-high)]"
-              : "border-[var(--border)] hover:border-[var(--border-strong)] focus:border-[var(--border-strong)]",
+              ? "border-(--risk-high) focus-visible:outline-(--risk-high)"
+              : "border-(--border) hover:border-(--border-strong) focus:border-(--border-strong)",
             className
           )}
           ref={ref}
@@ -41,7 +41,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
         {error && (
           <p
             id={`${inputId}-error`}
-            className="flex items-center gap-1.5 text-sm font-sans text-[var(--risk-high)] pt-0.5"
+            className="flex items-center gap-1.5 text-sm font-sans text-(--risk-high) pt-0.5"
             role="alert"
           >
             <AlertCircle className="w-4 h-4 shrink-0" strokeWidth={1.75} aria-hidden="true" />

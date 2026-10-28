@@ -87,12 +87,12 @@ export function StrikeReveal() {
     <div
       ref={containerRef}
       id="example-redline"
-      className="rounded-2xl bg-[var(--surface-raised)] border border-[var(--border)] p-6 sm:p-8 space-y-6 shadow-xl"
+      className="rounded-2xl bg-(--surface-raised) border border-(--border) p-6 sm:p-8 space-y-6 shadow-xl"
     >
       {/* Original Clause */}
       <div className="space-y-3">
         <div className="flex items-center justify-between gap-4 flex-wrap">
-          <span className="text-sm font-sans font-bold uppercase tracking-wider text-[var(--muted)]">
+          <span className="text-sm font-sans font-bold uppercase tracking-wider text-(--muted)">
             Original Clause
           </span>
           <RiskBadge level="high" label="High risk" />
@@ -101,7 +101,7 @@ export function StrikeReveal() {
         <div className="relative inline-block w-full">
           <p
             className={`font-serif text-lg sm:text-xl leading-relaxed transition-opacity duration-500 ${
-              activeDimmed ? "opacity-50 text-[var(--muted)]" : "text-[var(--foreground)]"
+              activeDimmed ? "opacity-50 text-(--muted)" : "text-(--foreground)"
             }`}
           >
             {originalText}
@@ -109,7 +109,7 @@ export function StrikeReveal() {
 
           {/* Animated red strike-through line */}
           <div
-            className={`absolute left-0 top-1/2 h-[3px] bg-[var(--risk-high)] rounded-full pointer-events-none transition-all ease-out duration-700 ${
+            className={`absolute left-0 top-1/2 h-[3px] bg-(--risk-high) rounded-full pointer-events-none transition-all ease-out duration-700 ${
               activeStriking ? "w-full opacity-100" : "w-0 opacity-0"
             }`}
             style={{ transform: "translateY(-50%)" }}
@@ -119,22 +119,22 @@ export function StrikeReveal() {
       </div>
 
       {/* Why it matters */}
-      <div className="pt-2 border-t border-[var(--border)]/60">
-        <p className="text-sm sm:text-base leading-relaxed font-sans text-[var(--foreground)]">
-          <span className="font-bold text-[var(--risk-medium)] mr-2">Why it matters:</span>
+      <div className="pt-2 border-t border-(--border)/60">
+        <p className="text-sm sm:text-base leading-relaxed font-sans text-(--foreground)">
+          <span className="font-bold text-(--risk-medium) mr-2">Why it matters:</span>
           You could owe far more than the project pays, including indirect losses.
         </p>
       </div>
 
       {/* Suggested wording */}
-      <div className="pt-2 border-t border-[var(--border)]/60 space-y-2">
-        <span className="text-sm font-sans font-bold uppercase tracking-wider text-[var(--risk-low)]">
+      <div className="pt-2 border-t border-(--border)/60 space-y-2">
+        <span className="text-sm font-sans font-bold uppercase tracking-wider text-(--risk-low)">
           Suggested Wording
         </span>
-        <div className="min-h-16 font-serif text-lg sm:text-xl leading-relaxed text-[var(--risk-low)] bg-[rgba(16,185,129,0.08)] border border-[rgba(16,185,129,0.25)] rounded-lg p-4">
+        <div className="min-h-16 font-serif text-lg sm:text-xl leading-relaxed text-(--risk-low) bg-[rgba(16,185,129,0.08)] border border-[rgba(16,185,129,0.25)] rounded-lg p-4">
           <span>{activeDisplayed}</span>
           {isTyping && !reducedMotion && (
-            <span className="inline-block w-0.5 h-5 bg-[var(--risk-low)] ml-1 align-middle animate-pulse" />
+            <span className="inline-block w-0.5 h-5 bg-(--risk-low) ml-1 align-middle animate-pulse" />
           )}
         </div>
       </div>
@@ -150,7 +150,7 @@ export function StrikeReveal() {
         >
           {accepted ? (
             <>
-              <Check className="w-4 h-4 text-[var(--primary-foreground)]" strokeWidth={2} />
+              <Check className="w-4 h-4 text-(--primary-foreground)" strokeWidth={2} />
               <span>Accepted</span>
             </>
           ) : (

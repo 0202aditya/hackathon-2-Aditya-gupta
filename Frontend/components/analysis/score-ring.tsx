@@ -51,7 +51,7 @@ export function ScoreRing({
           className="transition-all duration-700 ease-out"
         />
       </svg>
-      <span className="absolute font-sans font-bold text-sm text-[var(--foreground)]">
+      <span className="absolute font-sans font-bold text-sm text-(--foreground)">
         {score}
       </span>
     </div>

@@ -75,18 +75,18 @@ Sincerely,
       aria-labelledby="email-dialog-title"
       className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs"
     >
-      <div className="w-full max-w-[640px] rounded-2xl bg-[var(--surface)] border border-[var(--border)] p-6 sm:p-8 space-y-6 shadow-2xl animate-in fade-in zoom-in-95 duration-150 max-h-[90vh] flex flex-col">
+      <div className="w-full max-w-[640px] rounded-2xl bg-(--surface) border border-(--border) p-6 sm:p-8 space-y-6 shadow-2xl animate-in fade-in zoom-in-95 duration-150 max-h-[90vh] flex flex-col">
         {/* Header */}
-        <div className="flex items-start justify-between gap-4 pb-3 border-b border-[var(--border)]">
+        <div className="flex items-start justify-between gap-4 pb-3 border-b border-(--border)">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-lg bg-[rgba(134,168,255,0.12)] border border-[rgba(134,168,255,0.25)] flex items-center justify-center text-[var(--primary)] shrink-0">
+            <div className="w-10 h-10 rounded-lg bg-[rgba(134,168,255,0.12)] border border-[rgba(134,168,255,0.25)] flex items-center justify-center text-(--primary) shrink-0">
               <Mail className="w-5 h-5" strokeWidth={1.75} />
             </div>
             <div>
-              <h2 id="email-dialog-title" className="text-lg font-sans font-bold text-[var(--foreground)]">
+              <h2 id="email-dialog-title" className="text-lg font-sans font-bold text-(--foreground)">
                 Negotiation email draft
               </h2>
-              <p className="text-xs text-[var(--muted)]">
+              <p className="text-xs text-(--muted)">
                 This email covers the changes you accepted.
               </p>
             </div>
@@ -95,7 +95,7 @@ Sincerely,
           <button
             type="button"
             onClick={onClose}
-            className="p-1.5 rounded-lg text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--surface-raised)] min-h-9 min-w-9 flex items-center justify-center interactive-transition cursor-pointer"
+            className="p-1.5 rounded-lg text-(--muted) hover:text-(--foreground) hover:bg-(--surface-raised) min-h-9 min-w-9 flex items-center justify-center interactive-transition cursor-pointer"
             aria-label="Close dialog"
           >
             <X className="w-5 h-5" />
@@ -104,17 +104,17 @@ Sincerely,
 
         {/* Tone Selector */}
         <div className="flex items-center justify-between gap-4 flex-wrap">
-          <span className="text-xs font-sans font-bold uppercase tracking-wider text-[var(--muted)]">
+          <span className="text-xs font-sans font-bold uppercase tracking-wider text-(--muted)">
             Select Tone:
           </span>
-          <div className="flex items-center rounded-lg bg-[var(--surface-raised)] border border-[var(--border)] p-1">
+          <div className="flex items-center rounded-lg bg-(--surface-raised) border border-(--border) p-1">
             <button
               type="button"
               onClick={() => setTone("friendly")}
               className={`px-3.5 py-1.5 rounded-md text-xs font-sans font-bold interactive-transition min-h-9 ${
                 tone === "friendly"
-                  ? "bg-[var(--primary)] text-[var(--primary-foreground)] shadow-xs"
-                  : "text-[var(--muted)] hover:text-[var(--foreground)]"
+                  ? "bg-(--primary) text-(--primary-foreground) shadow-xs"
+                  : "text-(--muted) hover:text-(--foreground)"
               }`}
             >
               Friendly
@@ -124,8 +124,8 @@ Sincerely,
               onClick={() => setTone("firm")}
               className={`px-3.5 py-1.5 rounded-md text-xs font-sans font-bold interactive-transition min-h-9 ${
                 tone === "firm"
-                  ? "bg-[var(--primary)] text-[var(--primary-foreground)] shadow-xs"
-                  : "text-[var(--muted)] hover:text-[var(--foreground)]"
+                  ? "bg-(--primary) text-(--primary-foreground) shadow-xs"
+                  : "text-(--muted) hover:text-(--foreground)"
               }`}
             >
               Firm
@@ -134,13 +134,13 @@ Sincerely,
         </div>
 
         {/* Email Draft Box in Serif Font */}
-        <div className="flex-1 overflow-y-auto rounded-xl bg-[var(--surface-raised)] border border-[var(--border)] p-4 sm:p-5 font-serif text-sm leading-relaxed text-[var(--foreground)] whitespace-pre-wrap select-text">
+        <div className="flex-1 overflow-y-auto rounded-xl bg-(--surface-raised) border border-(--border) p-4 sm:p-5 font-serif text-sm leading-relaxed text-(--foreground) whitespace-pre-wrap select-text">
           {emailDraft}
         </div>
 
         {/* Actions */}
-        <div className="flex items-center justify-between gap-4 pt-3 border-t border-[var(--border)]">
-          <span className="text-xs text-[var(--muted)]">
+        <div className="flex items-center justify-between gap-4 pt-3 border-t border-(--border)">
+          <span className="text-xs text-(--muted)">
             Ready to paste into your email client.
           </span>
           <div className="flex items-center gap-3">

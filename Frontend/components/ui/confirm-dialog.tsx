@@ -45,32 +45,32 @@ export function ConfirmDialog({
       className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs"
     >
       <div
-        className="w-full max-w-[420px] rounded-2xl bg-[var(--surface)] border border-[var(--border)] p-6 space-y-5 shadow-2xl animate-in fade-in zoom-in-95 duration-150"
+        className="w-full max-w-[420px] rounded-2xl bg-(--surface) border border-(--border) p-6 space-y-5 shadow-2xl animate-in fade-in zoom-in-95 duration-150"
       >
         <div className="flex items-start justify-between gap-4">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-lg bg-[rgba(255,122,122,0.12)] border border-[rgba(255,122,122,0.3)] flex items-center justify-center text-[var(--risk-high)] shrink-0">
+            <div className="w-10 h-10 rounded-lg bg-[rgba(255,122,122,0.12)] border border-[rgba(255,122,122,0.3)] flex items-center justify-center text-(--risk-high) shrink-0">
               <AlertTriangle className="w-5 h-5" strokeWidth={1.75} aria-hidden="true" />
             </div>
-            <h2 id="dialog-title" className="text-lg font-sans font-bold text-[var(--foreground)]">
+            <h2 id="dialog-title" className="text-lg font-sans font-bold text-(--foreground)">
               {title}
             </h2>
           </div>
           <button
             type="button"
             onClick={onClose}
-            className="p-1 rounded-md text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--surface-raised)] min-h-9 min-w-9 flex items-center justify-center interactive-transition cursor-pointer"
+            className="p-1 rounded-md text-(--muted) hover:text-(--foreground) hover:bg-(--surface-raised) min-h-9 min-w-9 flex items-center justify-center interactive-transition cursor-pointer"
             aria-label="Close dialog"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
-        <p className="text-sm leading-relaxed text-[var(--muted)]">
+        <p className="text-sm leading-relaxed text-(--muted)">
           {description}
         </p>
 
-        <div className="flex items-center justify-end gap-3 pt-3 border-t border-[var(--border)]">
+        <div className="flex items-center justify-end gap-3 pt-3 border-t border-(--border)">
           <Button
             type="button"
             variant="outline"

@@ -54,7 +54,7 @@ export default function ForgotPasswordPage() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col justify-between bg-[var(--background)] text-[var(--foreground)] px-4 py-8">
+    <div className="min-h-screen flex flex-col justify-between bg-(--background) text-(--foreground) px-4 py-8">
       {/* Top Header with Logo */}
       <header className="flex justify-center">
         <Link href="/" className="inline-flex items-center gap-3 interactive-transition hover:opacity-90">
@@ -65,7 +65,7 @@ export default function ForgotPasswordPage() {
             height={32}
             className="rounded-md shrink-0"
           />
-          <span className="font-serif font-semibold text-xl text-[var(--foreground)]">
+          <span className="font-serif font-semibold text-xl text-(--foreground)">
             Contract Auto-Redline
           </span>
         </Link>
@@ -73,23 +73,23 @@ export default function ForgotPasswordPage() {
 
       {/* Main Centered 400px Panel */}
       <main className="w-full max-w-[400px] mx-auto my-auto py-8">
-        <div className="rounded-2xl bg-[var(--surface)] border border-[var(--border)] p-6 sm:p-8 space-y-6 shadow-xl">
+        <div className="rounded-2xl bg-(--surface) border border-(--border) p-6 sm:p-8 space-y-6 shadow-xl">
           <div className="text-center space-y-1">
-            <h1 className="heading-3 text-[var(--foreground)]">Reset password</h1>
-            <p className="text-sm text-[var(--muted)]">
+            <h1 className="heading-3 text-(--foreground)">Reset password</h1>
+            <p className="text-sm text-(--muted)">
               Enter your email and we will send you a link to reset your password.
             </p>
           </div>
 
           {error && (
-            <div className="p-3 rounded-lg bg-[rgba(255,122,122,0.12)] border border-[var(--risk-high)] text-sm text-[var(--risk-high)] leading-relaxed">
+            <div className="p-3 rounded-lg bg-[rgba(255,122,122,0.12)] border border-(--risk-high) text-sm text-(--risk-high) leading-relaxed">
               {error}
             </div>
           )}
 
           {success ? (
             <div className="space-y-4">
-              <div className="p-4 rounded-xl bg-[rgba(95,211,160,0.12)] border border-[var(--risk-low)] text-sm text-[var(--risk-low)] leading-relaxed">
+              <div className="p-4 rounded-xl bg-[rgba(95,211,160,0.12)] border border-(--risk-low) text-sm text-(--risk-low) leading-relaxed">
                 Password reset link sent! Check your email inbox for instructions to set your new password.
               </div>
               <Link href="/sign-in" className="block text-center">
@@ -123,10 +123,10 @@ export default function ForgotPasswordPage() {
             </form>
           )}
 
-          <div className="text-center pt-2 border-t border-[var(--border)]">
+          <div className="text-center pt-2 border-t border-(--border)">
             <Link
               href="/sign-in"
-              className="text-sm text-[var(--muted)] hover:text-[var(--foreground)] interactive-transition"
+              className="text-sm text-(--muted) hover:text-(--foreground) interactive-transition"
             >
               Back to sign in
             </Link>
@@ -135,7 +135,7 @@ export default function ForgotPasswordPage() {
       </main>
 
       {/* Footer Disclaimer */}
-      <footer className="text-center text-xs text-[var(--muted)] font-sans py-2">
+      <footer className="text-center text-xs text-(--muted) font-sans py-2">
         General information only. Not legal advice.
       </footer>
     </div>

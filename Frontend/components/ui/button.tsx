@@ -3,22 +3,22 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap text-base leading-6 font-bold rounded-lg transition-colors focus-visible:outline-2 focus-visible:outline-[var(--primary)] focus-visible:outline-offset-[3px] disabled:pointer-events-none disabled:opacity-50 min-h-11 px-5 py-2.5 cursor-pointer interactive-transition",
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap text-base leading-6 font-bold rounded-lg transition-colors focus-visible:outline-2 focus-visible:outline-(--primary) focus-visible:outline-offset-[3px] disabled:pointer-events-none disabled:opacity-50 min-h-11 px-5 py-2.5 cursor-pointer interactive-transition",
   {
     variants: {
       variant: {
         primary:
-          "bg-[var(--primary)] text-[var(--primary-foreground)] hover:bg-[#9db8ff] active:bg-[#7398ff]",
+          "bg-(--primary) text-(--primary-foreground) hover:bg-[#9db8ff] active:bg-[#7398ff]",
         secondary:
-          "bg-[var(--surface-raised)] text-[var(--foreground)] border border-[var(--border)] hover:bg-[#232f50] hover:border-[var(--border-strong)]",
+          "bg-(--surface-raised) text-(--foreground) border border-(--border) hover:bg-[#232f50] hover:border-(--border-strong)",
         outline:
-          "bg-transparent text-[var(--foreground)] border border-[var(--border)] hover:bg-[var(--surface-raised)] hover:border-[var(--border-strong)]",
+          "bg-transparent text-(--foreground) border border-(--border) hover:bg-(--surface-raised) hover:border-(--border-strong)",
         ghost:
-          "bg-transparent text-[var(--foreground)] hover:bg-[var(--surface)] hover:text-[var(--primary)]",
+          "bg-transparent text-(--foreground) hover:bg-(--surface) hover:text-(--primary)",
         destructive:
-          "bg-[rgba(255,122,122,0.12)] text-[var(--risk-high)] border border-[rgba(255,122,122,0.3)] hover:bg-[rgba(255,122,122,0.2)]",
+          "bg-[rgba(255,122,122,0.12)] text-(--risk-high) border border-[rgba(255,122,122,0.3)] hover:bg-[rgba(255,122,122,0.2)]",
         link:
-          "text-[var(--primary)] underline-offset-4 hover:underline p-0 min-h-0 h-auto font-normal",
+          "text-(--primary) underline-offset-4 hover:underline p-0 min-h-0 h-auto font-normal",
       },
       size: {
         default: "min-h-11 px-5 py-2.5",

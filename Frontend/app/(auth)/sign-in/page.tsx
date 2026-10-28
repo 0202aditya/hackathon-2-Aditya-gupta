@@ -76,16 +76,16 @@ function SignInForm() {
   };
 
   return (
-    <div className="rounded-2xl bg-[var(--surface)] border border-[var(--border)] p-6 sm:p-8 space-y-6 shadow-xl">
+    <div className="rounded-2xl bg-(--surface) border border-(--border) p-6 sm:p-8 space-y-6 shadow-xl">
       <div className="text-center space-y-1">
-        <h1 className="heading-3 text-[var(--foreground)]">Sign in</h1>
-        <p className="text-sm text-[var(--muted)]">
+        <h1 className="heading-3 text-(--foreground)">Sign in</h1>
+        <p className="text-sm text-(--muted)">
           Welcome back. Review your contracts with confidence.
         </p>
       </div>
 
       {errors.general && (
-        <div className="p-3 rounded-lg bg-[rgba(255,122,122,0.12)] border border-[var(--risk-high)] text-sm text-[var(--risk-high)] leading-relaxed">
+        <div className="p-3 rounded-lg bg-[rgba(255,122,122,0.12)] border border-(--risk-high) text-sm text-(--risk-high) leading-relaxed">
           {errors.general}
         </div>
       )}
@@ -109,13 +109,13 @@ function SignInForm() {
           <div className="flex items-center justify-between">
             <label
               htmlFor="signin-password"
-              className="block text-sm font-sans font-bold text-[var(--foreground)]"
+              className="block text-sm font-sans font-bold text-(--foreground)"
             >
               Password
             </label>
             <Link
               href="/forgot-password"
-              className="text-xs font-sans text-[var(--primary)] hover:underline interactive-transition"
+              className="text-xs font-sans text-(--primary) hover:underline interactive-transition"
             >
               Forgot password?
             </Link>
@@ -145,12 +145,12 @@ function SignInForm() {
       </form>
 
       {/* Bottom Switch Link */}
-      <div className="text-center pt-2 border-t border-[var(--border)]">
-        <p className="text-sm text-[var(--muted)]">
+      <div className="text-center pt-2 border-t border-(--border)">
+        <p className="text-sm text-(--muted)">
           New here?{" "}
           <Link
             href="/sign-up"
-            className="text-[var(--primary)] font-bold hover:underline interactive-transition"
+            className="text-(--primary) font-bold hover:underline interactive-transition"
           >
             Create an account
           </Link>
@@ -162,7 +162,7 @@ function SignInForm() {
 
 export default function SignInPage() {
   return (
-    <div className="min-h-screen flex flex-col justify-between bg-[var(--background)] text-[var(--foreground)] px-4 py-8">
+    <div className="min-h-screen flex flex-col justify-between bg-(--background) text-(--foreground) px-4 py-8">
       {/* Top Header with Logo */}
       <header className="flex justify-center">
         <Link href="/" className="inline-flex items-center gap-3 interactive-transition hover:opacity-90">
@@ -173,7 +173,7 @@ export default function SignInPage() {
             height={32}
             className="rounded-md shrink-0"
           />
-          <span className="font-serif font-semibold text-xl text-[var(--foreground)]">
+          <span className="font-serif font-semibold text-xl text-(--foreground)">
             Contract Auto-Redline
           </span>
         </Link>
@@ -181,13 +181,13 @@ export default function SignInPage() {
 
       {/* Main Centered 400px Panel with Suspense */}
       <main className="w-full max-w-[400px] mx-auto my-auto py-8">
-        <React.Suspense fallback={<div className="h-64 rounded-2xl bg-[var(--surface)] animate-pulse" />}>
+        <React.Suspense fallback={<div className="h-64 rounded-2xl bg-(--surface) animate-pulse" />}>
           <SignInForm />
         </React.Suspense>
       </main>
 
       {/* Footer Disclaimer */}
-      <footer className="text-center text-xs text-[var(--muted)] font-sans py-2">
+      <footer className="text-center text-xs text-(--muted) font-sans py-2">
         General information only. Not legal advice.
       </footer>
     </div>

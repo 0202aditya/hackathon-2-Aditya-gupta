@@ -69,7 +69,7 @@ export default function LandingPage() {
   ];
 
   return (
-    <div className="min-h-screen flex flex-col bg-[var(--background)] text-[var(--foreground)]">
+    <div className="min-h-screen flex flex-col bg-(--background) text-(--foreground)">
       {/* Sticky Top Navigation */}
       <LandingNav />
 
@@ -80,11 +80,11 @@ export default function LandingPage() {
         <section className="flex flex-col lg:flex-row items-center justify-between gap-12 lg:gap-16 pt-4">
           {/* Left Column: Text (about 50%) */}
           <div className="w-full lg:w-1/2 space-y-6 text-left">
-            <h1 className="heading-landing text-[var(--foreground)] tracking-tight">
+            <h1 className="heading-landing text-(--foreground) tracking-tight">
               Know what you&apos;re signing before you sign it.
             </h1>
 
-            <p className="text-base lg:text-lg leading-relaxed text-[var(--muted)] max-w-[540px]">
+            <p className="text-base lg:text-lg leading-relaxed text-(--muted) max-w-[540px]">
               Upload a client contract. We flag the risky clauses, explain them in plain
               English, and give you the wording to ask for instead.
             </p>
@@ -103,7 +103,7 @@ export default function LandingPage() {
               </a>
             </div>
 
-            <p className="text-meta text-[var(--muted)] pt-1">
+            <p className="text-meta text-(--muted) pt-1">
               Free to use. Works with PDF, Word, or pasted text.
             </p>
           </div>
@@ -125,14 +125,14 @@ export default function LandingPage() {
 
         {/* Section: How It Works */}
         <section id="how-it-works" className="space-y-10 scroll-mt-24">
-          <h2 className="heading-2 text-[var(--foreground)]">
+          <h2 className="heading-2 text-(--foreground)">
             Three steps to a safer contract
           </h2>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 relative">
             {/* Desktop connecting line */}
             <div
-              className="hidden md:block absolute top-[28px] left-[15%] right-[15%] h-[1px] bg-[var(--border)] z-0"
+              className="hidden md:block absolute top-[28px] left-[15%] right-[15%] h-[1px] bg-(--border) z-0"
               aria-hidden="true"
             />
 
@@ -156,14 +156,14 @@ export default function LandingPage() {
               },
             ].map((s) => (
               <div key={s.step} className="relative z-10 flex flex-col items-start space-y-4">
-                <div className="w-14 h-14 rounded-full bg-[var(--surface-raised)] border border-[var(--border)] flex items-center justify-center font-bold text-lg text-[var(--primary)] shrink-0">
+                <div className="w-14 h-14 rounded-full bg-(--surface-raised) border border-(--border) flex items-center justify-center font-bold text-lg text-(--primary) shrink-0">
                   {s.step}
                 </div>
                 <div className="space-y-1.5">
-                  <h3 className="text-lg font-bold text-[var(--foreground)] font-sans">
+                  <h3 className="text-lg font-bold text-(--foreground) font-sans">
                     {s.title}
                   </h3>
-                  <p className="text-base leading-relaxed text-[var(--muted)] font-sans">
+                  <p className="text-base leading-relaxed text-(--muted) font-sans">
                     {s.description}
                   </p>
                 </div>
@@ -174,7 +174,7 @@ export default function LandingPage() {
 
         {/* Section: Example (The Memorable Moment) */}
         <section className="space-y-8 scroll-mt-24">
-          <h2 className="heading-2 text-[var(--foreground)]">
+          <h2 className="heading-2 text-(--foreground)">
             Here&apos;s what a redline looks like
           </h2>
           <StrikeReveal />
@@ -182,28 +182,28 @@ export default function LandingPage() {
 
         {/* Section: What You Get */}
         <section className="space-y-10">
-          <h2 className="heading-2 text-[var(--foreground)]">
+          <h2 className="heading-2 text-(--foreground)">
             Everything you need to negotiate with confidence
           </h2>
 
           {/* Two-column list separated by thin dividers without boxed cards */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-0 divide-y md:divide-y-0 border-t border-b border-[var(--border)]">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-0 divide-y md:divide-y-0 border-t border-b border-(--border)">
             {whatYouGetFeatures.map((item, index) => {
               const Icon = item.icon;
               return (
                 <div
                   key={item.title}
-                  className={`py-6 flex items-start gap-4 border-b border-[var(--border)] ${
+                  className={`py-6 flex items-start gap-4 border-b border-(--border) ${
                     index % 2 === 0 ? "md:pr-6" : "md:pl-6"
                   }`}
                 >
-                  <div className="p-2 rounded-lg bg-[var(--surface-raised)] border border-[var(--border)] text-[var(--primary)] shrink-0">
+                  <div className="p-2 rounded-lg bg-(--surface-raised) border border-(--border) text-(--primary) shrink-0">
                     <Icon className="w-5 h-5" strokeWidth={1.75} aria-hidden="true" />
                   </div>
                   <div className="space-y-1">
-                    <p className="text-base leading-normal font-sans text-[var(--foreground)]">
+                    <p className="text-base leading-normal font-sans text-(--foreground)">
                       <span className="font-bold mr-1.5">{item.title}</span>
-                      <span className="text-[var(--muted)]">{item.description}</span>
+                      <span className="text-(--muted)">{item.description}</span>
                     </p>
                   </div>
                 </div>
@@ -214,28 +214,28 @@ export default function LandingPage() {
 
         {/* Section: Privacy */}
         <section id="privacy" className="space-y-8 scroll-mt-24">
-          <h2 className="heading-2 text-[var(--foreground)]">
+          <h2 className="heading-2 text-(--foreground)">
             Your contract stays yours
           </h2>
 
-          <div className="rounded-2xl bg-[var(--surface)] border border-[var(--border)] p-6 sm:p-8 space-y-6">
+          <div className="rounded-2xl bg-(--surface) border border-(--border) p-6 sm:p-8 space-y-6">
             <div className="space-y-4">
               {privacyPoints.map((point) => {
                 const Icon = point.icon;
                 return (
                   <div key={point.title} className="flex items-start gap-3.5">
-                    <Icon className="w-5 h-5 text-[var(--primary)] shrink-0 mt-1" strokeWidth={1.75} />
-                    <p className="text-base leading-relaxed font-sans text-[var(--foreground)]">
+                    <Icon className="w-5 h-5 text-(--primary) shrink-0 mt-1" strokeWidth={1.75} />
+                    <p className="text-base leading-relaxed font-sans text-(--foreground)">
                       <span className="font-bold mr-1">{point.title}</span>
-                      <span className="text-[var(--muted)]">{point.subtitle}</span>
+                      <span className="text-(--muted)">{point.subtitle}</span>
                     </p>
                   </div>
                 );
               })}
             </div>
 
-            <div className="pt-4 border-t border-[var(--border)]">
-              <p className="text-meta text-[var(--muted)]">
+            <div className="pt-4 border-t border-(--border)">
+              <p className="text-meta text-(--muted)">
                 Contract text is processed by an AI service to produce your review. Use
                 the hide-details switch for anything sensitive.
               </p>
@@ -244,8 +244,8 @@ export default function LandingPage() {
         </section>
 
         {/* Section: Final Call to Action */}
-        <section className="rounded-3xl bg-[var(--surface-raised)] border border-[var(--border)] p-8 sm:p-12 text-center space-y-6">
-          <h2 className="heading-2 text-[var(--foreground)] max-w-[600px] mx-auto">
+        <section className="rounded-3xl bg-(--surface-raised) border border-(--border) p-8 sm:p-12 text-center space-y-6">
+          <h2 className="heading-2 text-(--foreground) max-w-[600px] mx-auto">
             Read it before you sign it.
           </h2>
           <div className="flex justify-center">

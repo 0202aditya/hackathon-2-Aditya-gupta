@@ -49,16 +49,16 @@ export function FileDropzone({
 
   if (selectedFile) {
     return (
-      <div className="rounded-xl bg-[var(--surface-raised)] border border-[var(--border)] p-5 flex items-center justify-between gap-4">
+      <div className="rounded-xl bg-(--surface-raised) border border-(--border) p-5 flex items-center justify-between gap-4">
         <div className="flex items-center gap-3.5 min-w-0">
-          <div className="w-11 h-11 rounded-lg bg-[rgba(134,168,255,0.12)] border border-[rgba(134,168,255,0.25)] flex items-center justify-center text-[var(--primary)] shrink-0">
+          <div className="w-11 h-11 rounded-lg bg-[rgba(134,168,255,0.12)] border border-[rgba(134,168,255,0.25)] flex items-center justify-center text-(--primary) shrink-0">
             <FileText className="w-5 h-5" strokeWidth={1.75} />
           </div>
           <div className="min-w-0">
-            <p className="text-base font-sans font-bold text-[var(--foreground)] truncate">
+            <p className="text-base font-sans font-bold text-(--foreground) truncate">
               {selectedFile.name}
             </p>
-            <p className="text-xs text-[var(--muted)] font-mono">
+            <p className="text-xs text-(--muted) font-mono">
               {selectedFile.size} &bull; Ready for analysis
             </p>
           </div>
@@ -69,7 +69,7 @@ export function FileDropzone({
           variant="outline"
           size="sm"
           onClick={onRemoveFile}
-          className="min-h-11 gap-1.5 text-xs text-[var(--risk-high)] hover:bg-[rgba(255,122,122,0.12)] shrink-0"
+          className="min-h-11 gap-1.5 text-xs text-(--risk-high) hover:bg-[rgba(255,122,122,0.12)] shrink-0"
         >
           <X className="w-4 h-4" />
           <span>Remove</span>
@@ -86,10 +86,10 @@ export function FileDropzone({
       onClick={() => fileInputRef.current?.click()}
       className={`rounded-2xl border-2 border-dashed p-8 sm:p-12 text-center cursor-pointer interactive-transition flex flex-col items-center justify-center ${
         isDragging
-          ? "border-[var(--primary)] bg-[rgba(134,168,255,0.06)]"
+          ? "border-(--primary) bg-[rgba(134,168,255,0.06)]"
           : error
-          ? "border-[var(--risk-high)] bg-[rgba(255,122,122,0.04)]"
-          : "border-[var(--border)] hover:border-[var(--border-strong)] bg-[var(--surface-raised)]/40 hover:bg-[var(--surface-raised)]"
+          ? "border-(--risk-high) bg-[rgba(255,122,122,0.04)]"
+          : "border-(--border) hover:border-(--border-strong) bg-(--surface-raised)/40 hover:bg-(--surface-raised)"
       }`}
     >
       <input
@@ -100,20 +100,20 @@ export function FileDropzone({
         className="hidden"
       />
 
-      <div className="w-14 h-14 rounded-full bg-[var(--surface-raised)] border border-[var(--border)] flex items-center justify-center mb-4 text-[var(--primary)]">
+      <div className="w-14 h-14 rounded-full bg-(--surface-raised) border border-(--border) flex items-center justify-center mb-4 text-(--primary)">
         <UploadCloud className="w-7 h-7" strokeWidth={1.75} />
       </div>
 
-      <p className="text-base font-sans font-bold text-[var(--foreground)] mb-1">
+      <p className="text-base font-sans font-bold text-(--foreground) mb-1">
         Drop a PDF or Word file here, or choose a file
       </p>
 
-      <p className="text-sm text-[var(--muted)]">
+      <p className="text-sm text-(--muted)">
         Up to 10 MB
       </p>
 
       {error && (
-        <p className="text-sm font-sans text-[var(--risk-high)] font-bold mt-3">
+        <p className="text-sm font-sans text-(--risk-high) font-bold mt-3">
           {error}
         </p>
       )}

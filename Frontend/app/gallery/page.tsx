@@ -58,27 +58,27 @@ export default function GalleryPage() {
     <AppShell userEmail="freelancer@example.com">
       <div className="max-w-[1120px] mx-auto w-full px-4 sm:px-6 py-8 space-y-12">
         {/* Step 1 Foundation Header */}
-        <header className="border-b border-[var(--border)] pb-6">
+        <header className="border-b border-(--border) pb-6">
           <div className="flex items-center gap-3 mb-2 flex-wrap">
-            <span className="px-3 py-1 rounded-lg bg-[rgba(134,168,255,0.15)] text-[var(--primary)] text-sm font-sans font-bold border border-[rgba(134,168,255,0.3)]">
+            <span className="px-3 py-1 rounded-lg bg-[rgba(134,168,255,0.15)] text-(--primary) text-sm font-sans font-bold border border-[rgba(134,168,255,0.3)]">
               UI Design Spec Verification Gallery
             </span>
-            <span className="text-meta text-[var(--muted)]">
+            <span className="text-meta text-(--muted)">
               Steps 1 through 6 Completed
             </span>
           </div>
-          <h1 className="heading-2 text-[var(--foreground)]">
+          <h1 className="heading-2 text-(--foreground)">
             Design System & Screen Directory
           </h1>
-          <p className="text-base text-[var(--muted)] max-w-[680px] mt-2">
+          <p className="text-base text-(--muted) max-w-[680px] mt-2">
             Interactive reference and complete sitemap for all screens built with dark theme, Two Voices typography, shadcn components, and spec microcopy.
           </p>
         </header>
 
         {/* Section 0: All App Screens Sitemap */}
         <section className="space-y-4">
-          <h2 className="heading-3 text-[var(--foreground)] flex items-center gap-2">
-            <ExternalLink className="w-5 h-5 text-[var(--primary)]" />
+          <h2 className="heading-3 text-(--foreground) flex items-center gap-2">
+            <ExternalLink className="w-5 h-5 text-(--primary)" />
             <span>Interactive App Screen Directory</span>
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -96,22 +96,22 @@ export default function GalleryPage() {
               <Link
                 key={scr.href}
                 href={scr.href}
-                className="p-5 rounded-2xl bg-[var(--surface)] border border-[var(--border)] hover:border-[var(--primary)] hover:bg-[var(--surface-raised)] interactive-transition space-y-2 group shadow-sm flex flex-col justify-between"
+                className="p-5 rounded-2xl bg-(--surface) border border-(--border) hover:border-(--primary) hover:bg-(--surface-raised) interactive-transition space-y-2 group shadow-sm flex flex-col justify-between"
               >
                 <div>
                   <div className="flex items-center justify-between gap-2 mb-1.5">
-                    <span className="font-bold text-base text-[var(--foreground)] group-hover:text-[var(--primary)] interactive-transition">
+                    <span className="font-bold text-base text-(--foreground) group-hover:text-(--primary) interactive-transition">
                       {scr.title}
                     </span>
-                    <span className="text-xs px-2 py-0.5 rounded bg-[var(--surface-raised)] border border-[var(--border)] text-[var(--muted)]">
+                    <span className="text-xs px-2 py-0.5 rounded bg-(--surface-raised) border border-(--border) text-(--muted)">
                       {scr.badge}
                     </span>
                   </div>
-                  <p className="text-xs leading-relaxed text-[var(--muted)]">
+                  <p className="text-xs leading-relaxed text-(--muted)">
                     {scr.desc}
                   </p>
                 </div>
-                <div className="flex items-center gap-1.5 text-xs text-[var(--primary)] font-bold pt-2">
+                <div className="flex items-center gap-1.5 text-xs text-(--primary) font-bold pt-2">
                   <span>Open screen</span>
                   <ExternalLink className="w-3.5 h-3.5" />
                 </div>
@@ -122,25 +122,25 @@ export default function GalleryPage() {
 
         {/* Section 1: Microcopy for States (Section 8) */}
         <section className="space-y-4">
-          <h2 className="heading-3 text-[var(--foreground)] flex items-center gap-2">
-            <AlertCircle className="w-5 h-5 text-[var(--risk-medium)]" />
+          <h2 className="heading-3 text-(--foreground) flex items-center gap-2">
+            <AlertCircle className="w-5 h-5 text-(--risk-medium)" />
             <span>Microcopy for States (Section 8 of Spec)</span>
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {errorStatesMicrocopy.map((st) => (
               <div
                 key={st.situation}
-                className="p-5 rounded-2xl bg-[var(--surface)] border border-[var(--border)] space-y-2"
+                className="p-5 rounded-2xl bg-(--surface) border border-(--border) space-y-2"
               >
                 <div className="flex items-center justify-between gap-2">
-                  <span className="text-sm font-bold text-[var(--foreground)]">
+                  <span className="text-sm font-bold text-(--foreground)">
                     {st.situation}
                   </span>
-                  <span className="text-xs px-2 py-0.5 rounded bg-[rgba(255,122,122,0.12)] border border-[rgba(255,122,122,0.25)] text-[var(--risk-high)] font-bold">
+                  <span className="text-xs px-2 py-0.5 rounded bg-[rgba(255,122,122,0.12)] border border-[rgba(255,122,122,0.25)] text-(--risk-high) font-bold">
                     {st.badge}
                   </span>
                 </div>
-                <p className="text-xs leading-relaxed text-[var(--muted)]">
+                <p className="text-xs leading-relaxed text-(--muted)">
                   {st.text}
                 </p>
                 {st.hasButton && (
@@ -157,8 +157,8 @@ export default function GalleryPage() {
 
         {/* Section 2: Color Palette Tokens */}
         <section className="space-y-4">
-          <h2 className="heading-3 text-[var(--foreground)] flex items-center gap-2">
-            <Sparkles className="w-5 h-5 text-[var(--primary)]" />
+          <h2 className="heading-3 text-(--foreground) flex items-center gap-2">
+            <Sparkles className="w-5 h-5 text-(--primary)" />
             <span>Color Tokens</span>
           </h2>
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
@@ -177,17 +177,17 @@ export default function GalleryPage() {
             ].map((c) => (
               <div
                 key={c.token}
-                className="p-4 rounded-2xl bg-[var(--surface)] border border-[var(--border)] space-y-2"
+                className="p-4 rounded-2xl bg-(--surface) border border-(--border) space-y-2"
               >
                 <div
-                  className={`h-12 w-full rounded-lg ${c.bg} ${c.border ? "border border-[var(--border-strong)]" : ""}`}
+                  className={`h-12 w-full rounded-lg ${c.bg} ${c.border ? "border border-(--border-strong)" : ""}`}
                 />
                 <div>
-                  <p className="font-bold text-sm leading-tight text-[var(--foreground)]">
+                  <p className="font-bold text-sm leading-tight text-(--foreground)">
                     {c.name}
                   </p>
-                  <p className="text-meta text-[var(--muted)] font-mono">{c.hex}</p>
-                  <p className="text-xs text-[var(--muted)]/70 font-mono">{c.token}</p>
+                  <p className="text-meta text-(--muted) font-mono">{c.hex}</p>
+                  <p className="text-xs text-(--muted)/70 font-mono">{c.token}</p>
                 </div>
               </div>
             ))}
@@ -196,14 +196,14 @@ export default function GalleryPage() {
 
         {/* Section 3: RiskBadges & ScoreRing */}
         <section className="space-y-4">
-          <h2 className="heading-3 text-[var(--foreground)] flex items-center gap-2">
-            <Info className="w-5 h-5 text-[var(--primary)]" />
+          <h2 className="heading-3 text-(--foreground) flex items-center gap-2">
+            <Info className="w-5 h-5 text-(--primary)" />
             <span>Risk Badges & Score Gauge</span>
           </h2>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="rounded-2xl bg-[var(--surface)] border border-[var(--border)] p-6 space-y-4">
-              <h3 className="text-base font-bold text-[var(--foreground)]">
+            <div className="rounded-2xl bg-(--surface) border border-(--border) p-6 space-y-4">
+              <h3 className="text-base font-bold text-(--foreground)">
                 Risk Badges
               </h3>
               <div className="flex flex-wrap items-center gap-3 pt-2">
@@ -218,22 +218,22 @@ export default function GalleryPage() {
               </div>
             </div>
 
-            <div className="rounded-2xl bg-[var(--surface)] border border-[var(--border)] p-6 space-y-4">
-              <h3 className="text-base font-bold text-[var(--foreground)]">
+            <div className="rounded-2xl bg-(--surface) border border-(--border) p-6 space-y-4">
+              <h3 className="text-base font-bold text-(--foreground)">
                 ScoreRing Component
               </h3>
               <div className="flex items-center gap-6 pt-2">
                 <div className="flex items-center gap-3">
                   <ScoreRing score={78} size={56} />
-                  <span className="text-xs font-bold text-[var(--risk-high)]">High (78)</span>
+                  <span className="text-xs font-bold text-(--risk-high)">High (78)</span>
                 </div>
                 <div className="flex items-center gap-3">
                   <ScoreRing score={52} size={56} />
-                  <span className="text-xs font-bold text-[var(--risk-medium)]">Med (52)</span>
+                  <span className="text-xs font-bold text-(--risk-medium)">Med (52)</span>
                 </div>
                 <div className="flex items-center gap-3">
                   <ScoreRing score={15} size={56} />
-                  <span className="text-xs font-bold text-[var(--risk-low)]">Low (15)</span>
+                  <span className="text-xs font-bold text-(--risk-low)">Low (15)</span>
                 </div>
               </div>
             </div>
@@ -242,10 +242,10 @@ export default function GalleryPage() {
 
         {/* Section 4: CopyButton & EmptyState */}
         <section className="space-y-4">
-          <h2 className="heading-3 text-[var(--foreground)]">
+          <h2 className="heading-3 text-(--foreground)">
             CopyButton & EmptyState
           </h2>
-          <div className="rounded-2xl bg-[var(--surface)] border border-[var(--border)] p-6 space-y-6">
+          <div className="rounded-2xl bg-(--surface) border border-(--border) p-6 space-y-6">
             <div className="flex items-center gap-4 flex-wrap">
               <CopyButton
                 textToCopy="The Contractor's total liability under this Agreement shall not exceed the fees paid in the preceding twelve months."
@@ -266,7 +266,7 @@ export default function GalleryPage() {
               onAction={() => setDemoActionFired(true)}
             />
             {demoActionFired && (
-              <p className="text-center text-sm text-[var(--risk-low)] font-bold">
+              <p className="text-center text-sm text-(--risk-low) font-bold">
                 Action triggered successfully!
               </p>
             )}

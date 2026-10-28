@@ -480,10 +480,10 @@ function AnalysisResultsContent({ analysisId }: { analysisId: string }) {
     return (
       <AppShell userEmail="contractor@example.com">
         <div className="min-h-[70vh] flex items-center justify-center p-4">
-          <div className="max-w-md w-full rounded-2xl bg-[var(--surface)] border border-[var(--border)] p-8 text-center space-y-5">
-            <AlertCircle className="w-12 h-12 text-[var(--danger)] mx-auto" />
-            <h1 className="heading-3 text-[var(--foreground)]">Analysis Not Found</h1>
-            <p className="text-sm text-[var(--muted)]">{fetchError}</p>
+          <div className="max-w-md w-full rounded-2xl bg-(--surface) border border-(--border) p-8 text-center space-y-5">
+            <AlertCircle className="w-12 h-12 text-(--danger) mx-auto" />
+            <h1 className="heading-3 text-(--foreground)">Analysis Not Found</h1>
+            <p className="text-sm text-(--muted)">{fetchError}</p>
             <Link href="/dashboard">
               <Button variant="primary" className="w-full justify-center">
                 Return to Dashboard
@@ -500,19 +500,19 @@ function AnalysisResultsContent({ analysisId }: { analysisId: string }) {
     return (
       <AppShell userEmail="contractor@example.com">
         <div className="min-h-[80vh] flex items-center justify-center p-4">
-          <div className="w-full max-w-[480px] rounded-2xl bg-[var(--surface)] border border-[var(--border)] p-8 sm:p-10 text-center space-y-8 shadow-2xl">
-            <div className="w-16 h-16 rounded-full bg-[rgba(134,168,255,0.12)] border border-[rgba(134,168,255,0.25)] flex items-center justify-center text-[var(--primary)] mx-auto animate-pulse">
+          <div className="w-full max-w-[480px] rounded-2xl bg-(--surface) border border-(--border) p-8 sm:p-10 text-center space-y-8 shadow-2xl">
+            <div className="w-16 h-16 rounded-full bg-[rgba(134,168,255,0.12)] border border-[rgba(134,168,255,0.25)] flex items-center justify-center text-(--primary) mx-auto animate-pulse">
               <Sparkles className="w-8 h-8" strokeWidth={1.75} />
             </div>
 
             <div className="space-y-2">
-              <h1 className="heading-3 text-[var(--foreground)]">Analyzing your contract</h1>
-              <p className="text-sm text-[var(--muted)]">
+              <h1 className="heading-3 text-(--foreground)">Analyzing your contract</h1>
+              <p className="text-sm text-(--muted)">
                 Our Gemini AI engine is reviewing clause terms against freelancer protections.
               </p>
             </div>
 
-            <div className="space-y-4 text-left border-t border-b border-[var(--border)] py-6">
+            <div className="space-y-4 text-left border-t border-b border-(--border) py-6">
               {[
                 { stage: 1, label: "Reading & extracting contract text" },
                 { stage: 2, label: "Identifying risks & predatory clauses" },
@@ -523,21 +523,21 @@ function AnalysisResultsContent({ analysisId }: { analysisId: string }) {
                 return (
                   <div key={s.stage} className="flex items-center gap-3">
                     {isComplete ? (
-                      <div className="w-6 h-6 rounded-full bg-[rgba(95,211,160,0.15)] text-[var(--risk-low)] border border-[rgba(95,211,160,0.3)] flex items-center justify-center shrink-0">
+                      <div className="w-6 h-6 rounded-full bg-[rgba(95,211,160,0.15)] text-(--risk-low) border border-[rgba(95,211,160,0.3)] flex items-center justify-center shrink-0">
                         <Check className="w-3.5 h-3.5" strokeWidth={2.5} />
                       </div>
                     ) : isCurrent ? (
-                      <div className="w-6 h-6 rounded-full border-2 border-[var(--primary)] border-t-transparent animate-spin shrink-0" />
+                      <div className="w-6 h-6 rounded-full border-2 border-(--primary) border-t-transparent animate-spin shrink-0" />
                     ) : (
-                      <div className="w-6 h-6 rounded-full border border-[var(--border)] bg-[var(--surface-raised)] shrink-0" />
+                      <div className="w-6 h-6 rounded-full border border-(--border) bg-(--surface-raised) shrink-0" />
                     )}
                     <span
                       className={`text-sm font-sans ${
                         isCurrent
-                          ? "font-bold text-[var(--primary)]"
+                          ? "font-bold text-(--primary)"
                           : isComplete
-                          ? "text-[var(--foreground)]"
-                          : "text-[var(--muted)]"
+                          ? "text-(--foreground)"
+                          : "text-(--muted)"
                       }`}
                     >
                       {s.label}
@@ -562,7 +562,7 @@ function AnalysisResultsContent({ analysisId }: { analysisId: string }) {
       <div className="max-w-[1240px] mx-auto w-full px-4 sm:px-6 py-6 space-y-8">
         
         {/* Sticky Top Summary Bar */}
-        <section className="sticky top-0 z-20 rounded-2xl bg-[var(--surface)] border border-[var(--border)] p-4 sm:p-6 shadow-xl backdrop-blur-md">
+        <section className="sticky top-0 z-20 rounded-2xl bg-(--surface) border border-(--border) p-4 sm:p-6 shadow-xl backdrop-blur-md">
           <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
             
             {/* Title & Score */}
@@ -570,20 +570,20 @@ function AnalysisResultsContent({ analysisId }: { analysisId: string }) {
               <ScoreRing score={overallScore} size={60} strokeWidth={5} />
               <div className="space-y-1 min-w-0">
                 <div className="flex items-center gap-2.5 flex-wrap">
-                  <Link href="/dashboard" className="text-xs text-[var(--muted)] hover:text-[var(--foreground)] flex items-center gap-1">
+                  <Link href="/dashboard" className="text-xs text-(--muted) hover:text-(--foreground) flex items-center gap-1">
                     <ArrowLeft className="w-3.5 h-3.5" />
                     <span>Dashboard</span>
                   </Link>
-                  <span className="text-xs text-[var(--border)]">/</span>
-                  <h1 className="heading-3 text-[var(--foreground)] truncate">
+                  <span className="text-xs text-(--border)">/</span>
+                  <h1 className="heading-3 text-(--foreground) truncate">
                     {contractTitle}
                   </h1>
-                  <span className="text-xs px-2 py-0.5 rounded bg-[var(--surface-raised)] border border-[var(--border)] text-[var(--muted)] font-sans">
+                  <span className="text-xs px-2 py-0.5 rounded bg-(--surface-raised) border border-(--border) text-(--muted) font-sans">
                     {contractType}
                   </span>
                 </div>
-                <p className="text-xs sm:text-sm text-[var(--muted)] line-clamp-1">
-                  <span className={`font-bold mr-1.5 ${overallRisk === 'high' ? 'text-[var(--risk-high)]' : overallRisk === 'medium' ? 'text-[var(--risk-medium)]' : 'text-[var(--risk-low)]'}`}>
+                <p className="text-xs sm:text-sm text-(--muted) line-clamp-1">
+                  <span className={`font-bold mr-1.5 ${overallRisk === 'high' ? 'text-(--risk-high)' : overallRisk === 'medium' ? 'text-(--risk-medium)' : 'text-(--risk-low)'}`}>
                     {overallRisk.toUpperCase()} risk ({overallScore}/100):
                   </span>
                   {summary}
@@ -621,21 +621,21 @@ function AnalysisResultsContent({ analysisId }: { analysisId: string }) {
                     <Download className="w-4 h-4" />
                     <span>Export</span>
                   </Button>
-                  <div className="absolute right-0 top-full mt-1 w-48 rounded-xl bg-[var(--surface-raised)] border border-[var(--border)] shadow-2xl py-1.5 hidden group-hover:block z-30">
+                  <div className="absolute right-0 top-full mt-1 w-48 rounded-xl bg-(--surface-raised) border border-(--border) shadow-2xl py-1.5 hidden group-hover:block z-30">
                     <button
                       type="button"
                       onClick={handleExportDocx}
-                      className="w-full text-left px-3.5 py-2 text-xs font-sans text-[var(--foreground)] hover:bg-[var(--surface)] hover:text-[var(--primary)] interactive-transition flex items-center gap-2"
+                      className="w-full text-left px-3.5 py-2 text-xs font-sans text-(--foreground) hover:bg-(--surface) hover:text-(--primary) interactive-transition flex items-center gap-2"
                     >
-                      <Download className="w-3.5 h-3.5 text-[var(--primary)]" />
+                      <Download className="w-3.5 h-3.5 text-(--primary)" />
                       <span>Word (.docx) with redlines</span>
                     </button>
                     <button
                       type="button"
                       onClick={handleExportPdf}
-                      className="w-full text-left px-3.5 py-2 text-xs font-sans text-[var(--foreground)] hover:bg-[var(--surface)] hover:text-[var(--primary)] interactive-transition flex items-center gap-2"
+                      className="w-full text-left px-3.5 py-2 text-xs font-sans text-(--foreground) hover:bg-(--surface) hover:text-(--primary) interactive-transition flex items-center gap-2"
                     >
-                      <Printer className="w-3.5 h-3.5 text-[var(--risk-low)]" />
+                      <Printer className="w-3.5 h-3.5 text-(--risk-low)" />
                       <span>PDF risk report</span>
                     </button>
                   </div>
@@ -645,12 +645,12 @@ function AnalysisResultsContent({ analysisId }: { analysisId: string }) {
           </div>
 
           {exportNotification && (
-            <div className="mt-3 p-2.5 rounded-lg bg-[rgba(134,168,255,0.12)] border border-[rgba(134,168,255,0.25)] text-xs font-sans text-[var(--primary)] flex items-center justify-between animate-fade-in">
+            <div className="mt-3 p-2.5 rounded-lg bg-[rgba(134,168,255,0.12)] border border-[rgba(134,168,255,0.25)] text-xs font-sans text-(--primary) flex items-center justify-between animate-fade-in">
               <span>{exportNotification}</span>
               <button
                 type="button"
                 onClick={() => setExportNotification(null)}
-                className="text-[var(--muted)] hover:text-[var(--foreground)]"
+                className="text-(--muted) hover:text-(--foreground)"
               >
                 <X className="w-3.5 h-3.5" />
               </button>
@@ -662,9 +662,9 @@ function AnalysisResultsContent({ analysisId }: { analysisId: string }) {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
           
           {/* Left Pane (5 cols): Clauses List */}
-          <aside className="lg:col-span-5 rounded-2xl bg-[var(--surface)] border border-[var(--border)] overflow-hidden shadow-lg flex flex-col max-h-[820px]">
+          <aside className="lg:col-span-5 rounded-2xl bg-(--surface) border border-(--border) overflow-hidden shadow-lg flex flex-col max-h-[820px]">
             {/* Filter Bar */}
-            <div className="p-4 border-b border-[var(--border)] flex items-center justify-between gap-2 bg-[var(--surface)] shrink-0">
+            <div className="p-4 border-b border-(--border) flex items-center justify-between gap-2 bg-(--surface) shrink-0">
               <div className="flex items-center gap-1">
                 {(["all", "high", "medium", "low"] as const).map((lvl) => (
                   <button
@@ -673,8 +673,8 @@ function AnalysisResultsContent({ analysisId }: { analysisId: string }) {
                     onClick={() => setFilter(lvl)}
                     className={`px-2.5 py-1 rounded-md text-xs font-sans font-bold capitalize interactive-transition ${
                       filter === lvl
-                        ? "bg-[var(--surface-raised)] text-[var(--foreground)] border border-[var(--border)]"
-                        : "text-[var(--muted)] hover:text-[var(--foreground)]"
+                        ? "bg-(--surface-raised) text-(--foreground) border border-(--border)"
+                        : "text-(--muted) hover:text-(--foreground)"
                     }`}
                   >
                     {lvl}
@@ -694,7 +694,7 @@ function AnalysisResultsContent({ analysisId }: { analysisId: string }) {
             </div>
 
             {/* Scrollable Clause Rows */}
-            <div className="overflow-y-auto divide-y divide-[var(--border)] flex-1">
+            <div className="overflow-y-auto divide-y divide-(--border) flex-1">
               {filteredClauses.map((clause) => {
                 const isSelected = clause.id === selectedId;
                 return (
@@ -707,35 +707,35 @@ function AnalysisResultsContent({ analysisId }: { analysisId: string }) {
                     }}
                     className={`w-full text-left p-4 interactive-transition flex items-start justify-between gap-3 ${
                       isSelected
-                        ? "bg-[var(--surface-raised)] border-l-[3px] border-l-[var(--primary)]"
-                        : "hover:bg-[var(--surface-raised)]/50"
+                        ? "bg-(--surface-raised) border-l-[3px] border-l-(--primary)"
+                        : "hover:bg-(--surface-raised)/50"
                     }`}
                   >
                     <div className="space-y-1.5 min-w-0 flex-1">
                       <div className="flex items-center gap-2">
                         <RiskBadge level={clause.riskLevel} />
-                        <h2 className="text-sm font-sans font-bold text-[var(--foreground)] truncate">
+                        <h2 className="text-sm font-sans font-bold text-(--foreground) truncate">
                           {clause.title}
                         </h2>
                       </div>
-                      <p className="text-xs text-[var(--muted)] line-clamp-2 leading-relaxed">
+                      <p className="text-xs text-(--muted) line-clamp-2 leading-relaxed">
                         {clause.explanation}
                       </p>
                     </div>
 
                     <div className="shrink-0 mt-1">
                       {clause.decision === "accepted" && (
-                        <span className="w-6 h-6 rounded-full bg-[rgba(95,211,160,0.15)] text-[var(--risk-low)] border border-[rgba(95,211,160,0.3)] flex items-center justify-center">
+                        <span className="w-6 h-6 rounded-full bg-[rgba(95,211,160,0.15)] text-(--risk-low) border border-[rgba(95,211,160,0.3)] flex items-center justify-center">
                           <Check className="w-3.5 h-3.5" strokeWidth={2.5} />
                         </span>
                       )}
                       {clause.decision === "edited" && (
-                        <span className="w-6 h-6 rounded-full bg-[rgba(134,168,255,0.15)] text-[var(--primary)] border border-[rgba(134,168,255,0.3)] flex items-center justify-center">
+                        <span className="w-6 h-6 rounded-full bg-[rgba(134,168,255,0.15)] text-(--primary) border border-[rgba(134,168,255,0.3)] flex items-center justify-center">
                           <Edit3 className="w-3 h-3" />
                         </span>
                       )}
                       {clause.decision === "rejected" && (
-                        <span className="w-6 h-6 rounded-full bg-[rgba(255,107,107,0.15)] text-[var(--risk-high)] border border-[rgba(255,107,107,0.3)] flex items-center justify-center">
+                        <span className="w-6 h-6 rounded-full bg-[rgba(255,107,107,0.15)] text-(--risk-high) border border-[rgba(255,107,107,0.3)] flex items-center justify-center">
                           <X className="w-3.5 h-3.5" strokeWidth={2.5} />
                         </span>
                       )}
@@ -747,20 +747,20 @@ function AnalysisResultsContent({ analysisId }: { analysisId: string }) {
           </aside>
 
           {/* Right Pane (7 cols): Detailed Clause Inspector */}
-          <main className="lg:col-span-7 rounded-2xl bg-[var(--surface)] border border-[var(--border)] p-6 sm:p-8 space-y-6 shadow-lg min-h-[640px]">
+          <main className="lg:col-span-7 rounded-2xl bg-(--surface) border border-(--border) p-6 sm:p-8 space-y-6 shadow-lg min-h-[640px]">
             {selectedClause ? (
               <div className="space-y-6">
                 
                 {/* Header */}
-                <div className="flex items-start justify-between gap-4 border-b border-[var(--border)] pb-5">
+                <div className="flex items-start justify-between gap-4 border-b border-(--border) pb-5">
                   <div className="space-y-2">
                     <div className="flex items-center gap-2.5">
                       <RiskBadge level={selectedClause.riskLevel} />
-                      <h2 className="heading-3 text-[var(--foreground)]">
+                      <h2 className="heading-3 text-(--foreground)">
                         {selectedClause.title}
                       </h2>
                     </div>
-                    <p className="text-sm text-[var(--muted)]">
+                    <p className="text-sm text-(--muted)">
                       {selectedClause.explanation}
                     </p>
                   </div>
@@ -777,21 +777,21 @@ function AnalysisResultsContent({ analysisId }: { analysisId: string }) {
                 </div>
 
                 {/* Practical Impact Callout */}
-                <div className="rounded-xl bg-[var(--surface-raised)] border border-[var(--border)] p-4 space-y-1">
-                  <span className="text-xs uppercase tracking-wider font-bold text-[var(--muted)]">
+                <div className="rounded-xl bg-(--surface-raised) border border-(--border) p-4 space-y-1">
+                  <span className="text-xs uppercase tracking-wider font-bold text-(--muted)">
                     What this means for you
                   </span>
-                  <p className="text-sm font-sans text-[var(--foreground)] leading-relaxed">
+                  <p className="text-sm font-sans text-(--foreground) leading-relaxed">
                     {selectedClause.impact}
                   </p>
                 </div>
 
                 {/* As Written (Original Clause) */}
                 <div className="space-y-2">
-                  <span className="text-xs font-sans font-bold uppercase tracking-wider text-[var(--muted)]">
+                  <span className="text-xs font-sans font-bold uppercase tracking-wider text-(--muted)">
                     As written in contract
                   </span>
-                  <div className="p-4 rounded-xl bg-[var(--surface-raised)] border border-[var(--border)] font-serif text-sm leading-relaxed text-[var(--foreground)]/80">
+                  <div className="p-4 rounded-xl bg-(--surface-raised) border border-(--border) font-serif text-sm leading-relaxed text-(--foreground)/80">
                     &ldquo;{selectedClause.originalText}&rdquo;
                   </div>
                 </div>
@@ -800,11 +800,11 @@ function AnalysisResultsContent({ analysisId }: { analysisId: string }) {
                 {selectedClause.suggestedRedline && (
                   <div className="space-y-2">
                     <div className="flex items-center justify-between">
-                      <span className="text-xs font-sans font-bold uppercase tracking-wider text-[var(--primary)] flex items-center gap-1.5">
+                      <span className="text-xs font-sans font-bold uppercase tracking-wider text-(--primary) flex items-center gap-1.5">
                         <Sparkles className="w-3.5 h-3.5" />
                         <span>Recommended replacement</span>
                       </span>
-                      <span className="text-xs text-[var(--muted)]">
+                      <span className="text-xs text-(--muted)">
                         Legally balanced for contractors
                       </span>
                     </div>
@@ -815,7 +815,7 @@ function AnalysisResultsContent({ analysisId }: { analysisId: string }) {
                           rows={5}
                           value={editedText}
                           onChange={(e) => setEditedText(e.target.value)}
-                          className="w-full px-4 py-3 rounded-xl bg-[var(--surface-raised)] border border-[var(--primary)] text-sm font-serif text-[var(--foreground)] leading-relaxed focus:outline-none"
+                          className="w-full px-4 py-3 rounded-xl bg-(--surface-raised) border border-(--primary) text-sm font-serif text-(--foreground) leading-relaxed focus:outline-none"
                         />
                         <div className="flex items-center justify-end gap-2">
                           <Button
@@ -837,7 +837,7 @@ function AnalysisResultsContent({ analysisId }: { analysisId: string }) {
                         </div>
                       </div>
                     ) : (
-                      <div className="p-4 rounded-xl bg-[rgba(134,168,255,0.06)] border border-[rgba(134,168,255,0.2)] font-serif text-sm leading-relaxed text-[var(--foreground)] space-y-3">
+                      <div className="p-4 rounded-xl bg-[rgba(134,168,255,0.06)] border border-[rgba(134,168,255,0.2)] font-serif text-sm leading-relaxed text-(--foreground) space-y-3">
                         <p>
                           &ldquo;
                           {selectedClause.editedRedline || selectedClause.suggestedRedline}
@@ -846,10 +846,10 @@ function AnalysisResultsContent({ analysisId }: { analysisId: string }) {
 
                         {selectedClause.isDiffSnippet && (
                           <div className="pt-2 border-t border-[rgba(134,168,255,0.15)] text-xs font-sans space-y-1">
-                            <p className="line-through text-[var(--danger)]">
+                            <p className="line-through text-(--danger)">
                               - {selectedClause.isDiffSnippet.del}
                             </p>
-                            <p className="text-[var(--risk-low)]">
+                            <p className="text-(--risk-low)">
                               + {selectedClause.isDiffSnippet.ins}
                             </p>
                           </div>
@@ -860,7 +860,7 @@ function AnalysisResultsContent({ analysisId }: { analysisId: string }) {
                 )}
 
                 {/* Decision Actions */}
-                <div className="pt-4 border-t border-[var(--border)] flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div className="pt-4 border-t border-(--border) flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                   <div className="flex items-center gap-2">
                     <Button
                       variant={selectedClause.decision === "accepted" ? "primary" : "outline"}
@@ -910,7 +910,7 @@ function AnalysisResultsContent({ analysisId }: { analysisId: string }) {
                 </div>
               </div>
             ) : (
-              <div className="py-20 text-center text-sm text-[var(--muted)]">
+              <div className="py-20 text-center text-sm text-(--muted)">
                 Select a clause to review redlines
               </div>
             )}
@@ -918,13 +918,13 @@ function AnalysisResultsContent({ analysisId }: { analysisId: string }) {
         </div>
 
         {/* Section: What the Contract Leaves Out (Missing Protections) */}
-        <section className="rounded-2xl bg-[var(--surface)] border border-[var(--border)] p-6 sm:p-8 space-y-6">
+        <section className="rounded-2xl bg-(--surface) border border-(--border) p-6 sm:p-8 space-y-6">
           <div className="space-y-1">
-            <h2 className="heading-3 text-[var(--foreground)] flex items-center gap-2">
-              <AlertCircle className="w-5 h-5 text-[var(--risk-medium)]" />
+            <h2 className="heading-3 text-(--foreground) flex items-center gap-2">
+              <AlertCircle className="w-5 h-5 text-(--risk-medium)" />
               <span>What the contract leaves out</span>
             </h2>
-            <p className="text-sm text-[var(--muted)]">
+            <p className="text-sm text-(--muted)">
               Provisions missing from the contract that you should consider asking to add.
             </p>
           </div>
@@ -933,21 +933,21 @@ function AnalysisResultsContent({ analysisId }: { analysisId: string }) {
             {missingProtections.map((item) => (
               <div
                 key={item.title}
-                className="p-5 rounded-xl bg-[var(--surface-raised)] border border-[var(--border)] space-y-3 flex flex-col justify-between"
+                className="p-5 rounded-xl bg-(--surface-raised) border border-(--border) space-y-3 flex flex-col justify-between"
               >
                 <div className="space-y-1.5">
                   <div className="flex items-center justify-between">
-                    <h3 className="font-bold text-sm text-[var(--foreground)]">
+                    <h3 className="font-bold text-sm text-(--foreground)">
                       {item.title}
                     </h3>
                     <span className={`text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded ${item.severity === 'critical' ? 'badge-risk-high' : 'badge-risk-medium'}`}>
                       {item.severity}
                     </span>
                   </div>
-                  <p className="text-xs text-[var(--muted)]">
+                  <p className="text-xs text-(--muted)">
                     {item.description}
                   </p>
-                  <p className="font-serif text-xs leading-relaxed text-[var(--foreground)]/80 italic pt-1">
+                  <p className="font-serif text-xs leading-relaxed text-(--foreground)/80 italic pt-1">
                     &ldquo;{item.suggestedClause}&rdquo;
                   </p>
                 </div>
@@ -965,13 +965,13 @@ function AnalysisResultsContent({ analysisId }: { analysisId: string }) {
         </section>
 
         {/* Section: Key Obligations & Deliverables */}
-        <section className="rounded-2xl bg-[var(--surface)] border border-[var(--border)] p-6 sm:p-8 space-y-6">
+        <section className="rounded-2xl bg-(--surface) border border-(--border) p-6 sm:p-8 space-y-6">
           <div className="space-y-1">
-            <h2 className="heading-3 text-[var(--foreground)] flex items-center gap-2">
-              <Clock className="w-5 h-5 text-[var(--primary)]" />
+            <h2 className="heading-3 text-(--foreground) flex items-center gap-2">
+              <Clock className="w-5 h-5 text-(--primary)" />
               <span>Key obligations & deliverables</span>
             </h2>
-            <p className="text-sm text-[var(--muted)]">
+            <p className="text-sm text-(--muted)">
               Delivery milestones, payment windows, and contract requirements extracted from the text.
             </p>
           </div>
@@ -980,21 +980,21 @@ function AnalysisResultsContent({ analysisId }: { analysisId: string }) {
             {obligations.map((d) => (
               <div
                 key={d.title}
-                className="p-5 rounded-xl bg-[var(--surface-raised)] border border-[var(--border)] space-y-3 flex flex-col justify-between"
+                className="p-5 rounded-xl bg-(--surface-raised) border border-(--border) space-y-3 flex flex-col justify-between"
               >
                 <div>
                   <div className="flex items-center justify-between">
-                    <span className="text-xs font-mono font-bold text-[var(--primary)] uppercase">
+                    <span className="text-xs font-mono font-bold text-(--primary) uppercase">
                       {d.dueDate}
                     </span>
-                    <span className="text-[10px] px-1.5 py-0.5 rounded bg-[var(--surface)] border border-[var(--border)] text-[var(--muted)] uppercase font-bold">
+                    <span className="text-[10px] px-1.5 py-0.5 rounded bg-(--surface) border border-(--border) text-(--muted) uppercase font-bold">
                       {d.party}
                     </span>
                   </div>
-                  <h3 className="font-bold text-sm text-[var(--foreground)] mt-1">
+                  <h3 className="font-bold text-sm text-(--foreground) mt-1">
                     {d.title}
                   </h3>
-                  <p className="text-xs text-[var(--muted)] mt-1 leading-relaxed">
+                  <p className="text-xs text-(--muted) mt-1 leading-relaxed">
                     {d.description}
                   </p>
                 </div>
@@ -1004,35 +1004,35 @@ function AnalysisResultsContent({ analysisId }: { analysisId: string }) {
         </section>
 
         {/* Global Footer Legal Disclaimer & Keyboard Hints */}
-        <footer className="flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-[var(--muted)] font-sans pt-6 border-t border-[var(--border)]">
+        <footer className="flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-(--muted) font-sans pt-6 border-t border-(--border)">
           <span>General information only. Not legal advice.</span>
           <button
             type="button"
             onClick={() => setShowKeyboardHelp((prev) => !prev)}
-            className="hover:text-[var(--foreground)] underline flex items-center gap-1.5"
+            className="hover:text-(--foreground) underline flex items-center gap-1.5"
           >
             <span>Shortcuts (J / K / A / C / ?)</span>
           </button>
         </footer>
 
         {showKeyboardHelp && (
-          <div className="fixed bottom-6 right-6 z-40 p-4 rounded-xl bg-[var(--surface-raised)] border border-[var(--border)] shadow-2xl text-xs space-y-2 max-w-xs animate-in fade-in">
-            <div className="flex items-center justify-between font-bold text-[var(--foreground)] pb-1 border-b border-[var(--border)]">
+          <div className="fixed bottom-6 right-6 z-40 p-4 rounded-xl bg-(--surface-raised) border border-(--border) shadow-2xl text-xs space-y-2 max-w-xs animate-in fade-in">
+            <div className="flex items-center justify-between font-bold text-(--foreground) pb-1 border-b border-(--border)">
               <span>Keyboard Shortcuts</span>
               <button
                 type="button"
                 onClick={() => setShowKeyboardHelp(false)}
-                className="text-[var(--muted)] hover:text-[var(--foreground)]"
+                className="text-(--muted) hover:text-(--foreground)"
               >
                 ✕
               </button>
             </div>
-            <div className="grid grid-cols-2 gap-1 text-[var(--muted)]">
-              <span><kbd className="font-mono text-[var(--foreground)]">J</kbd> Next clause</span>
-              <span><kbd className="font-mono text-[var(--foreground)]">K</kbd> Prev clause</span>
-              <span><kbd className="font-mono text-[var(--foreground)]">A</kbd> Accept redline</span>
-              <span><kbd className="font-mono text-[var(--foreground)]">C</kbd> Copy text</span>
-              <span><kbd className="font-mono text-[var(--foreground)]">?</kbd> Toggle help</span>
+            <div className="grid grid-cols-2 gap-1 text-(--muted)">
+              <span><kbd className="font-mono text-(--foreground)">J</kbd> Next clause</span>
+              <span><kbd className="font-mono text-(--foreground)">K</kbd> Prev clause</span>
+              <span><kbd className="font-mono text-(--foreground)">A</kbd> Accept redline</span>
+              <span><kbd className="font-mono text-(--foreground)">C</kbd> Copy text</span>
+              <span><kbd className="font-mono text-(--foreground)">?</kbd> Toggle help</span>
             </div>
           </div>
         )}
@@ -1052,7 +1052,7 @@ function AnalysisResultsContent({ analysisId }: { analysisId: string }) {
 export default function AnalysisResultsPage({ params }: { params: Promise<{ id: string }> }) {
   const unwrappedParams = React.use(params);
   return (
-    <React.Suspense fallback={<div className="min-h-screen bg-[var(--background)]" />}>
+    <React.Suspense fallback={<div className="min-h-screen bg-(--background)" />}>
       <AnalysisResultsContent analysisId={unwrappedParams.id} />
     </React.Suspense>
   );

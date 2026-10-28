@@ -81,7 +81,7 @@ export default function OnboardingPage() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col justify-between bg-[var(--background)] text-[var(--foreground)] px-4 py-8">
+    <div className="min-h-screen flex flex-col justify-between bg-(--background) text-(--foreground) px-4 py-8">
       {/* Top Header with Logo */}
       <header className="flex justify-center">
         <Link href="/" className="inline-flex items-center gap-3 interactive-transition hover:opacity-90">
@@ -92,7 +92,7 @@ export default function OnboardingPage() {
             height={32}
             className="rounded-md shrink-0"
           />
-          <span className="font-serif font-semibold text-xl text-[var(--foreground)]">
+          <span className="font-serif font-semibold text-xl text-(--foreground)">
             Contract Auto-Redline
           </span>
         </Link>
@@ -100,22 +100,22 @@ export default function OnboardingPage() {
 
       {/* Main Form Container */}
       <main className="w-full max-w-[560px] mx-auto my-auto py-8">
-        <div className="rounded-2xl bg-[var(--surface)] border border-[var(--border)] p-6 sm:p-10 space-y-8 shadow-xl">
+        <div className="rounded-2xl bg-(--surface) border border-(--border) p-6 sm:p-10 space-y-8 shadow-xl">
           {/* Header */}
           <div className="space-y-2">
-            <span className="text-xs uppercase tracking-wider text-[var(--primary)] font-bold">
+            <span className="text-xs uppercase tracking-wider text-(--primary) font-bold">
               Business Profile Setup
             </span>
-            <h1 className="heading-2 text-[var(--foreground)]">
+            <h1 className="heading-2 text-(--foreground)">
               Tell us about your work.
             </h1>
-            <p className="text-base leading-relaxed text-[var(--muted)]">
+            <p className="text-base leading-relaxed text-(--muted)">
               We use this to judge each clause for your situation. You can change it later.
             </p>
           </div>
 
           {errorMessage && (
-            <div className="p-3 rounded-lg bg-[rgba(255,122,122,0.12)] border border-[var(--risk-high)] text-sm text-[var(--risk-high)] leading-relaxed">
+            <div className="p-3 rounded-lg bg-[rgba(255,122,122,0.12)] border border-(--risk-high) text-sm text-(--risk-high) leading-relaxed">
               {errorMessage}
             </div>
           )}
@@ -168,14 +168,14 @@ export default function OnboardingPage() {
             <div className="space-y-1.5 text-left">
               <label
                 htmlFor="mustKeep"
-                className="block text-sm font-sans font-bold text-[var(--foreground)]"
+                className="block text-sm font-sans font-bold text-(--foreground)"
               >
                 What must stay in your contracts?
               </label>
               <textarea
                 id="mustKeep"
                 rows={3}
-                className="w-full px-3.5 py-2.5 rounded-lg bg-[var(--surface-raised)] border border-[var(--border)] text-base font-sans text-[var(--foreground)] placeholder:text-[var(--muted)]/60 transition-colors hover:border-[var(--border-strong)] focus:border-[var(--border-strong)] focus-visible:outline-2 focus-visible:outline-[var(--primary)] focus-visible:outline-offset-[3px]"
+                className="w-full px-3.5 py-2.5 rounded-lg bg-(--surface-raised) border border-(--border) text-base font-sans text-(--foreground) placeholder:text-(--muted)/60 transition-colors hover:border-(--border-strong) focus:border-(--border-strong) focus-visible:outline-2 focus-visible:outline-(--primary) focus-visible:outline-offset-[3px]"
                 placeholder="For example: payment within 30 days, I keep my reusable code"
                 value={formData.mustKeep}
                 onChange={(e) =>
@@ -185,11 +185,11 @@ export default function OnboardingPage() {
             </div>
 
             {/* Actions: Save and continue, and Skip for now */}
-            <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-4 border-t border-[var(--border)]">
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-4 border-t border-(--border)">
               <button
                 type="button"
                 onClick={handleSkip}
-                className="text-sm font-sans font-bold text-[var(--muted)] hover:text-[var(--foreground)] min-h-11 flex items-center interactive-transition cursor-pointer"
+                className="text-sm font-sans font-bold text-(--muted) hover:text-(--foreground) min-h-11 flex items-center interactive-transition cursor-pointer"
               >
                 Skip for now
               </button>
@@ -208,7 +208,7 @@ export default function OnboardingPage() {
       </main>
 
       {/* Footer Disclaimer */}
-      <footer className="text-center text-xs text-[var(--muted)] font-sans py-2">
+      <footer className="text-center text-xs text-(--muted) font-sans py-2">
         General information only. Not legal advice.
       </footer>
     </div>

@@ -115,24 +115,24 @@ export default function NewAnalysisPage() {
     <AppShell userEmail="contractor@example.com">
       <div className="max-w-[780px] mx-auto w-full px-4 sm:px-6 py-8 space-y-10">
         {/* Header */}
-        <div className="border-b border-[var(--border)] pb-6 space-y-2">
-          <span className="text-xs uppercase tracking-wider text-[var(--primary)] font-bold">
+        <div className="border-b border-(--border) pb-6 space-y-2">
+          <span className="text-xs uppercase tracking-wider text-(--primary) font-bold">
             Step 1 of Review
           </span>
-          <h1 className="heading-2 text-[var(--foreground)]">
+          <h1 className="heading-2 text-(--foreground)">
             Review a contract
           </h1>
-          <p className="text-base leading-relaxed text-[var(--muted)]">
+          <p className="text-base leading-relaxed text-(--muted)">
             Upload your document or paste text. We will analyze each clause for risk, extract obligations, and draft redlines.
           </p>
         </div>
 
         {submitError && (
-          <div className="rounded-xl border border-[var(--danger)]/40 bg-[var(--danger)]/10 p-4 flex items-start gap-3">
-            <AlertCircle className="w-5 h-5 text-[var(--danger)] shrink-0 mt-0.5" />
-            <div className="text-sm text-[var(--foreground)]">
-              <p className="font-bold text-[var(--danger)]">Analysis Failed</p>
-              <p className="text-xs text-[var(--muted)] mt-1">{submitError}</p>
+          <div className="rounded-xl border border-(--danger)/40 bg-(--danger)/10 p-4 flex items-start gap-3">
+            <AlertCircle className="w-5 h-5 text-(--danger) shrink-0 mt-0.5" />
+            <div className="text-sm text-(--foreground)">
+              <p className="font-bold text-(--danger)">Analysis Failed</p>
+              <p className="text-xs text-(--muted) mt-1">{submitError}</p>
             </div>
           </div>
         )}
@@ -140,22 +140,22 @@ export default function NewAnalysisPage() {
         {/* Section 1: Your Contract */}
         <section className="space-y-4">
           <div className="flex items-center justify-between">
-            <h2 className="heading-3 text-[var(--foreground)] flex items-center gap-2">
-              <span className="w-7 h-7 rounded-full bg-[var(--surface-raised)] border border-[var(--border)] text-sm flex items-center justify-center text-[var(--primary)] font-bold">
+            <h2 className="heading-3 text-(--foreground) flex items-center gap-2">
+              <span className="w-7 h-7 rounded-full bg-(--surface-raised) border border-(--border) text-sm flex items-center justify-center text-(--primary) font-bold">
                 1
               </span>
               <span>Your contract</span>
             </h2>
 
             {/* Tabs */}
-            <div className="flex items-center rounded-lg bg-[var(--surface)] border border-[var(--border)] p-1">
+            <div className="flex items-center rounded-lg bg-(--surface) border border-(--border) p-1">
               <button
                 type="button"
                 onClick={() => setActiveTab("upload")}
                 className={`flex items-center gap-2 px-3 py-1.5 rounded-md text-xs font-sans font-bold interactive-transition min-h-9 ${
                   activeTab === "upload"
-                    ? "bg-[var(--surface-raised)] text-[var(--foreground)] shadow-xs"
-                    : "text-[var(--muted)] hover:text-[var(--foreground)]"
+                    ? "bg-(--surface-raised) text-(--foreground) shadow-xs"
+                    : "text-(--muted) hover:text-(--foreground)"
                 }`}
               >
                 <FileText className="w-4 h-4" />
@@ -166,8 +166,8 @@ export default function NewAnalysisPage() {
                 onClick={() => setActiveTab("paste")}
                 className={`flex items-center gap-2 px-3 py-1.5 rounded-md text-xs font-sans font-bold interactive-transition min-h-9 ${
                   activeTab === "paste"
-                    ? "bg-[var(--surface-raised)] text-[var(--foreground)] shadow-xs"
-                    : "text-[var(--muted)] hover:text-[var(--foreground)]"
+                    ? "bg-(--surface-raised) text-(--foreground) shadow-xs"
+                    : "text-(--muted) hover:text-(--foreground)"
                 }`}
               >
                 <ClipboardPaste className="w-4 h-4" />
@@ -189,9 +189,9 @@ export default function NewAnalysisPage() {
                 value={pastedText}
                 onChange={(e) => setPastedText(e.target.value)}
                 placeholder="Paste the full text of your agreement here..."
-                className="w-full px-4 py-3 rounded-2xl bg-[var(--surface-raised)] border border-[var(--border)] text-base font-serif text-[var(--foreground)] placeholder:text-[var(--muted)]/60 transition-colors hover:border-[var(--border-strong)] focus:border-[var(--border-strong)] focus-visible:outline-2 focus-visible:outline-[var(--primary)] focus-visible:outline-offset-[3px]"
+                className="w-full px-4 py-3 rounded-2xl bg-(--surface-raised) border border-(--border) text-base font-serif text-(--foreground) placeholder:text-(--muted)/60 transition-colors hover:border-(--border-strong) focus:border-(--border-strong) focus-visible:outline-2 focus-visible:outline-(--primary) focus-visible:outline-offset-[3px]"
               />
-              <div className="flex items-center justify-between text-xs text-[var(--muted)]">
+              <div className="flex items-center justify-between text-xs text-(--muted)">
                 <span>Min 50 characters</span>
                 <span>{pastedText.length} characters</span>
               </div>
@@ -202,8 +202,8 @@ export default function NewAnalysisPage() {
         {/* Section 2: Business Profile Context */}
         <section className="space-y-4">
           <div className="flex items-center justify-between">
-            <h2 className="heading-3 text-[var(--foreground)] flex items-center gap-2">
-              <span className="w-7 h-7 rounded-full bg-[var(--surface-raised)] border border-[var(--border)] text-sm flex items-center justify-center text-[var(--primary)] font-bold">
+            <h2 className="heading-3 text-(--foreground) flex items-center gap-2">
+              <span className="w-7 h-7 rounded-full bg-(--surface-raised) border border-(--border) text-sm flex items-center justify-center text-(--primary) font-bold">
                 2
               </span>
               <span>Your profile context</span>
@@ -221,14 +221,14 @@ export default function NewAnalysisPage() {
             </Button>
           </div>
 
-          <div className="rounded-2xl bg-[var(--surface)] border border-[var(--border)] p-5 space-y-4">
+          <div className="rounded-2xl bg-(--surface) border border-(--border) p-5 space-y-4">
             <div className="flex items-start gap-3">
-              <Briefcase className="w-5 h-5 text-[var(--primary)] shrink-0 mt-0.5" />
+              <Briefcase className="w-5 h-5 text-(--primary) shrink-0 mt-0.5" />
               <div className="space-y-1">
-                <p className="text-sm font-sans font-bold text-[var(--foreground)]">
+                <p className="text-sm font-sans font-bold text-(--foreground)">
                   How we tailor this review
                 </p>
-                <p className="text-xs text-[var(--muted)] leading-relaxed">
+                <p className="text-xs text-(--muted) leading-relaxed">
                   We evaluate IP retention, liability, and payment terms against what is standard for your specific role.
                 </p>
               </div>
@@ -282,27 +282,27 @@ export default function NewAnalysisPage() {
               </div>
             ) : (
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-2 text-xs">
-                <div className="p-3 rounded-lg bg-[var(--surface-raised)] border border-[var(--border)]">
-                  <span className="text-[var(--muted)] block">Role</span>
-                  <span className="font-bold text-[var(--foreground)] truncate block mt-0.5">
+                <div className="p-3 rounded-lg bg-(--surface-raised) border border-(--border)">
+                  <span className="text-(--muted) block">Role</span>
+                  <span className="font-bold text-(--foreground) truncate block mt-0.5">
                     {businessProfile.whatYouDo}
                   </span>
                 </div>
-                <div className="p-3 rounded-lg bg-[var(--surface-raised)] border border-[var(--border)]">
-                  <span className="text-[var(--muted)] block">Entity</span>
-                  <span className="font-bold text-[var(--foreground)] truncate block mt-0.5">
+                <div className="p-3 rounded-lg bg-(--surface-raised) border border-(--border)">
+                  <span className="text-(--muted) block">Entity</span>
+                  <span className="font-bold text-(--foreground) truncate block mt-0.5">
                     {businessProfile.businessType}
                   </span>
                 </div>
-                <div className="p-3 rounded-lg bg-[var(--surface-raised)] border border-[var(--border)]">
-                  <span className="text-[var(--muted)] block">Project Size</span>
-                  <span className="font-bold text-[var(--foreground)] truncate block mt-0.5">
+                <div className="p-3 rounded-lg bg-(--surface-raised) border border-(--border)">
+                  <span className="text-(--muted) block">Project Size</span>
+                  <span className="font-bold text-(--foreground) truncate block mt-0.5">
                     {businessProfile.typicalProjectValue}
                   </span>
                 </div>
-                <div className="p-3 rounded-lg bg-[var(--surface-raised)] border border-[var(--border)]">
-                  <span className="text-[var(--muted)] block">Location</span>
-                  <span className="font-bold text-[var(--foreground)] truncate block mt-0.5">
+                <div className="p-3 rounded-lg bg-(--surface-raised) border border-(--border)">
+                  <span className="text-(--muted) block">Location</span>
+                  <span className="font-bold text-(--foreground) truncate block mt-0.5">
                     {businessProfile.countryOrState}
                   </span>
                 </div>
@@ -313,23 +313,23 @@ export default function NewAnalysisPage() {
 
         {/* Section 3: Privacy & Redaction */}
         <section className="space-y-4">
-          <h2 className="heading-3 text-[var(--foreground)] flex items-center gap-2">
-            <span className="w-7 h-7 rounded-full bg-[var(--surface-raised)] border border-[var(--border)] text-sm flex items-center justify-center text-[var(--primary)] font-bold">
+          <h2 className="heading-3 text-(--foreground) flex items-center gap-2">
+            <span className="w-7 h-7 rounded-full bg-(--surface-raised) border border-(--border) text-sm flex items-center justify-center text-(--primary) font-bold">
               3
             </span>
             <span>Confidentiality & Privacy</span>
           </h2>
 
-          <div className="rounded-2xl bg-[var(--surface)] border border-[var(--border)] p-5 space-y-4">
+          <div className="rounded-2xl bg-(--surface) border border-(--border) p-5 space-y-4">
             <div className="flex items-center justify-between gap-4">
               <div className="space-y-1">
                 <div className="flex items-center gap-2">
-                  <Lock className="w-4 h-4 text-[var(--primary)]" />
-                  <span className="text-sm font-sans font-bold text-[var(--foreground)]">
+                  <Lock className="w-4 h-4 text-(--primary)" />
+                  <span className="text-sm font-sans font-bold text-(--foreground)">
                     In-browser PII Redaction
                   </span>
                 </div>
-                <p className="text-xs text-[var(--muted)]">
+                <p className="text-xs text-(--muted)">
                   Automatically masks email addresses, phone numbers, and identifying entity numbers before sending to AI.
                 </p>
               </div>
@@ -340,27 +340,27 @@ export default function NewAnalysisPage() {
                 aria-checked={redactionEnabled}
                 onClick={() => setRedactionEnabled(!redactionEnabled)}
                 className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
-                  redactionEnabled ? "bg-[var(--primary)]" : "bg-[var(--surface-raised)] border-[var(--border)]"
+                  redactionEnabled ? "bg-(--primary)" : "bg-(--surface-raised) border-(--border)"
                 }`}
               >
                 <span
                   className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${
-                    redactionEnabled ? "translate-x-5 bg-[var(--background)]" : "translate-x-0 bg-[var(--muted)]"
+                    redactionEnabled ? "translate-x-5 bg-(--background)" : "translate-x-0 bg-(--muted)"
                   }`}
                 />
               </button>
             </div>
 
             {/* Mandatory AI Processing Checkbox */}
-            <div className="pt-4 border-t border-[var(--border)]">
+            <div className="pt-4 border-t border-(--border)">
               <label className="flex items-start gap-3 cursor-pointer select-none">
                 <input
                   type="checkbox"
                   checked={consentChecked}
                   onChange={(e) => setConsentChecked(e.target.checked)}
-                  className="mt-1 h-4 w-4 rounded border-[var(--border)] bg-[var(--surface-raised)] text-[var(--primary)] focus:ring-[var(--primary)] cursor-pointer"
+                  className="mt-1 h-4 w-4 rounded border-(--border) bg-(--surface-raised) text-(--primary) focus:ring-(--primary) cursor-pointer"
                 />
-                <span className="text-sm font-sans text-[var(--foreground)] leading-relaxed">
+                <span className="text-sm font-sans text-(--foreground) leading-relaxed">
                   I understand my contract text is processed by an AI service to produce this review. Uploaded files are processed in-memory and never stored.
                 </span>
               </label>
@@ -392,14 +392,14 @@ export default function NewAnalysisPage() {
           </Button>
 
           {!isFormValid && (
-            <p className="text-center text-xs text-[var(--muted)]">
+            <p className="text-center text-xs text-(--muted)">
               {getDisabledReason()}
             </p>
           )}
         </div>
 
         {/* Footer Disclaimer */}
-        <footer className="text-center text-xs text-[var(--muted)] font-sans pt-4">
+        <footer className="text-center text-xs text-(--muted) font-sans pt-4">
           General information only. Not legal advice.
         </footer>
       </div>

@@ -69,7 +69,7 @@ export default function SignUpPage() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col justify-between bg-[var(--background)] text-[var(--foreground)] px-4 py-8">
+    <div className="min-h-screen flex flex-col justify-between bg-(--background) text-(--foreground) px-4 py-8">
       {/* Top Header with Logo */}
       <header className="flex justify-center">
         <Link href="/" className="inline-flex items-center gap-3 interactive-transition hover:opacity-90">
@@ -80,7 +80,7 @@ export default function SignUpPage() {
             height={32}
             className="rounded-md shrink-0"
           />
-          <span className="font-serif font-semibold text-xl text-[var(--foreground)]">
+          <span className="font-serif font-semibold text-xl text-(--foreground)">
             Contract Auto-Redline
           </span>
         </Link>
@@ -88,22 +88,22 @@ export default function SignUpPage() {
 
       {/* Main Centered 400px Panel */}
       <main className="w-full max-w-[400px] mx-auto my-auto py-8">
-        <div className="rounded-2xl bg-[var(--surface)] border border-[var(--border)] p-6 sm:p-8 space-y-6 shadow-xl">
+        <div className="rounded-2xl bg-(--surface) border border-(--border) p-6 sm:p-8 space-y-6 shadow-xl">
           <div className="text-center space-y-1">
-            <h1 className="heading-3 text-[var(--foreground)]">Create account</h1>
-            <p className="text-sm text-[var(--muted)]">
+            <h1 className="heading-3 text-(--foreground)">Create account</h1>
+            <p className="text-sm text-(--muted)">
               Start reviewing and redlining your client contracts.
             </p>
           </div>
 
           {errors.general && (
-            <div className="p-3 rounded-lg bg-[rgba(255,122,122,0.12)] border border-[var(--risk-high)] text-sm text-[var(--risk-high)] leading-relaxed">
+            <div className="p-3 rounded-lg bg-[rgba(255,122,122,0.12)] border border-(--risk-high) text-sm text-(--risk-high) leading-relaxed">
               {errors.general}
             </div>
           )}
 
           {successNotice && (
-            <div className="p-3 rounded-lg bg-[rgba(95,211,160,0.12)] border border-[var(--risk-low)] text-sm text-[var(--risk-low)] leading-relaxed">
+            <div className="p-3 rounded-lg bg-[rgba(95,211,160,0.12)] border border-(--risk-low) text-sm text-(--risk-low) leading-relaxed">
               {successNotice}
               <div className="mt-2">
                 <Link href="/sign-in" className="font-bold underline">
@@ -152,12 +152,12 @@ export default function SignUpPage() {
           </form>
 
           {/* Bottom Switch Link */}
-          <div className="text-center pt-2 border-t border-[var(--border)]">
-            <p className="text-sm text-[var(--muted)]">
+          <div className="text-center pt-2 border-t border-(--border)">
+            <p className="text-sm text-(--muted)">
               Already have an account?{" "}
               <Link
                 href="/sign-in"
-                className="text-[var(--primary)] font-bold hover:underline interactive-transition"
+                className="text-(--primary) font-bold hover:underline interactive-transition"
               >
                 Sign in
               </Link>
@@ -167,7 +167,7 @@ export default function SignUpPage() {
       </main>
 
       {/* Footer Disclaimer */}
-      <footer className="text-center text-xs text-[var(--muted)] font-sans py-2">
+      <footer className="text-center text-xs text-(--muted) font-sans py-2">
         General information only. Not legal advice.
       </footer>
     </div>

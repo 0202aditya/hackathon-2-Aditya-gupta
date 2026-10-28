@@ -55,7 +55,7 @@ export function CopyButton({
       onClick={handleCopy}
       className={cn(
         "interactive-transition min-h-11",
-        copied && "bg-[var(--risk-low)] text-[var(--primary-foreground)] hover:bg-[var(--risk-low)]",
+        copied && "bg-(--risk-low) text-(--primary-foreground) hover:bg-(--risk-low)",
         className
       )}
       aria-live="polite"

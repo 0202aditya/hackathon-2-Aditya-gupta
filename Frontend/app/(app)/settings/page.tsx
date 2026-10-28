@@ -121,21 +121,21 @@ export default function SettingsPage() {
     <AppShell>
       <div className="max-w-[760px] mx-auto w-full px-4 sm:px-6 py-8 space-y-10">
         {/* Header */}
-        <div className="border-b border-[var(--border)] pb-6 space-y-1">
-          <h1 className="heading-2 text-[var(--foreground)]">Settings</h1>
-          <p className="text-sm text-[var(--muted)]">
+        <div className="border-b border-(--border) pb-6 space-y-1">
+          <h1 className="heading-2 text-(--foreground)">Settings</h1>
+          <p className="text-sm text-(--muted)">
             Manage your business profile, privacy preferences, and account.
           </p>
         </div>
 
         {errorMessage && (
-          <div className="p-3 rounded-lg bg-[rgba(255,122,122,0.12)] border border-[var(--risk-high)] text-sm text-[var(--risk-high)] leading-relaxed">
+          <div className="p-3 rounded-lg bg-[rgba(255,122,122,0.12)] border border-(--risk-high) text-sm text-(--risk-high) leading-relaxed">
             {errorMessage}
           </div>
         )}
 
         {accountDeleted && (
-          <div className="p-4 rounded-xl bg-[rgba(255,122,122,0.15)] border border-[var(--risk-high)] text-[var(--risk-high)] text-sm font-bold flex items-center gap-2">
+          <div className="p-4 rounded-xl bg-[rgba(255,122,122,0.15)] border border-(--risk-high) text-(--risk-high) text-sm font-bold flex items-center gap-2">
             <AlertTriangle className="w-5 h-5 shrink-0" />
             <span>Account data successfully deleted. Redirecting to home...</span>
           </div>
@@ -144,11 +144,11 @@ export default function SettingsPage() {
         {/* Section 1: Your Business Profile */}
         <section className="space-y-4">
           <div className="flex items-center gap-2.5">
-            <Briefcase className="w-5 h-5 text-[var(--primary)]" />
-            <h2 className="heading-3 text-[var(--foreground)]">Your business</h2>
+            <Briefcase className="w-5 h-5 text-(--primary)" />
+            <h2 className="heading-3 text-(--foreground)">Your business</h2>
           </div>
 
-          <form onSubmit={handleSave} className="rounded-2xl bg-[var(--surface)] border border-[var(--border)] p-6 sm:p-8 space-y-6 shadow-md">
+          <form onSubmit={handleSave} className="rounded-2xl bg-(--surface) border border-(--border) p-6 sm:p-8 space-y-6 shadow-md">
             <Input
               label="What you do"
               value={profile.whatYouDo}
@@ -178,14 +178,14 @@ export default function SettingsPage() {
             <div className="space-y-1.5 text-left">
               <label
                 htmlFor="settings-mustKeep"
-                className="block text-sm font-sans font-bold text-[var(--foreground)]"
+                className="block text-sm font-sans font-bold text-(--foreground)"
               >
                 What must stay in your contracts?
               </label>
               <textarea
                 id="settings-mustKeep"
                 rows={3}
-                className="w-full px-3.5 py-2.5 rounded-lg bg-[var(--surface-raised)] border border-[var(--border)] text-base font-sans text-[var(--foreground)] placeholder:text-[var(--muted)]/60 transition-colors hover:border-[var(--border-strong)] focus:border-[var(--border-strong)] focus-visible:outline-2 focus-visible:outline-[var(--primary)] focus-visible:outline-offset-[3px]"
+                className="w-full px-3.5 py-2.5 rounded-lg bg-(--surface-raised) border border-(--border) text-base font-sans text-(--foreground) placeholder:text-(--muted)/60 transition-colors hover:border-(--border-strong) focus:border-(--border-strong) focus-visible:outline-2 focus-visible:outline-(--primary) focus-visible:outline-offset-[3px]"
                 value={profile.mustKeep}
                 onChange={(e) => setProfile((p) => ({ ...p, mustKeep: e.target.value }))}
               />
@@ -194,7 +194,7 @@ export default function SettingsPage() {
             <div className="flex items-center gap-4 pt-2">
               <Button type="submit" variant="primary" className="min-h-11 min-w-[140px]">
                 {saveSuccess ? (
-                  <span className="flex items-center gap-1.5 text-[var(--primary-foreground)]">
+                  <span className="flex items-center gap-1.5 text-(--primary-foreground)">
                     <Check className="w-4 h-4" />
                     <span>Saved</span>
                   </span>
@@ -209,17 +209,17 @@ export default function SettingsPage() {
         {/* Section 2: Privacy Settings */}
         <section className="space-y-4">
           <div className="flex items-center gap-2.5">
-            <Shield className="w-5 h-5 text-[var(--primary)]" />
-            <h2 className="heading-3 text-[var(--foreground)]">Privacy</h2>
+            <Shield className="w-5 h-5 text-(--primary)" />
+            <h2 className="heading-3 text-(--foreground)">Privacy</h2>
           </div>
 
-          <div className="rounded-2xl bg-[var(--surface)] border border-[var(--border)] p-6 sm:p-8 space-y-4 shadow-md">
+          <div className="rounded-2xl bg-(--surface) border border-(--border) p-6 sm:p-8 space-y-4 shadow-md">
             <div className="flex items-start justify-between gap-6">
               <div className="space-y-1">
-                <p className="text-base font-sans font-bold text-[var(--foreground)]">
+                <p className="text-base font-sans font-bold text-(--foreground)">
                   Help improve benchmarks with anonymous clause data
                 </p>
-                <p className="text-xs text-[var(--muted)] leading-relaxed max-w-[500px]">
+                <p className="text-xs text-(--muted) leading-relaxed max-w-[500px]">
                   No contract text, client names, or dollar amounts are ever stored or shared. Only anonymized clause tags and risk classifications are logged to calculate freelancer market baselines.
                 </p>
               </div>
@@ -230,13 +230,13 @@ export default function SettingsPage() {
                 role="switch"
                 aria-checked={anonymousLogOptOut}
                 onClick={() => setAnonymousLogOptOut(!anonymousLogOptOut)}
-                className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus-visible:outline-2 focus-visible:outline-[var(--primary)] focus-visible:outline-offset-[3px] ${
-                  anonymousLogOptOut ? "bg-[var(--primary)]" : "bg-[var(--surface-raised)] border-[var(--border)]"
+                className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus-visible:outline-2 focus-visible:outline-(--primary) focus-visible:outline-offset-[3px] ${
+                  anonymousLogOptOut ? "bg-(--primary)" : "bg-(--surface-raised) border-(--border)"
                 }`}
               >
                 <span
                   className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${
-                    anonymousLogOptOut ? "translate-x-5 bg-[var(--background)]" : "translate-x-0 bg-[var(--muted)]"
+                    anonymousLogOptOut ? "translate-x-5 bg-(--background)" : "translate-x-0 bg-(--muted)"
                   }`}
                 />
               </button>
@@ -247,16 +247,16 @@ export default function SettingsPage() {
         {/* Section 3: Delete Account (Danger Zone) */}
         <section className="space-y-4">
           <div className="flex items-center gap-2.5">
-            <Trash2 className="w-5 h-5 text-[var(--risk-high)]" />
-            <h2 className="heading-3 text-[var(--foreground)]">Delete account</h2>
+            <Trash2 className="w-5 h-5 text-(--risk-high)" />
+            <h2 className="heading-3 text-(--foreground)">Delete account</h2>
           </div>
 
-          <div className="rounded-2xl bg-[var(--surface)] border border-[rgba(255,122,122,0.3)] p-6 sm:p-8 space-y-4 shadow-md">
+          <div className="rounded-2xl bg-(--surface) border border-[rgba(255,122,122,0.3)] p-6 sm:p-8 space-y-4 shadow-md">
             <div>
-              <p className="text-base font-sans font-bold text-[var(--foreground)]">
+              <p className="text-base font-sans font-bold text-(--foreground)">
                 Permanently delete account and all data
               </p>
-              <p className="text-xs text-[var(--muted)] leading-relaxed mt-1">
+              <p className="text-xs text-(--muted) leading-relaxed mt-1">
                 Once deleted, all past analyses, redlines, saved decisions, and business profiles are permanently erased. This action cannot be reversed.
               </p>
             </div>
@@ -273,7 +273,7 @@ export default function SettingsPage() {
         </section>
 
         {/* Global Footer Legal Disclaimer */}
-        <footer className="text-center text-xs text-[var(--muted)] font-sans pt-6 border-t border-[var(--border)]">
+        <footer className="text-center text-xs text-(--muted) font-sans pt-6 border-t border-(--border)">
           General information only. Not legal advice.
         </footer>
       </div>

@@ -17,7 +17,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`${serif.variable} ${sans.variable} dark`}>
-      <body className="min-h-screen bg-[var(--background)] text-[var(--foreground)] antialiased font-sans">
+      <body className="min-h-screen bg-(--background) text-(--foreground) antialiased font-sans">
         {children}
       </body>
     </html>

@@ -69,14 +69,14 @@ export function AppShell({
   };
 
   return (
-    <div className="min-h-screen flex flex-col md:flex-row bg-[var(--background)] text-[var(--foreground)]">
+    <div className="min-h-screen flex flex-col md:flex-row bg-(--background) text-(--foreground)">
       {/* Desktop Sidebar: 240px fixed width */}
       <aside
-        className="hidden md:flex flex-col w-[240px] shrink-0 border-r border-[var(--border)] bg-[var(--surface)] h-screen sticky top-0"
+        className="hidden md:flex flex-col w-[240px] shrink-0 border-r border-(--border) bg-(--surface) h-screen sticky top-0"
         aria-label="Sidebar Navigation"
       >
         {/* App Logo & Title */}
-        <div className="h-[72px] flex items-center px-5 border-b border-[var(--border)] gap-3">
+        <div className="h-[72px] flex items-center px-5 border-b border-(--border) gap-3">
           <Image
             src="/images/logo.png"
             alt="Contract Auto-Redline Logo"
@@ -84,7 +84,7 @@ export function AppShell({
             height={32}
             className="rounded-md shrink-0"
           />
-          <span className="font-serif font-semibold text-base tracking-tight truncate text-[var(--foreground)]">
+          <span className="font-serif font-semibold text-base tracking-tight truncate text-(--foreground)">
             Contract Auto-Redline
           </span>
         </div>
@@ -101,21 +101,21 @@ export function AppShell({
                 className={cn(
                   "relative flex items-center gap-3 px-3.5 py-3 rounded-lg text-base leading-6 font-sans font-bold interactive-transition min-h-11",
                   active
-                    ? "bg-[var(--surface-raised)] text-[var(--foreground)] shadow-sm"
-                    : "text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--surface-raised)]/50"
+                    ? "bg-(--surface-raised) text-(--foreground) shadow-sm"
+                    : "text-(--muted) hover:text-(--foreground) hover:bg-(--surface-raised)/50"
                 )}
               >
                 {/* Active left indicator bar */}
                 {active && (
                   <span
-                    className="absolute left-0 top-1.5 bottom-1.5 w-[3px] bg-[var(--primary)] rounded-r-full"
+                    className="absolute left-0 top-1.5 bottom-1.5 w-[3px] bg-(--primary) rounded-r-full"
                     aria-hidden="true"
                   />
                 )}
                 <Icon
                   className={cn(
                     "w-5 h-5 shrink-0",
-                    active ? "text-[var(--primary)]" : "text-[var(--muted)]"
+                    active ? "text-(--primary)" : "text-(--muted)"
                   )}
                   strokeWidth={1.75}
                   aria-hidden="true"
@@ -127,20 +127,20 @@ export function AppShell({
         </nav>
 
         {/* User profile & sign-out at bottom */}
-        <div className="p-4 border-t border-[var(--border)] bg-[var(--surface)]">
+        <div className="p-4 border-t border-(--border) bg-(--surface)">
           <div className="flex items-center justify-between gap-2">
             <div className="min-w-0">
-              <p className="text-sm leading-5 font-sans text-[var(--foreground)] truncate font-medium">
+              <p className="text-sm leading-5 font-sans text-(--foreground) truncate font-medium">
                 {displayEmail}
               </p>
-              <p className="text-xs leading-4 text-[var(--muted)] truncate">
+              <p className="text-xs leading-4 text-(--muted) truncate">
                 Independent Pro
               </p>
             </div>
             <button
               type="button"
               onClick={handleSignOut}
-              className="p-2 rounded-lg text-[var(--muted)] hover:text-[var(--risk-high)] hover:bg-[var(--surface-raised)] min-h-11 min-w-11 flex items-center justify-center interactive-transition cursor-pointer"
+              className="p-2 rounded-lg text-(--muted) hover:text-(--risk-high) hover:bg-(--surface-raised) min-h-11 min-w-11 flex items-center justify-center interactive-transition cursor-pointer"
               title="Sign out"
               aria-label="Sign out"
             >
@@ -151,7 +151,7 @@ export function AppShell({
       </aside>
 
       {/* Mobile Top Bar */}
-      <header className="md:hidden flex items-center justify-between h-[60px] px-4 border-b border-[var(--border)] bg-[var(--surface)] sticky top-0 z-30">
+      <header className="md:hidden flex items-center justify-between h-[60px] px-4 border-b border-(--border) bg-(--surface) sticky top-0 z-30">
         <div className="flex items-center gap-2.5">
           <Image
             src="/images/logo.png"
@@ -160,14 +160,14 @@ export function AppShell({
             height={28}
             className="rounded-md"
           />
-          <span className="font-serif font-semibold text-base text-[var(--foreground)]">
+          <span className="font-serif font-semibold text-base text-(--foreground)">
             Contract Auto-Redline
           </span>
         </div>
         <button
           type="button"
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-          className="p-2 rounded-lg text-[var(--muted)] hover:text-[var(--foreground)] min-h-11 min-w-11 flex items-center justify-center"
+          className="p-2 rounded-lg text-(--muted) hover:text-(--foreground) min-h-11 min-w-11 flex items-center justify-center"
           aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
           aria-expanded={mobileMenuOpen}
         >
@@ -184,7 +184,7 @@ export function AppShell({
         <div
           role="dialog"
           aria-modal="true"
-          className="md:hidden border-b border-[var(--border)] bg-[var(--surface)] p-4 space-y-2 z-20"
+          className="md:hidden border-b border-(--border) bg-(--surface) p-4 space-y-2 z-20"
         >
           <nav className="space-y-1" aria-label="Mobile Navigation">
             {navItems.map((item) => {
@@ -198,8 +198,8 @@ export function AppShell({
                   className={cn(
                     "flex items-center gap-3 px-4 py-3 rounded-lg text-base font-sans font-bold min-h-11",
                     active
-                      ? "bg-[var(--surface-raised)] text-[var(--foreground)] border-l-[3px] border-[var(--primary)]"
-                      : "text-[var(--muted)] hover:bg-[var(--surface-raised)]/50"
+                      ? "bg-(--surface-raised) text-(--foreground) border-l-[3px] border-(--primary)"
+                      : "text-(--muted) hover:bg-(--surface-raised)/50"
                   )}
                 >
                   <Icon className="w-5 h-5 shrink-0" strokeWidth={1.75} />
@@ -208,12 +208,12 @@ export function AppShell({
               );
             })}
           </nav>
-          <div className="pt-3 border-t border-[var(--border)] flex items-center justify-between text-sm">
-            <span className="text-[var(--muted)] truncate">{displayEmail}</span>
+          <div className="pt-3 border-t border-(--border) flex items-center justify-between text-sm">
+            <span className="text-(--muted) truncate">{displayEmail}</span>
             <button
               type="button"
               onClick={handleSignOut}
-              className="text-[var(--risk-high)] flex items-center gap-1.5 p-2 font-bold min-h-11"
+              className="text-(--risk-high) flex items-center gap-1.5 p-2 font-bold min-h-11"
             >
               <LogOut className="w-4 h-4" />
               <span>Sign out</span>
@@ -229,7 +229,7 @@ export function AppShell({
 
       {/* Mobile Fixed Bottom Navigation Bar (per UI Spec Section 6) */}
       <nav
-        className="md:hidden fixed bottom-0 left-0 right-0 h-[64px] bg-[var(--surface)] border-t border-[var(--border)] flex items-center justify-around px-2 z-30"
+        className="md:hidden fixed bottom-0 left-0 right-0 h-[64px] bg-(--surface) border-t border-(--border) flex items-center justify-around px-2 z-30"
         aria-label="Mobile Bottom Navigation"
       >
         {navItems
@@ -244,8 +244,8 @@ export function AppShell({
                 className={cn(
                   "flex flex-col items-center justify-center flex-1 h-[52px] min-h-11 rounded-lg interactive-transition",
                   active
-                    ? "text-[var(--primary)]"
-                    : "text-[var(--muted)] hover:text-[var(--foreground)]"
+                    ? "text-(--primary)"
+                    : "text-(--muted) hover:text-(--foreground)"
                 )}
               >
                 <Icon className="w-5 h-5 mb-0.5" strokeWidth={1.75} />
