@@ -11,7 +11,6 @@ import {
   LogOut,
   Menu,
   X,
-  Layers,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { createClient } from "@/lib/supabase/client";
@@ -60,7 +59,6 @@ export function AppShell({
     { label: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
     { label: "New review", href: "/analyses/new", icon: FilePlus },
     { label: "Settings", href: "/settings", icon: Settings },
-    { label: "Component gallery", href: "/gallery", icon: Layers },
   ];
 
   const isActive = (href: string) => {
@@ -70,21 +68,21 @@ export function AppShell({
 
   return (
     <div className="min-h-screen flex flex-col md:flex-row bg-(--background) text-(--foreground)">
-      {/* Desktop Sidebar: 240px fixed width */}
+      {/* Desktop Sidebar: Collapsible on hover (w-16 collapsed -> w-60 expanded) */}
       <aside
-        className="hidden md:flex flex-col w-60 shrink-0 border-r border-(--border) bg-(--surface) h-screen sticky top-0"
+        className="group/sidebar hidden md:flex flex-col w-16 hover:w-60 shrink-0 border-r border-(--border) bg-(--surface) h-screen sticky top-0 z-30 transition-[width] duration-300 ease-in-out overflow-x-hidden shadow-xl"
         aria-label="Sidebar Navigation"
       >
         {/* App Logo & Title */}
-        <div className="h-18 flex items-center px-5 border-b border-(--border) gap-3">
+        <div className="h-18 flex items-center px-3.5 border-b border-(--border) gap-3 shrink-0">
           <Image
             src="/images/logo.png"
             alt="Contract Auto-Redline Logo"
-            width={32}
-            height={32}
+            width={34}
+            height={34}
             className="rounded-md shrink-0"
           />
-          <span className="font-serif font-semibold text-base tracking-tight truncate text-(--foreground)">
+          <span className="font-serif font-semibold text-base tracking-tight text-(--foreground) whitespace-nowrap overflow-hidden transition-all duration-300 opacity-0 group-hover/sidebar:opacity-100 max-w-0 group-hover/sidebar:max-w-[180px]">
             Contract Auto-Redline
           </span>
         </div>
@@ -98,17 +96,18 @@ export function AppShell({
               <Link
                 key={item.href}
                 href={item.href}
+                title={item.label}
                 className={cn(
-                  "relative flex items-center gap-3 px-3.5 py-3 rounded-lg text-base leading-6 font-sans font-bold interactive-transition min-h-11",
+                  "relative flex items-center gap-3.5 px-3 py-3 rounded-xl text-base leading-6 font-sans font-bold transition-colors min-h-11",
                   active
                     ? "bg-(--surface-raised) text-(--foreground) shadow-sm"
-                    : "text-(--muted) hover:text-(--foreground) hover:bg-(--surface-raised)/50"
+                    : "text-(--muted) hover:text-(--foreground) hover:bg-(--surface-raised)/60"
                 )}
               >
                 {/* Active left indicator bar */}
                 {active && (
                   <span
-                    className="absolute left-0 top-1.5 bottom-1.5 w-[3px] bg-(--primary) rounded-r-full"
+                    className="absolute left-0 top-2 bottom-2 w-[3px] bg-(--primary) rounded-r-full"
                     aria-hidden="true"
                   />
                 )}
@@ -117,30 +116,32 @@ export function AppShell({
                     "w-5 h-5 shrink-0",
                     active ? "text-(--primary)" : "text-(--muted)"
                   )}
-                  strokeWidth={1.75}
+                  strokeWidth={2}
                   aria-hidden="true"
                 />
-                <span>{item.label}</span>
+                <span className="whitespace-nowrap overflow-hidden transition-all duration-300 opacity-0 group-hover/sidebar:opacity-100 max-w-0 group-hover/sidebar:max-w-[160px]">
+                  {item.label}
+                </span>
               </Link>
             );
           })}
         </nav>
 
         {/* User profile & sign-out at bottom */}
-        <div className="p-4 border-t border-(--border) bg-(--surface)">
+        <div className="p-3 border-t border-(--border) bg-(--surface) shrink-0">
           <div className="flex items-center justify-between gap-2">
-            <div className="min-w-0">
-              <p className="text-sm leading-5 font-sans text-(--foreground) truncate font-medium">
+            <div className="min-w-0 overflow-hidden whitespace-nowrap transition-all duration-300 opacity-0 group-hover/sidebar:opacity-100 max-w-0 group-hover/sidebar:max-w-[140px]">
+              <p className="text-xs leading-4 font-sans text-(--foreground) truncate font-bold">
                 {displayEmail}
               </p>
-              <p className="text-xs leading-4 text-(--muted) truncate">
-                Independent Pro
+              <p className="text-[11px] leading-3 text-(--muted) truncate mt-0.5">
+                Pro Contractor
               </p>
             </div>
             <button
               type="button"
               onClick={handleSignOut}
-              className="p-2 rounded-lg text-(--muted) hover:text-(--risk-high) hover:bg-(--surface-raised) min-h-11 min-w-11 flex items-center justify-center interactive-transition cursor-pointer"
+              className="p-2 rounded-lg text-(--muted) hover:text-(--risk-high) hover:bg-(--surface-raised) min-h-10 min-w-10 flex items-center justify-center transition-colors cursor-pointer shrink-0"
               title="Sign out"
               aria-label="Sign out"
             >
@@ -150,112 +151,91 @@ export function AppShell({
         </div>
       </aside>
 
-      {/* Mobile Top Bar */}
-      <header className="md:hidden flex items-center justify-between h-15 px-4 border-b border-(--border) bg-(--surface) sticky top-0 z-30">
-        <div className="flex items-center gap-2.5">
+      {/* Mobile Top Header */}
+      <header className="md:hidden flex items-center justify-between px-4 h-16 border-b border-(--border) bg-(--surface) sticky top-0 z-30">
+        <div className="flex items-center gap-3">
           <Image
             src="/images/logo.png"
             alt="Contract Auto-Redline Logo"
             width={28}
             height={28}
-            className="rounded-md"
+            className="rounded-md shrink-0"
           />
-          <span className="font-serif font-semibold text-base text-(--foreground)">
+          <span className="font-serif font-semibold text-base tracking-tight text-(--foreground)">
             Contract Auto-Redline
           </span>
         </div>
+
         <button
           type="button"
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-          className="p-2 rounded-lg text-(--muted) hover:text-(--foreground) min-h-11 min-w-11 flex items-center justify-center"
+          className="p-2 text-(--muted) hover:text-(--foreground) min-h-11 min-w-11 flex items-center justify-center rounded-lg"
           aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
-          aria-expanded={mobileMenuOpen}
         >
-          {mobileMenuOpen ? (
-            <X className="w-6 h-6" strokeWidth={1.75} />
-          ) : (
-            <Menu className="w-6 h-6" strokeWidth={1.75} />
-          )}
+          {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
         </button>
       </header>
 
-      {/* Mobile Slide-down Drawer Menu */}
+      {/* Mobile Navigation Drawer */}
       {mobileMenuOpen && (
-        <div
-          role="dialog"
-          aria-modal="true"
-          className="md:hidden border-b border-(--border) bg-(--surface) p-4 space-y-2 z-20"
-        >
-          <nav className="space-y-1" aria-label="Mobile Navigation">
-            {navItems.map((item) => {
-              const active = isActive(item.href);
-              const Icon = item.icon;
-              return (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  onClick={() => setMobileMenuOpen(false)}
-                  className={cn(
-                    "flex items-center gap-3 px-4 py-3 rounded-lg text-base font-sans font-bold min-h-11",
-                    active
-                      ? "bg-(--surface-raised) text-(--foreground) border-l-[3px] border-(--primary)"
-                      : "text-(--muted) hover:bg-(--surface-raised)/50"
-                  )}
-                >
-                  <Icon className="w-5 h-5 shrink-0" strokeWidth={1.75} />
-                  <span>{item.label}</span>
-                </Link>
-              );
-            })}
-          </nav>
-          <div className="pt-3 border-t border-(--border) flex items-center justify-between text-sm">
-            <span className="text-(--muted) truncate">{displayEmail}</span>
-            <button
-              type="button"
-              onClick={handleSignOut}
-              className="text-(--risk-high) flex items-center gap-1.5 p-2 font-bold min-h-11"
-            >
-              <LogOut className="w-4 h-4" />
-              <span>Sign out</span>
-            </button>
+        <div className="md:hidden fixed inset-0 z-40 bg-black/60 backdrop-blur-xs flex flex-col">
+          <div className="bg-(--surface) border-b border-(--border) p-5 space-y-4">
+            <div className="flex items-center justify-between">
+              <span className="text-xs uppercase font-bold text-(--muted)">Menu</span>
+              <button
+                type="button"
+                onClick={() => setMobileMenuOpen(false)}
+                className="p-1 text-(--muted) hover:text-(--foreground)"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <nav className="space-y-1">
+              {navItems.map((item) => {
+                const active = isActive(item.href);
+                const Icon = item.icon;
+                return (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    onClick={() => setMobileMenuOpen(false)}
+                    className={cn(
+                      "flex items-center gap-3 px-4 py-3 rounded-lg text-base font-sans font-bold",
+                      active
+                        ? "bg-(--surface-raised) text-(--foreground)"
+                        : "text-(--muted) hover:text-(--foreground)"
+                    )}
+                  >
+                    <Icon className="w-5 h-5" strokeWidth={1.75} />
+                    <span>{item.label}</span>
+                  </Link>
+                );
+              })}
+            </nav>
+
+            <div className="pt-4 border-t border-(--border) flex items-center justify-between">
+              <span className="text-xs text-(--muted) truncate max-w-[200px]">
+                {displayEmail}
+              </span>
+              <button
+                type="button"
+                onClick={handleSignOut}
+                className="text-xs text-(--risk-high) font-bold flex items-center gap-1.5 p-2"
+              >
+                <LogOut className="w-4 h-4" />
+                <span>Sign out</span>
+              </button>
+            </div>
           </div>
+          <div className="flex-1" onClick={() => setMobileMenuOpen(false)} />
         </div>
       )}
 
       {/* Main Content Area */}
-      <main className="flex-1 min-w-0 pb-20 md:pb-8 flex flex-col">
+      <main className="flex-1 flex flex-col min-w-0 overflow-y-auto">
         {children}
       </main>
-
-      {/* Mobile Fixed Bottom Navigation Bar (per UI Spec Section 6) */}
-      <nav
-        className="md:hidden fixed bottom-0 left-0 right-0 h-16 bg-(--surface) border-t border-(--border) flex items-center justify-around px-2 z-30"
-        aria-label="Mobile Bottom Navigation"
-      >
-        {navItems
-          .filter((item) => item.href !== "/gallery")
-          .map((item) => {
-            const active = isActive(item.href);
-            const Icon = item.icon;
-            return (
-              <Link
-                key={item.href}
-                href={item.href}
-                className={cn(
-                  "flex flex-col items-center justify-center flex-1 h-13 min-h-11 rounded-lg interactive-transition",
-                  active
-                    ? "text-(--primary)"
-                    : "text-(--muted) hover:text-(--foreground)"
-                )}
-              >
-                <Icon className="w-5 h-5 mb-0.5" strokeWidth={1.75} />
-                <span className="text-xs font-sans font-bold">
-                  {item.label}
-                </span>
-              </Link>
-            );
-          })}
-      </nav>
     </div>
   );
 }

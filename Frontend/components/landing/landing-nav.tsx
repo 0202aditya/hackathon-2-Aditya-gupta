@@ -35,12 +35,6 @@ export function LandingNav() {
             >
               Privacy
             </a>
-            <Link
-              href="/gallery"
-              className="text-base font-sans font-bold text-(--muted) hover:text-(--foreground) interactive-transition"
-            >
-              Components
-            </Link>
           </nav>
         </div>
 

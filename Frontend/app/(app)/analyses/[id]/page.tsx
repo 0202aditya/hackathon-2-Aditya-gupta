@@ -21,6 +21,7 @@ import {
   ArrowLeft,
   Clock,
   Printer,
+  Loader2,
 } from "lucide-react";
 import { generateRedlineDocx } from "@/lib/export/docx-generator";
 
@@ -353,7 +354,6 @@ function AnalysisResultsContent({ analysisId }: { analysisId: string }) {
       );
       setIsEditing(false);
 
-      // Save decision to Supabase if live analysis
       if (analysisId !== "acme-msa") {
         try {
           await fetch(`/api/analyses/${analysisId}/clauses/${id}`, {
@@ -495,8 +495,22 @@ function AnalysisResultsContent({ analysisId }: { analysisId: string }) {
     );
   }
 
-  // Loading Screen
-  if (isLoadingFromDb || analyzingStage < 4) {
+  // Fast Sleek Loader when opening an already analyzed contract
+  if (isLoadingFromDb) {
+    return (
+      <AppShell userEmail="contractor@example.com">
+        <div className="min-h-[75vh] flex flex-col items-center justify-center p-4 gap-4">
+          <Loader2 className="w-10 h-10 animate-spin text-(--primary)" />
+          <p className="text-base font-sans font-medium text-zinc-300">
+            Loading contract analysis...
+          </p>
+        </div>
+      </AppShell>
+    );
+  }
+
+  // 3-Stage Animated Screen ONLY when freshly analyzing a new contract (?analyzing=true)
+  if (isAnalyzingInitial && analyzingStage < 4) {
     return (
       <AppShell userEmail="contractor@example.com">
         <div className="min-h-[80vh] flex items-center justify-center p-4">
@@ -562,27 +576,27 @@ function AnalysisResultsContent({ analysisId }: { analysisId: string }) {
       <div className="max-w-310 mx-auto w-full px-4 sm:px-6 py-6 space-y-8">
         
         {/* Sticky Top Summary Bar */}
-        <section className="sticky top-0 z-20 rounded-2xl bg-(--surface) border border-(--border) p-4 sm:p-6 shadow-xl backdrop-blur-md">
-          <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+        <section className="sticky top-0 z-20 rounded-2xl bg-(--surface) border border-(--border) p-4 sm:p-5 shadow-xl backdrop-blur-md">
+          <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-4">
             
-            {/* Title & Score */}
-            <div className="flex items-start sm:items-center gap-4">
-              <ScoreRing score={overallScore} size={60} strokeWidth={5} />
-              <div className="space-y-1 min-w-0">
-                <div className="flex items-center gap-2.5 flex-wrap">
-                  <Link href="/dashboard" className="text-xs text-(--muted) hover:text-(--foreground) flex items-center gap-1">
+            {/* Title & Score (responsive flex with truncation prevention) */}
+            <div className="flex items-center gap-4 min-w-0 flex-1">
+              <ScoreRing score={overallScore} size={62} strokeWidth={5} />
+              <div className="space-y-1 min-w-0 flex-1">
+                <div className="flex items-center gap-2 flex-wrap">
+                  <Link href="/dashboard" className="text-xs text-zinc-400 hover:text-white flex items-center gap-1 font-medium transition-colors">
                     <ArrowLeft className="w-3.5 h-3.5" />
                     <span>Dashboard</span>
                   </Link>
                   <span className="text-xs text-(--border)">/</span>
-                  <h1 className="heading-3 text-(--foreground) truncate">
-                    {contractTitle}
-                  </h1>
-                  <span className="text-xs px-2 py-0.5 rounded bg-(--surface-raised) border border-(--border) text-(--muted) font-sans">
+                  <span className="text-xs px-2.5 py-0.5 rounded-md bg-(--surface-raised) border border-(--border) text-zinc-400 font-sans font-medium">
                     {contractType}
                   </span>
                 </div>
-                <p className="text-xs sm:text-sm text-(--muted) line-clamp-1">
+                <h1 className="text-lg sm:text-xl font-bold font-sans text-white truncate" title={contractTitle}>
+                  {contractTitle}
+                </h1>
+                <p className="text-xs sm:text-sm text-zinc-300 truncate">
                   <span className={`font-bold mr-1.5 ${overallRisk === 'high' ? 'text-(--risk-high)' : overallRisk === 'medium' ? 'text-(--risk-medium)' : 'text-(--risk-low)'}`}>
                     {overallRisk.toUpperCase()} risk ({overallScore}/100):
                   </span>
@@ -591,51 +605,53 @@ function AnalysisResultsContent({ analysisId }: { analysisId: string }) {
               </div>
             </div>
 
-            {/* Count Chips & Action Buttons */}
-            <div className="flex items-center justify-between lg:justify-end gap-3 flex-wrap">
-              <div className="flex items-center gap-2">
-                <span className="px-2.5 py-1 rounded-md text-xs font-bold badge-risk-high">
+            {/* Count Chips & Action Buttons (never wrap out of box) */}
+            <div className="flex items-center justify-between xl:justify-end gap-3 shrink-0 flex-wrap sm:flex-nowrap">
+              {/* Chips */}
+              <div className="flex items-center gap-2 shrink-0">
+                <span className="px-3 py-1 rounded-lg text-xs font-bold badge-risk-high">
                   {highCount} high
                 </span>
-                <span className="px-2.5 py-1 rounded-md text-xs font-bold badge-risk-medium">
+                <span className="px-3 py-1 rounded-lg text-xs font-bold badge-risk-medium">
                   {mediumCount} medium
                 </span>
-                <span className="px-2.5 py-1 rounded-md text-xs font-bold badge-risk-low">
+                <span className="px-3 py-1 rounded-lg text-xs font-bold badge-risk-low">
                   {lowCount} low
                 </span>
               </div>
 
-              <div className="flex items-center gap-2">
+              {/* Actions */}
+              <div className="flex items-center gap-2.5 shrink-0">
                 <Button
                   variant="primary"
                   size="sm"
                   onClick={() => setIsEmailModalOpen(true)}
-                  className="min-h-11 gap-1.5 font-bold"
+                  className="h-10 px-4 gap-2 font-bold text-sm whitespace-nowrap shadow-sm"
                 >
                   <Mail className="w-4 h-4" />
                   <span>Write email ({acceptedClauses.length})</span>
                 </Button>
 
                 <div className="relative group">
-                  <Button variant="secondary" size="sm" className="min-h-11 gap-1.5">
+                  <Button variant="secondary" size="sm" className="h-10 px-4 gap-2 text-sm font-bold whitespace-nowrap">
                     <Download className="w-4 h-4" />
                     <span>Export</span>
                   </Button>
-                  <div className="absolute right-0 top-full mt-1 w-48 rounded-xl bg-(--surface-raised) border border-(--border) shadow-2xl py-1.5 hidden group-hover:block z-30">
+                  <div className="absolute right-0 top-full mt-1.5 w-52 rounded-xl bg-(--surface-raised) border border-(--border) shadow-2xl py-1.5 hidden group-hover:block z-30">
                     <button
                       type="button"
                       onClick={handleExportDocx}
-                      className="w-full text-left px-3.5 py-2 text-xs font-sans text-(--foreground) hover:bg-(--surface) hover:text-(--primary) interactive-transition flex items-center gap-2"
+                      className="w-full text-left px-4 py-2.5 text-xs font-sans text-(--foreground) hover:bg-(--surface) hover:text-(--primary) transition-colors flex items-center gap-2"
                     >
-                      <Download className="w-3.5 h-3.5 text-(--primary)" />
+                      <Download className="w-4 h-4 text-(--primary)" />
                       <span>Word (.docx) with redlines</span>
                     </button>
                     <button
                       type="button"
                       onClick={handleExportPdf}
-                      className="w-full text-left px-3.5 py-2 text-xs font-sans text-(--foreground) hover:bg-(--surface) hover:text-(--primary) interactive-transition flex items-center gap-2"
+                      className="w-full text-left px-4 py-2.5 text-xs font-sans text-(--foreground) hover:bg-(--surface) hover:text-(--primary) transition-colors flex items-center gap-2"
                     >
-                      <Printer className="w-3.5 h-3.5 text-(--risk-low)" />
+                      <Printer className="w-4 h-4 text-(--risk-low)" />
                       <span>PDF risk report</span>
                     </button>
                   </div>
@@ -645,14 +661,14 @@ function AnalysisResultsContent({ analysisId }: { analysisId: string }) {
           </div>
 
           {exportNotification && (
-            <div className="mt-3 p-2.5 rounded-lg bg-[rgba(134,168,255,0.12)] border border-[rgba(134,168,255,0.25)] text-xs font-sans text-(--primary) flex items-center justify-between animate-fade-in">
+            <div className="mt-3 p-3 rounded-xl bg-[rgba(134,168,255,0.12)] border border-[rgba(134,168,255,0.25)] text-sm font-sans text-white flex items-center justify-between animate-fade-in font-medium">
               <span>{exportNotification}</span>
               <button
                 type="button"
                 onClick={() => setExportNotification(null)}
-                className="text-(--muted) hover:text-(--foreground)"
+                className="text-zinc-400 hover:text-white"
               >
-                <X className="w-3.5 h-3.5" />
+                <X className="w-4 h-4" />
               </button>
             </div>
           )}
@@ -665,16 +681,16 @@ function AnalysisResultsContent({ analysisId }: { analysisId: string }) {
           <aside className="lg:col-span-5 rounded-2xl bg-(--surface) border border-(--border) overflow-hidden shadow-lg flex flex-col max-h-205">
             {/* Filter Bar */}
             <div className="p-4 border-b border-(--border) flex items-center justify-between gap-2 bg-(--surface) shrink-0">
-              <div className="flex items-center gap-1">
+              <div className="flex items-center gap-1.5">
                 {(["all", "high", "medium", "low"] as const).map((lvl) => (
                   <button
                     key={lvl}
                     type="button"
                     onClick={() => setFilter(lvl)}
-                    className={`px-2.5 py-1 rounded-md text-xs font-sans font-bold capitalize interactive-transition ${
+                    className={`px-3 py-1 rounded-lg text-xs font-sans font-bold capitalize transition-colors ${
                       filter === lvl
-                        ? "bg-(--surface-raised) text-(--foreground) border border-(--border)"
-                        : "text-(--muted) hover:text-(--foreground)"
+                        ? "bg-(--surface-raised) text-white border border-(--border)"
+                        : "text-zinc-400 hover:text-white"
                     }`}
                   >
                     {lvl}
@@ -686,10 +702,10 @@ function AnalysisResultsContent({ analysisId }: { analysisId: string }) {
                 variant="outline"
                 size="sm"
                 onClick={handleNextIssue}
-                className="text-xs h-8 gap-1 font-bold"
+                className="text-xs h-8 px-3 gap-1.5 font-bold"
               >
                 <span>Next issue</span>
-                <ArrowRight className="w-3 h-3" />
+                <ArrowRight className="w-3.5 h-3.5" />
               </Button>
             </div>
 
@@ -705,7 +721,7 @@ function AnalysisResultsContent({ analysisId }: { analysisId: string }) {
                       setSelectedId(clause.id);
                       setIsEditing(false);
                     }}
-                    className={`w-full text-left p-4 interactive-transition flex items-start justify-between gap-3 ${
+                    className={`w-full text-left p-4.5 transition-colors flex items-start justify-between gap-3 ${
                       isSelected
                         ? "bg-(--surface-raised) border-l-[3px] border-l-(--primary)"
                         : "hover:bg-(--surface-raised)/50"
@@ -714,11 +730,11 @@ function AnalysisResultsContent({ analysisId }: { analysisId: string }) {
                     <div className="space-y-1.5 min-w-0 flex-1">
                       <div className="flex items-center gap-2">
                         <RiskBadge level={clause.riskLevel} />
-                        <h2 className="text-sm font-sans font-bold text-(--foreground) truncate">
+                        <h2 className="text-sm font-sans font-bold text-white truncate">
                           {clause.title}
                         </h2>
                       </div>
-                      <p className="text-xs text-(--muted) line-clamp-2 leading-relaxed">
+                      <p className="text-xs text-zinc-300 line-clamp-2 leading-relaxed font-normal">
                         {clause.explanation}
                       </p>
                     </div>
@@ -753,14 +769,14 @@ function AnalysisResultsContent({ analysisId }: { analysisId: string }) {
                 
                 {/* Header */}
                 <div className="flex items-start justify-between gap-4 border-b border-(--border) pb-5">
-                  <div className="space-y-2">
-                    <div className="flex items-center gap-2.5">
+                  <div className="space-y-2 min-w-0 flex-1">
+                    <div className="flex items-center gap-2.5 flex-wrap">
                       <RiskBadge level={selectedClause.riskLevel} />
-                      <h2 className="heading-3 text-(--foreground)">
+                      <h2 className="text-xl font-bold font-sans text-white">
                         {selectedClause.title}
                       </h2>
                     </div>
-                    <p className="text-sm text-(--muted)">
+                    <p className="text-base text-zinc-200 leading-relaxed font-normal">
                       {selectedClause.explanation}
                     </p>
                   </div>
@@ -777,21 +793,21 @@ function AnalysisResultsContent({ analysisId }: { analysisId: string }) {
                 </div>
 
                 {/* Practical Impact Callout */}
-                <div className="rounded-xl bg-(--surface-raised) border border-(--border) p-4 space-y-1">
-                  <span className="text-xs uppercase tracking-wider font-bold text-(--muted)">
+                <div className="rounded-xl bg-(--surface-raised) border border-(--border) p-5 space-y-1.5">
+                  <span className="text-xs uppercase tracking-wider font-bold text-blue-400">
                     What this means for you
                   </span>
-                  <p className="text-sm font-sans text-(--foreground) leading-relaxed">
+                  <p className="text-base font-sans text-zinc-100 leading-relaxed font-normal">
                     {selectedClause.impact}
                   </p>
                 </div>
 
                 {/* As Written (Original Clause) */}
                 <div className="space-y-2">
-                  <span className="text-xs font-sans font-bold uppercase tracking-wider text-(--muted)">
+                  <span className="text-xs font-sans font-bold uppercase tracking-wider text-zinc-400">
                     As written in contract
                   </span>
-                  <div className="p-4 rounded-xl bg-(--surface-raised) border border-(--border) font-serif text-sm leading-relaxed text-(--foreground)/80">
+                  <div className="p-4 rounded-xl bg-(--surface-raised) border border-(--border) text-base leading-relaxed text-zinc-200 font-normal">
                     &ldquo;{selectedClause.originalText}&rdquo;
                   </div>
                 </div>
@@ -800,11 +816,11 @@ function AnalysisResultsContent({ analysisId }: { analysisId: string }) {
                 {selectedClause.suggestedRedline && (
                   <div className="space-y-2">
                     <div className="flex items-center justify-between">
-                      <span className="text-xs font-sans font-bold uppercase tracking-wider text-(--primary) flex items-center gap-1.5">
+                      <span className="text-xs font-sans font-bold uppercase tracking-wider text-emerald-400 flex items-center gap-1.5">
                         <Sparkles className="w-3.5 h-3.5" />
                         <span>Recommended replacement</span>
                       </span>
-                      <span className="text-xs text-(--muted)">
+                      <span className="text-xs text-zinc-400">
                         Legally balanced for contractors
                       </span>
                     </div>
@@ -812,10 +828,10 @@ function AnalysisResultsContent({ analysisId }: { analysisId: string }) {
                     {isEditing ? (
                       <div className="space-y-3">
                         <textarea
-                          rows={5}
+                          rows={6}
                           value={editedText}
                           onChange={(e) => setEditedText(e.target.value)}
-                          className="w-full px-4 py-3 rounded-xl bg-(--surface-raised) border border-(--primary) text-sm font-serif text-(--foreground) leading-relaxed focus:outline-none"
+                          className="w-full px-4 py-3 rounded-xl bg-(--surface-raised) border border-(--primary) text-base text-white leading-relaxed focus:outline-none"
                         />
                         <div className="flex items-center justify-end gap-2">
                           <Button
@@ -837,19 +853,19 @@ function AnalysisResultsContent({ analysisId }: { analysisId: string }) {
                         </div>
                       </div>
                     ) : (
-                      <div className="p-4 rounded-xl bg-[rgba(134,168,255,0.06)] border border-[rgba(134,168,255,0.2)] font-serif text-sm leading-relaxed text-(--foreground) space-y-3">
-                        <p>
+                      <div className="p-5 rounded-xl bg-emerald-950/20 border border-emerald-500/30 text-base leading-relaxed text-emerald-100 space-y-3">
+                        <p className="font-medium text-emerald-100">
                           &ldquo;
                           {selectedClause.editedRedline || selectedClause.suggestedRedline}
                           &rdquo;
                         </p>
 
                         {selectedClause.isDiffSnippet && (
-                          <div className="pt-2 border-t border-[rgba(134,168,255,0.15)] text-xs font-sans space-y-1">
+                          <div className="pt-3 border-t border-emerald-500/20 text-xs font-sans space-y-1.5">
                             <p className="line-through text-(--danger)">
                               - {selectedClause.isDiffSnippet.del}
                             </p>
-                            <p className="text-(--risk-low)">
+                            <p className="text-(--risk-low) font-semibold">
                               + {selectedClause.isDiffSnippet.ins}
                             </p>
                           </div>
@@ -861,12 +877,12 @@ function AnalysisResultsContent({ analysisId }: { analysisId: string }) {
 
                 {/* Decision Actions */}
                 <div className="pt-4 border-t border-(--border) flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2 flex-wrap">
                     <Button
                       variant={selectedClause.decision === "accepted" ? "primary" : "outline"}
                       size="sm"
                       onClick={() => handleDecision(selectedClause.id, "accepted")}
-                      className="min-h-11 gap-1.5"
+                      className="h-10 px-4 gap-1.5 font-bold text-sm"
                     >
                       <Check className="w-4 h-4" />
                       <span>{selectedClause.decision === "accepted" ? "Accepted" : "Accept redline"}</span>
@@ -881,7 +897,7 @@ function AnalysisResultsContent({ analysisId }: { analysisId: string }) {
                         );
                         setIsEditing(true);
                       }}
-                      className="min-h-11 gap-1.5"
+                      className="h-10 px-4 gap-1.5 font-bold text-sm"
                     >
                       <Edit3 className="w-4 h-4" />
                       <span>Edit</span>
@@ -891,7 +907,7 @@ function AnalysisResultsContent({ analysisId }: { analysisId: string }) {
                       variant={selectedClause.decision === "rejected" ? "destructive" : "outline"}
                       size="sm"
                       onClick={() => handleDecision(selectedClause.id, "rejected")}
-                      className="min-h-11 gap-1.5"
+                      className="h-10 px-4 gap-1.5 font-bold text-sm"
                     >
                       <X className="w-4 h-4" />
                       <span>Keep original</span>
@@ -902,10 +918,10 @@ function AnalysisResultsContent({ analysisId }: { analysisId: string }) {
                     variant="secondary"
                     size="sm"
                     onClick={handleNextIssue}
-                    className="min-h-11 gap-1.5 text-xs font-bold"
+                    className="h-10 px-4 gap-2 text-sm font-bold"
                   >
                     <span>Next clause</span>
-                    <ArrowRight className="w-3.5 h-3.5" />
+                    <ArrowRight className="w-4 h-4" />
                   </Button>
                 </div>
               </div>
@@ -920,36 +936,41 @@ function AnalysisResultsContent({ analysisId }: { analysisId: string }) {
         {/* Section: What the Contract Leaves Out (Missing Protections) */}
         <section className="rounded-2xl bg-(--surface) border border-(--border) p-6 sm:p-8 space-y-6">
           <div className="space-y-1">
-            <h2 className="heading-3 text-(--foreground) flex items-center gap-2">
+            <h2 className="heading-3 text-white flex items-center gap-2">
               <AlertCircle className="w-5 h-5 text-(--risk-medium)" />
               <span>What the contract leaves out</span>
             </h2>
-            <p className="text-sm text-(--muted)">
+            <p className="text-sm text-zinc-300">
               Provisions missing from the contract that you should consider asking to add.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
             {missingProtections.map((item) => (
               <div
                 key={item.title}
-                className="p-5 rounded-xl bg-(--surface-raised) border border-(--border) space-y-3 flex flex-col justify-between"
+                className="p-5 rounded-xl bg-(--surface-raised) border border-(--border) space-y-3.5 flex flex-col justify-between"
               >
-                <div className="space-y-1.5">
-                  <div className="flex items-center justify-between">
-                    <h3 className="font-bold text-sm text-(--foreground)">
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between gap-2">
+                    <h3 className="font-bold text-base text-white">
                       {item.title}
                     </h3>
-                    <span className={`text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded ${item.severity === 'critical' ? 'badge-risk-high' : 'badge-risk-medium'}`}>
+                    <span className={`text-[11px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-md ${item.severity === 'critical' ? 'badge-risk-high' : 'badge-risk-medium'}`}>
                       {item.severity}
                     </span>
                   </div>
-                  <p className="text-xs text-(--muted)">
+                  <p className="text-sm text-zinc-300 leading-relaxed font-normal">
                     {item.description}
                   </p>
-                  <p className="font-serif text-xs leading-relaxed text-(--foreground)/80 italic pt-1">
-                    &ldquo;{item.suggestedClause}&rdquo;
-                  </p>
+                  <div className="pt-2">
+                    <span className="text-[11px] font-bold uppercase tracking-wider text-blue-400 block mb-1">
+                      Suggested wording:
+                    </span>
+                    <p className="text-sm leading-relaxed text-zinc-200 bg-(--surface) border border-(--border) p-3 rounded-lg">
+                      &ldquo;{item.suggestedClause}&rdquo;
+                    </p>
+                  </div>
                 </div>
 
                 <CopyButton
@@ -957,7 +978,7 @@ function AnalysisResultsContent({ analysisId }: { analysisId: string }) {
                   label="Copy clause"
                   size="sm"
                   variant="outline"
-                  className="w-full text-xs"
+                  className="w-full text-sm font-bold min-h-10 mt-2"
                 />
               </div>
             ))}
@@ -967,11 +988,11 @@ function AnalysisResultsContent({ analysisId }: { analysisId: string }) {
         {/* Section: Key Obligations & Deliverables */}
         <section className="rounded-2xl bg-(--surface) border border-(--border) p-6 sm:p-8 space-y-6">
           <div className="space-y-1">
-            <h2 className="heading-3 text-(--foreground) flex items-center gap-2">
+            <h2 className="heading-3 text-white flex items-center gap-2">
               <Clock className="w-5 h-5 text-(--primary)" />
               <span>Key obligations & deliverables</span>
             </h2>
-            <p className="text-sm text-(--muted)">
+            <p className="text-sm text-zinc-300">
               Delivery milestones, payment windows, and contract requirements extracted from the text.
             </p>
           </div>
@@ -987,14 +1008,14 @@ function AnalysisResultsContent({ analysisId }: { analysisId: string }) {
                     <span className="text-xs font-mono font-bold text-(--primary) uppercase">
                       {d.dueDate}
                     </span>
-                    <span className="text-[10px] px-1.5 py-0.5 rounded bg-(--surface) border border-(--border) text-(--muted) uppercase font-bold">
+                    <span className="text-[10px] px-2 py-0.5 rounded bg-(--surface) border border-(--border) text-zinc-400 uppercase font-bold">
                       {d.party}
                     </span>
                   </div>
-                  <h3 className="font-bold text-sm text-(--foreground) mt-1">
+                  <h3 className="font-bold text-base text-white mt-2">
                     {d.title}
                   </h3>
-                  <p className="text-xs text-(--muted) mt-1 leading-relaxed">
+                  <p className="text-sm text-zinc-300 mt-1 leading-relaxed font-normal">
                     {d.description}
                   </p>
                 </div>
@@ -1004,12 +1025,12 @@ function AnalysisResultsContent({ analysisId }: { analysisId: string }) {
         </section>
 
         {/* Global Footer Legal Disclaimer & Keyboard Hints */}
-        <footer className="flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-(--muted) font-sans pt-6 border-t border-(--border)">
+        <footer className="flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-zinc-400 font-sans pt-6 border-t border-(--border)">
           <span>General information only. Not legal advice.</span>
           <button
             type="button"
             onClick={() => setShowKeyboardHelp((prev) => !prev)}
-            className="hover:text-(--foreground) underline flex items-center gap-1.5"
+            className="hover:text-white underline flex items-center gap-1.5 transition-colors"
           >
             <span>Shortcuts (J / K / A / C / ?)</span>
           </button>
@@ -1017,22 +1038,22 @@ function AnalysisResultsContent({ analysisId }: { analysisId: string }) {
 
         {showKeyboardHelp && (
           <div className="fixed bottom-6 right-6 z-40 p-4 rounded-xl bg-(--surface-raised) border border-(--border) shadow-2xl text-xs space-y-2 max-w-xs animate-in fade-in">
-            <div className="flex items-center justify-between font-bold text-(--foreground) pb-1 border-b border-(--border)">
+            <div className="flex items-center justify-between font-bold text-white pb-1 border-b border-(--border)">
               <span>Keyboard Shortcuts</span>
               <button
                 type="button"
                 onClick={() => setShowKeyboardHelp(false)}
-                className="text-(--muted) hover:text-(--foreground)"
+                className="text-zinc-400 hover:text-white"
               >
                 ✕
               </button>
             </div>
-            <div className="grid grid-cols-2 gap-1 text-(--muted)">
-              <span><kbd className="font-mono text-(--foreground)">J</kbd> Next clause</span>
-              <span><kbd className="font-mono text-(--foreground)">K</kbd> Prev clause</span>
-              <span><kbd className="font-mono text-(--foreground)">A</kbd> Accept redline</span>
-              <span><kbd className="font-mono text-(--foreground)">C</kbd> Copy text</span>
-              <span><kbd className="font-mono text-(--foreground)">?</kbd> Toggle help</span>
+            <div className="grid grid-cols-2 gap-1.5 text-zinc-300">
+              <span><kbd className="font-mono text-white bg-zinc-800 px-1 py-0.5 rounded">J</kbd> Next</span>
+              <span><kbd className="font-mono text-white bg-zinc-800 px-1 py-0.5 rounded">K</kbd> Prev</span>
+              <span><kbd className="font-mono text-white bg-zinc-800 px-1 py-0.5 rounded">A</kbd> Accept</span>
+              <span><kbd className="font-mono text-white bg-zinc-800 px-1 py-0.5 rounded">C</kbd> Copy</span>
+              <span><kbd className="font-mono text-white bg-zinc-800 px-1 py-0.5 rounded">?</kbd> Toggle</span>
             </div>
           </div>
         )}
