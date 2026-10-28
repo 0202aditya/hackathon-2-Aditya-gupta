@@ -500,7 +500,7 @@ function AnalysisResultsContent({ analysisId }: { analysisId: string }) {
     return (
       <AppShell userEmail="contractor@example.com">
         <div className="min-h-[80vh] flex items-center justify-center p-4">
-          <div className="w-full max-w-[480px] rounded-2xl bg-(--surface) border border-(--border) p-8 sm:p-10 text-center space-y-8 shadow-2xl">
+          <div className="w-full max-w-120 rounded-2xl bg-(--surface) border border-(--border) p-8 sm:p-10 text-center space-y-8 shadow-2xl">
             <div className="w-16 h-16 rounded-full bg-[rgba(134,168,255,0.12)] border border-[rgba(134,168,255,0.25)] flex items-center justify-center text-(--primary) mx-auto animate-pulse">
               <Sparkles className="w-8 h-8" strokeWidth={1.75} />
             </div>
@@ -559,7 +559,7 @@ function AnalysisResultsContent({ analysisId }: { analysisId: string }) {
 
   return (
     <AppShell userEmail="contractor@example.com">
-      <div className="max-w-[1240px] mx-auto w-full px-4 sm:px-6 py-6 space-y-8">
+      <div className="max-w-310 mx-auto w-full px-4 sm:px-6 py-6 space-y-8">
         
         {/* Sticky Top Summary Bar */}
         <section className="sticky top-0 z-20 rounded-2xl bg-(--surface) border border-(--border) p-4 sm:p-6 shadow-xl backdrop-blur-md">
@@ -662,7 +662,7 @@ function AnalysisResultsContent({ analysisId }: { analysisId: string }) {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
           
           {/* Left Pane (5 cols): Clauses List */}
-          <aside className="lg:col-span-5 rounded-2xl bg-(--surface) border border-(--border) overflow-hidden shadow-lg flex flex-col max-h-[820px]">
+          <aside className="lg:col-span-5 rounded-2xl bg-(--surface) border border-(--border) overflow-hidden shadow-lg flex flex-col max-h-205">
             {/* Filter Bar */}
             <div className="p-4 border-b border-(--border) flex items-center justify-between gap-2 bg-(--surface) shrink-0">
               <div className="flex items-center gap-1">
@@ -747,7 +747,7 @@ function AnalysisResultsContent({ analysisId }: { analysisId: string }) {
           </aside>
 
           {/* Right Pane (7 cols): Detailed Clause Inspector */}
-          <main className="lg:col-span-7 rounded-2xl bg-(--surface) border border-(--border) p-6 sm:p-8 space-y-6 shadow-lg min-h-[640px]">
+          <main className="lg:col-span-7 rounded-2xl bg-(--surface) border border-(--border) p-6 sm:p-8 space-y-6 shadow-lg min-h-160">
             {selectedClause ? (
               <div className="space-y-6">
                 

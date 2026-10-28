@@ -72,11 +72,11 @@ export function AppShell({
     <div className="min-h-screen flex flex-col md:flex-row bg-(--background) text-(--foreground)">
       {/* Desktop Sidebar: 240px fixed width */}
       <aside
-        className="hidden md:flex flex-col w-[240px] shrink-0 border-r border-(--border) bg-(--surface) h-screen sticky top-0"
+        className="hidden md:flex flex-col w-60 shrink-0 border-r border-(--border) bg-(--surface) h-screen sticky top-0"
         aria-label="Sidebar Navigation"
       >
         {/* App Logo & Title */}
-        <div className="h-[72px] flex items-center px-5 border-b border-(--border) gap-3">
+        <div className="h-18 flex items-center px-5 border-b border-(--border) gap-3">
           <Image
             src="/images/logo.png"
             alt="Contract Auto-Redline Logo"
@@ -151,7 +151,7 @@ export function AppShell({
       </aside>
 
       {/* Mobile Top Bar */}
-      <header className="md:hidden flex items-center justify-between h-[60px] px-4 border-b border-(--border) bg-(--surface) sticky top-0 z-30">
+      <header className="md:hidden flex items-center justify-between h-15 px-4 border-b border-(--border) bg-(--surface) sticky top-0 z-30">
         <div className="flex items-center gap-2.5">
           <Image
             src="/images/logo.png"
@@ -229,7 +229,7 @@ export function AppShell({
 
       {/* Mobile Fixed Bottom Navigation Bar (per UI Spec Section 6) */}
       <nav
-        className="md:hidden fixed bottom-0 left-0 right-0 h-[64px] bg-(--surface) border-t border-(--border) flex items-center justify-around px-2 z-30"
+        className="md:hidden fixed bottom-0 left-0 right-0 h-16 bg-(--surface) border-t border-(--border) flex items-center justify-around px-2 z-30"
         aria-label="Mobile Bottom Navigation"
       >
         {navItems
@@ -242,7 +242,7 @@ export function AppShell({
                 key={item.href}
                 href={item.href}
                 className={cn(
-                  "flex flex-col items-center justify-center flex-1 h-[52px] min-h-11 rounded-lg interactive-transition",
+                  "flex flex-col items-center justify-center flex-1 h-13 min-h-11 rounded-lg interactive-transition",
                   active
                     ? "text-(--primary)"
                     : "text-(--muted) hover:text-(--foreground)"

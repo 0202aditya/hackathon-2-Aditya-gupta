@@ -113,7 +113,7 @@ export default function NewAnalysisPage() {
 
   return (
     <AppShell userEmail="contractor@example.com">
-      <div className="max-w-[780px] mx-auto w-full px-4 sm:px-6 py-8 space-y-10">
+      <div className="max-w-195 mx-auto w-full px-4 sm:px-6 py-8 space-y-10">
         {/* Header */}
         <div className="border-b border-(--border) pb-6 space-y-2">
           <span className="text-xs uppercase tracking-wider text-(--primary) font-bold">

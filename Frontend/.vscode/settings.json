@@ -1,4 +1,7 @@
 {
-  "css.lint.unknownAtRules": "ignore"
+  "css.lint.unknownAtRules": "ignore",
+  "tailwindCSS.experimental.configFile": "app/globals.css",
+  "files.associations": {
+    "*.css": "tailwindcss"
+  }
 }
-

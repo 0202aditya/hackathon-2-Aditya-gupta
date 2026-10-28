@@ -119,7 +119,7 @@ export default function SettingsPage() {
 
   return (
     <AppShell>
-      <div className="max-w-[760px] mx-auto w-full px-4 sm:px-6 py-8 space-y-10">
+      <div className="max-w-190 mx-auto w-full px-4 sm:px-6 py-8 space-y-10">
         {/* Header */}
         <div className="border-b border-(--border) pb-6 space-y-1">
           <h1 className="heading-2 text-(--foreground)">Settings</h1>
@@ -192,7 +192,7 @@ export default function SettingsPage() {
             </div>
 
             <div className="flex items-center gap-4 pt-2">
-              <Button type="submit" variant="primary" className="min-h-11 min-w-[140px]">
+              <Button type="submit" variant="primary" className="min-h-11 min-w-35">
                 {saveSuccess ? (
                   <span className="flex items-center gap-1.5 text-(--primary-foreground)">
                     <Check className="w-4 h-4" />
@@ -219,7 +219,7 @@ export default function SettingsPage() {
                 <p className="text-base font-sans font-bold text-(--foreground)">
                   Help improve benchmarks with anonymous clause data
                 </p>
-                <p className="text-xs text-(--muted) leading-relaxed max-w-[500px]">
+                <p className="text-xs text-(--muted) leading-relaxed max-w-125">
                   No contract text, client names, or dollar amounts are ever stored or shared. Only anonymized clause tags and risk classifications are logged to calculate freelancer market baselines.
                 </p>
               </div>

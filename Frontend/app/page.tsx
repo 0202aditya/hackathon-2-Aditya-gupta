@@ -74,7 +74,7 @@ export default function LandingPage() {
       <LandingNav />
 
       {/* Main Content: 1120px max container per UI Design Spec */}
-      <main className="flex-1 max-w-[1120px] w-full mx-auto px-4 sm:px-6 py-12 lg:py-20 space-y-16 lg:space-y-28">
+      <main className="flex-1 max-w-280 w-full mx-auto px-4 sm:px-6 py-12 lg:py-20 space-y-16 lg:space-y-28">
         
         {/* Section: Hero */}
         <section className="flex flex-col lg:flex-row items-center justify-between gap-12 lg:gap-16 pt-4">
@@ -84,7 +84,7 @@ export default function LandingPage() {
               Know what you&apos;re signing before you sign it.
             </h1>
 
-            <p className="text-base lg:text-lg leading-relaxed text-(--muted) max-w-[540px]">
+            <p className="text-base lg:text-lg leading-relaxed text-(--muted) max-w-135">
               Upload a client contract. We flag the risky clauses, explain them in plain
               English, and give you the wording to ask for instead.
             </p>
@@ -110,7 +110,7 @@ export default function LandingPage() {
 
           {/* Right Column: Hero Image (1200 x 900 transparent background with soft glow) */}
           <div className="w-full lg:w-1/2 flex justify-center lg:justify-end">
-            <div className="relative w-full max-w-[540px] aspect-[4/3] rounded-3xl overflow-hidden">
+            <div className="relative w-full max-w-135 aspect-[4/3] rounded-3xl overflow-hidden">
               <Image
                 src="/images/hero.png"
                 alt="A contract with high and medium risk clauses highlighted, next to a suggested rewrite."
@@ -132,7 +132,7 @@ export default function LandingPage() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 relative">
             {/* Desktop connecting line */}
             <div
-              className="hidden md:block absolute top-[28px] left-[15%] right-[15%] h-[1px] bg-(--border) z-0"
+              className="hidden md:block absolute top-7 left-[15%] right-[15%] h-[1px] bg-(--border) z-0"
               aria-hidden="true"
             />
 
@@ -245,7 +245,7 @@ export default function LandingPage() {
 
         {/* Section: Final Call to Action */}
         <section className="rounded-3xl bg-(--surface-raised) border border-(--border) p-8 sm:p-12 text-center space-y-6">
-          <h2 className="heading-2 text-(--foreground) max-w-[600px] mx-auto">
+          <h2 className="heading-2 text-(--foreground) max-w-150 mx-auto">
             Read it before you sign it.
           </h2>
           <div className="flex justify-center">

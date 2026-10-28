@@ -56,7 +56,7 @@ export default function GalleryPage() {
 
   return (
     <AppShell userEmail="freelancer@example.com">
-      <div className="max-w-[1120px] mx-auto w-full px-4 sm:px-6 py-8 space-y-12">
+      <div className="max-w-280 mx-auto w-full px-4 sm:px-6 py-8 space-y-12">
         {/* Step 1 Foundation Header */}
         <header className="border-b border-(--border) pb-6">
           <div className="flex items-center gap-3 mb-2 flex-wrap">
@@ -70,7 +70,7 @@ export default function GalleryPage() {
           <h1 className="heading-2 text-(--foreground)">
             Design System & Screen Directory
           </h1>
-          <p className="text-base text-(--muted) max-w-[680px] mt-2">
+          <p className="text-base text-(--muted) max-w-170 mt-2">
             Interactive reference and complete sitemap for all screens built with dark theme, Two Voices typography, shadcn components, and spec microcopy.
           </p>
         </header>

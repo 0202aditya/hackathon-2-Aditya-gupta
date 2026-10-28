@@ -180,7 +180,7 @@ export default function SignInPage() {
       </header>
 
       {/* Main Centered 400px Panel with Suspense */}
-      <main className="w-full max-w-[400px] mx-auto my-auto py-8">
+      <main className="w-full max-w-100 mx-auto my-auto py-8">
         <React.Suspense fallback={<div className="h-64 rounded-2xl bg-(--surface) animate-pulse" />}>
           <SignInForm />
         </React.Suspense>

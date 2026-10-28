@@ -23,7 +23,7 @@ export function EmptyState({
   return (
     <div
       className={cn(
-        "rounded-2xl bg-(--surface) border border-(--border) p-10 text-center flex flex-col items-center justify-center max-w-[680px] mx-auto",
+        "rounded-2xl bg-(--surface) border border-(--border) p-10 text-center flex flex-col items-center justify-center max-w-170 mx-auto",
         className
       )}
     >
@@ -31,7 +31,7 @@ export function EmptyState({
         <Icon className="w-7 h-7" strokeWidth={1.75} aria-hidden="true" />
       </div>
       <h3 className="heading-3 text-(--foreground) mb-2">{title}</h3>
-      <p className="text-base leading-relaxed text-(--muted) max-w-[480px] mb-6">
+      <p className="text-base leading-relaxed text-(--muted) max-w-120 mb-6">
         {description}
       </p>
       {actionLabel && onAction && (

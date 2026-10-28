@@ -99,7 +99,7 @@ export default function OnboardingPage() {
       </header>
 
       {/* Main Form Container */}
-      <main className="w-full max-w-[560px] mx-auto my-auto py-8">
+      <main className="w-full max-w-140 mx-auto my-auto py-8">
         <div className="rounded-2xl bg-(--surface) border border-(--border) p-6 sm:p-10 space-y-8 shadow-xl">
           {/* Header */}
           <div className="space-y-2">
@@ -198,7 +198,7 @@ export default function OnboardingPage() {
                 type="submit"
                 variant="primary"
                 disabled={loading}
-                className="w-full sm:w-auto min-w-[180px]"
+                className="w-full sm:w-auto min-w-45"
               >
                 {loading ? "Saving profile..." : "Save and continue"}
               </Button>

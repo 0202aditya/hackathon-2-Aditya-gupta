@@ -1,8 +1,12 @@
 {
   "css.lint.unknownAtRules": "ignore",
   "typescript.tsdk": "Frontend/node_modules/typescript/lib",
+  "tailwindCSS.experimental.configFile": "Frontend/app/globals.css",
   "tailwindCSS.includeLanguages": {
     "typescript": "javascript",
     "typescriptreact": "javascript"
+  },
+  "files.associations": {
+    "*.css": "tailwindcss"
   }
 }

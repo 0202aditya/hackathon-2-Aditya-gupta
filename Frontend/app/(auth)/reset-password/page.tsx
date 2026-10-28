@@ -81,7 +81,7 @@ export default function ResetPasswordPage() {
       </header>
 
       {/* Main Centered 400px Panel */}
-      <main className="w-full max-w-[400px] mx-auto my-auto py-8">
+      <main className="w-full max-w-100 mx-auto my-auto py-8">
         <div className="rounded-2xl bg-(--surface) border border-(--border) p-6 sm:p-8 space-y-6 shadow-xl">
           <div className="text-center space-y-1">
             <h1 className="heading-3 text-(--foreground)">Set new password</h1>

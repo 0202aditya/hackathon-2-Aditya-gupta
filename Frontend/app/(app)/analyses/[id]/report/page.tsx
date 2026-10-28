@@ -89,7 +89,7 @@ export default function AnalysisReportPage({ params }: PageProps) {
   return (
     <div className="min-h-screen bg-(--background) text-(--foreground) p-4 sm:p-8">
       {/* Top action toolbar (hidden when printing) */}
-      <div className="max-w-[840px] mx-auto mb-8 flex items-center justify-between gap-4 print:hidden">
+      <div className="max-w-210 mx-auto mb-8 flex items-center justify-between gap-4 print:hidden">
         <Link href={`/analyses/${id}`}>
           <Button variant="outline" size="sm" className="gap-2">
             <ArrowLeft className="w-4 h-4" />
@@ -104,7 +104,7 @@ export default function AnalysisReportPage({ params }: PageProps) {
       </div>
 
       {/* Printable Report Document */}
-      <article className="max-w-[840px] mx-auto rounded-2xl bg-(--surface) border border-(--border) p-8 sm:p-12 space-y-10 shadow-2xl print:border-none print:shadow-none print:p-0 print:bg-white print:text-black">
+      <article className="max-w-210 mx-auto rounded-2xl bg-(--surface) border border-(--border) p-8 sm:p-12 space-y-10 shadow-2xl print:border-none print:shadow-none print:p-0 print:bg-white print:text-black">
         
         {/* Report Header */}
         <header className="border-b border-(--border) pb-8 space-y-4 print:border-gray-300">

@@ -4,9 +4,9 @@ import Image from "next/image";
 export function LandingFooter() {
   return (
     <footer className="w-full border-t border-(--border) bg-(--surface) py-12">
-      <div className="max-w-[1120px] mx-auto px-4 sm:px-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-8">
+      <div className="max-w-280 mx-auto px-4 sm:px-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-8">
         {/* Left Disclaimer & Logo */}
-        <div className="flex items-start sm:items-center gap-4 max-w-[620px]">
+        <div className="flex items-start sm:items-center gap-4 max-w-155">
           <Image
             src="/images/logo.png"
             alt="Contract Auto-Redline Logo"
