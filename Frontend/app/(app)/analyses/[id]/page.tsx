@@ -16,11 +16,13 @@ import {
   ArrowRight,
   Download,
   Mail,
-  Calendar as CalendarIcon,
   AlertCircle,
   Sparkles,
   ArrowLeft,
+  Clock,
+  Printer,
 } from "lucide-react";
+import { generateRedlineDocx } from "@/lib/export/docx-generator";
 
 type DecisionStatus = "pending" | "accepted" | "rejected" | "edited";
 
@@ -433,9 +435,44 @@ function AnalysisResultsContent({ analysisId }: { analysisId: string }) {
       redline: c.editedRedline || c.suggestedRedline || "",
     }));
 
-  const handleExport = (type: string) => {
-    setExportNotification(`Exporting ${type} document with full redlines and legal disclaimer...`);
-    setTimeout(() => setExportNotification(null), 3000);
+  const handleExportDocx = async () => {
+    try {
+      setExportNotification("Generating Word (.docx) with redline markup...");
+      const blob = await generateRedlineDocx({
+        contractTitle,
+        overallScore,
+        overallRisk,
+        summary,
+        clauses: clauses.map((c) => ({
+          title: c.title,
+          originalText: c.originalText,
+          suggestedRedline: c.suggestedRedline,
+          editedRedline: c.editedRedline,
+          explanation: c.explanation,
+          decision: c.decision,
+          riskLevel: c.riskLevel,
+        })),
+        missingProtections,
+      });
+
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `${contractTitle.replace(/[^a-zA-Z0-9_-]/g, "_")}_Redline.docx`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      setExportNotification("Word document downloaded successfully!");
+      setTimeout(() => setExportNotification(null), 3500);
+    } catch (err) {
+      console.error("Export docx error:", err);
+      setExportNotification("Failed to generate Word document.");
+    }
+  };
+
+  const handleExportPdf = () => {
+    window.open(`/analyses/${analysisId}/report`, "_blank");
   };
 
   // Error Loading Screen
@@ -584,27 +621,22 @@ function AnalysisResultsContent({ analysisId }: { analysisId: string }) {
                     <Download className="w-4 h-4" />
                     <span>Export</span>
                   </Button>
-                  <div className="absolute right-0 top-full mt-1 w-44 rounded-xl bg-[var(--surface-raised)] border border-[var(--border)] shadow-2xl py-1.5 hidden group-hover:block z-30">
+                  <div className="absolute right-0 top-full mt-1 w-48 rounded-xl bg-[var(--surface-raised)] border border-[var(--border)] shadow-2xl py-1.5 hidden group-hover:block z-30">
                     <button
                       type="button"
-                      onClick={() => handleExport("Word (.docx)")}
-                      className="w-full text-left px-3.5 py-2 text-xs font-sans text-[var(--foreground)] hover:bg-[var(--surface)] hover:text-[var(--primary)] interactive-transition"
+                      onClick={handleExportDocx}
+                      className="w-full text-left px-3.5 py-2 text-xs font-sans text-[var(--foreground)] hover:bg-[var(--surface)] hover:text-[var(--primary)] interactive-transition flex items-center gap-2"
                     >
-                      Word (.docx) with redlines
+                      <Download className="w-3.5 h-3.5 text-[var(--primary)]" />
+                      <span>Word (.docx) with redlines</span>
                     </button>
                     <button
                       type="button"
-                      onClick={() => handleExport("PDF report")}
-                      className="w-full text-left px-3.5 py-2 text-xs font-sans text-[var(--foreground)] hover:bg-[var(--surface)] hover:text-[var(--primary)] interactive-transition"
+                      onClick={handleExportPdf}
+                      className="w-full text-left px-3.5 py-2 text-xs font-sans text-[var(--foreground)] hover:bg-[var(--surface)] hover:text-[var(--primary)] interactive-transition flex items-center gap-2"
                     >
-                      PDF risk report
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => handleExport("Calendar (.ics)")}
-                      className="w-full text-left px-3.5 py-2 text-xs font-sans text-[var(--foreground)] hover:bg-[var(--surface)] hover:text-[var(--primary)] interactive-transition"
-                    >
-                      Calendar deadlines (.ics)
+                      <Printer className="w-3.5 h-3.5 text-[var(--risk-low)]" />
+                      <span>PDF risk report</span>
                     </button>
                   </div>
                 </div>
@@ -932,15 +964,15 @@ function AnalysisResultsContent({ analysisId }: { analysisId: string }) {
           </div>
         </section>
 
-        {/* Section: Dates to Remember (Deadlines) */}
+        {/* Section: Key Obligations & Deliverables */}
         <section className="rounded-2xl bg-[var(--surface)] border border-[var(--border)] p-6 sm:p-8 space-y-6">
           <div className="space-y-1">
             <h2 className="heading-3 text-[var(--foreground)] flex items-center gap-2">
-              <CalendarIcon className="w-5 h-5 text-[var(--primary)]" />
-              <span>Dates to remember</span>
+              <Clock className="w-5 h-5 text-[var(--primary)]" />
+              <span>Key obligations & deliverables</span>
             </h2>
             <p className="text-sm text-[var(--muted)]">
-              Key notice dates, renewal windows, and milestones extracted from the text.
+              Delivery milestones, payment windows, and contract requirements extracted from the text.
             </p>
           </div>
 
@@ -966,16 +998,6 @@ function AnalysisResultsContent({ analysisId }: { analysisId: string }) {
                     {d.description}
                   </p>
                 </div>
-
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => handleExport(`Calendar event for ${d.title}`)}
-                  className="w-full text-xs min-h-11 gap-1.5"
-                >
-                  <CalendarIcon className="w-3.5 h-3.5" />
-                  <span>Add to calendar</span>
-                </Button>
               </div>
             ))}
           </div>
