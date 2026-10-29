@@ -22,6 +22,8 @@ import {
   Clock,
   Printer,
   Loader2,
+  Briefcase,
+  ChevronDown,
 } from "lucide-react";
 import { generateRedlineDocx } from "@/lib/export/docx-generator";
 
@@ -253,6 +255,20 @@ function AnalysisResultsContent({ analysisId }: { analysisId: string }) {
   const [showKeyboardHelp, setShowKeyboardHelp] = React.useState(false);
   const [exportNotification, setExportNotification] = React.useState<string | null>(null);
   const [isSummaryExpanded, setIsSummaryExpanded] = React.useState<boolean>(false);
+  const [dealContext, setDealContext] = React.useState<any>(
+    analysisId === "acme-msa"
+      ? {
+          contractType: "Service agreement",
+          paymentStructure: "Fixed fee",
+          paymentRange: "$10,000 – $25,000",
+          clientType: "Startup",
+          workDescription: "Full-stack web application development and API integration",
+          duration: "3 to 12 months",
+          priorities: ["Keep my IP", "Limit my liability", "Get paid on time"],
+        }
+      : null
+  );
+  const [isDealContextOpen, setIsDealContextOpen] = React.useState<boolean>(true);
   const [aiNegotiationEmail, setAiNegotiationEmail] = React.useState<{
     subject: string;
     body: string;
@@ -293,6 +309,12 @@ function AnalysisResultsContent({ analysisId }: { analysisId: string }) {
 
         if (a.raw_ai_output?.negotiationEmail) {
           setAiNegotiationEmail(a.raw_ai_output.negotiationEmail);
+        }
+
+        if (a.deal_context) {
+          setDealContext(a.deal_context);
+        } else if (a.raw_ai_output?.dealContext) {
+          setDealContext(a.raw_ai_output.dealContext);
         }
 
         if (a.missing_protections && Array.isArray(a.missing_protections)) {
@@ -754,6 +776,99 @@ function AnalysisResultsContent({ analysisId }: { analysisId: string }) {
           )}
         </section>
 
+        {/* Deal Context & Review Parameters Banner */}
+        {dealContext && (
+          <section className="rounded-2xl bg-(--surface) border border-(--border) p-5 sm:p-6 shadow-md space-y-4">
+            <div className="flex items-center justify-between gap-3 flex-wrap">
+              <div className="flex items-center gap-2.5">
+                <div className="w-8 h-8 rounded-lg bg-[rgba(134,168,255,0.12)] border border-[rgba(134,168,255,0.25)] flex items-center justify-center text-(--primary) shrink-0">
+                  <Briefcase className="w-4 h-4" />
+                </div>
+                <div>
+                  <h2 className="text-sm font-sans font-bold text-white flex items-center gap-2">
+                    <span>Deal Context & Review Parameters</span>
+                  </h2>
+                  <p className="text-xs text-zinc-400">
+                    The specific deal terms and priorities used to guide this AI redline.
+                  </p>
+                </div>
+              </div>
+
+              <button
+                type="button"
+                onClick={() => setIsDealContextOpen((prev) => !prev)}
+                className="text-xs font-bold text-zinc-400 hover:text-white transition-colors flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-(--surface-raised) border border-(--border) cursor-pointer"
+              >
+                <span>{isDealContextOpen ? "Hide details" : "Show details"}</span>
+                <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-200 ${isDealContextOpen ? "rotate-180" : ""}`} />
+              </button>
+            </div>
+
+            {isDealContextOpen && (
+              <div className="space-y-4 pt-3 border-t border-(--border) animate-in fade-in duration-150">
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
+                  <div className="p-3.5 rounded-xl bg-(--surface-raised) border border-(--border) space-y-1">
+                    <span className="text-zinc-400 block font-sans">Contract Type</span>
+                    <span className="font-bold text-white block text-sm truncate">
+                      {dealContext.customContractType || dealContext.contractType || contractType}
+                    </span>
+                  </div>
+
+                  <div className="p-3.5 rounded-xl bg-(--surface-raised) border border-(--border) space-y-1">
+                    <span className="text-zinc-400 block font-sans">Payment & Value</span>
+                    <span className="font-bold text-white block text-sm truncate">
+                      {dealContext.customPaymentRange || dealContext.paymentRange || "Not specified"}
+                      {(dealContext.customPaymentStructure || dealContext.paymentStructure) ? ` • ${dealContext.customPaymentStructure || dealContext.paymentStructure}` : ""}
+                    </span>
+                  </div>
+
+                  <div className="p-3.5 rounded-xl bg-(--surface-raised) border border-(--border) space-y-1">
+                    <span className="text-zinc-400 block font-sans">Client Profile</span>
+                    <span className="font-bold text-white block text-sm truncate">
+                      {dealContext.customClientType || dealContext.clientType || "Not specified"}
+                    </span>
+                  </div>
+
+                  <div className="p-3.5 rounded-xl bg-(--surface-raised) border border-(--border) space-y-1">
+                    <span className="text-zinc-400 block font-sans">Engagement Duration</span>
+                    <span className="font-bold text-white block text-sm truncate">
+                      {dealContext.customDuration || dealContext.duration || "Not specified"}
+                    </span>
+                  </div>
+                </div>
+
+                {dealContext.workDescription && (
+                  <div className="p-3.5 rounded-xl bg-(--surface-raised) border border-(--border) space-y-1 text-xs">
+                    <span className="text-zinc-400 font-sans block font-bold uppercase tracking-wider text-[10px]">
+                      Scope of Work Evaluated
+                    </span>
+                    <p className="text-sm text-zinc-200 font-sans leading-relaxed">
+                      &ldquo;{dealContext.workDescription}&rdquo;
+                    </p>
+                  </div>
+                )}
+
+                {dealContext.priorities && dealContext.priorities.length > 0 && (
+                  <div className="flex items-center gap-2 flex-wrap text-xs pt-1">
+                    <span className="text-zinc-400 font-sans font-bold text-xs mr-1">
+                      Target Priorities:
+                    </span>
+                    {dealContext.priorities.map((priority: string) => (
+                      <span
+                        key={priority}
+                        className="px-2.5 py-1 rounded-full bg-(--surface-raised) border border-(--primary)/30 text-blue-300 font-medium font-sans flex items-center gap-1.5"
+                      >
+                        <Check className="w-3 h-3 text-(--primary)" />
+                        <span>{priority}</span>
+                      </span>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
+          </section>
+        )}
+
         {/* Workspace: 2-Pane Interactive Clause Inspector */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
           
@@ -810,11 +925,11 @@ function AnalysisResultsContent({ analysisId }: { analysisId: string }) {
                     <div className="space-y-1.5 min-w-0 flex-1">
                       <div className="flex items-center gap-2">
                         <RiskBadge level={clause.riskLevel} />
-                        <h2 className="text-sm font-sans font-bold text-white truncate">
+                        <h2 className="text-base font-sans font-bold text-white truncate">
                           {clause.title}
                         </h2>
                       </div>
-                      <p className="text-xs text-zinc-300 line-clamp-2 leading-relaxed font-normal">
+                      <p className="text-sm text-zinc-300 line-clamp-2 leading-relaxed font-normal">
                         {clause.explanation}
                       </p>
                     </div>
@@ -873,21 +988,21 @@ function AnalysisResultsContent({ analysisId }: { analysisId: string }) {
                 </div>
 
                 {/* Practical Impact Callout */}
-                <div className="rounded-xl bg-(--surface-raised) border border-(--border) p-5 space-y-1.5">
-                  <span className="text-xs uppercase tracking-wider font-bold text-blue-400">
+                <div className="rounded-xl bg-(--surface-raised) border border-(--border) p-5 space-y-2">
+                  <span className="text-sm uppercase tracking-wider font-bold text-blue-400">
                     What this means for you
                   </span>
-                  <p className="text-base font-sans text-zinc-100 leading-relaxed font-normal">
+                  <p className="text-base sm:text-lg font-sans text-zinc-100 leading-relaxed font-normal">
                     {selectedClause.impact}
                   </p>
                 </div>
 
                 {/* As Written (Original Clause) */}
                 <div className="space-y-2">
-                  <span className="text-xs font-sans font-bold uppercase tracking-wider text-zinc-400">
+                  <span className="text-sm font-sans font-bold uppercase tracking-wider text-zinc-300">
                     As written in contract
                   </span>
-                  <div className="p-4 rounded-xl bg-(--surface-raised) border border-(--border) text-base leading-relaxed text-zinc-200 font-normal">
+                  <div className="p-4 sm:p-5 rounded-xl bg-(--surface-raised) border border-(--border) text-base sm:text-lg leading-relaxed text-zinc-200 font-normal">
                     &ldquo;{selectedClause.originalText}&rdquo;
                   </div>
                 </div>
@@ -896,11 +1011,11 @@ function AnalysisResultsContent({ analysisId }: { analysisId: string }) {
                 {selectedClause.suggestedRedline && (
                   <div className="space-y-2">
                     <div className="flex items-center justify-between">
-                      <span className="text-xs font-sans font-bold uppercase tracking-wider text-emerald-400 flex items-center gap-1.5">
-                        <Sparkles className="w-3.5 h-3.5" />
+                      <span className="text-sm font-sans font-bold uppercase tracking-wider text-emerald-400 flex items-center gap-1.5">
+                        <Sparkles className="w-4 h-4" />
                         <span>Recommended replacement</span>
                       </span>
-                      <span className="text-xs text-zinc-400">
+                      <span className="text-sm text-zinc-400">
                         Legally balanced for contractors
                       </span>
                     </div>
@@ -911,7 +1026,7 @@ function AnalysisResultsContent({ analysisId }: { analysisId: string }) {
                           rows={6}
                           value={editedText}
                           onChange={(e) => setEditedText(e.target.value)}
-                          className="w-full px-4 py-3 rounded-xl bg-(--surface-raised) border border-(--primary) text-base text-white leading-relaxed focus:outline-none"
+                          className="w-full px-4 py-3 rounded-xl bg-(--surface-raised) border border-(--primary) text-base sm:text-lg text-white leading-relaxed focus:outline-none"
                         />
                         <div className="flex items-center justify-end gap-2">
                           <Button
@@ -933,7 +1048,7 @@ function AnalysisResultsContent({ analysisId }: { analysisId: string }) {
                         </div>
                       </div>
                     ) : (
-                      <div className="p-5 rounded-xl bg-emerald-950/20 border border-emerald-500/30 text-base leading-relaxed text-emerald-100 space-y-3">
+                      <div className="p-5 sm:p-6 rounded-xl bg-emerald-950/20 border border-emerald-500/30 text-base sm:text-lg leading-relaxed text-emerald-100 space-y-3">
                         <p className="font-medium text-emerald-100">
                           &ldquo;
                           {selectedClause.editedRedline || selectedClause.suggestedRedline}

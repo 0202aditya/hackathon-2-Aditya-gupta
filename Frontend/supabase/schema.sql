@@ -28,6 +28,7 @@ create table if not exists analyses (
   risk_score int,
   summary text,
   missing_protections jsonb default '[]',
+  deal_context jsonb default '{}'::jsonb,
   raw_ai_output jsonb,
   model text,
   redacted boolean default false,

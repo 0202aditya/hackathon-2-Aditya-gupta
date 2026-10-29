@@ -39,6 +39,7 @@ export async function GET(
     return NextResponse.json({
       analysis: {
         ...analysis,
+        deal_context: analysis.deal_context || (analysis.raw_ai_output as any)?.dealContext || null,
         clauses: clauses || [],
         obligations: obligations || [],
       },

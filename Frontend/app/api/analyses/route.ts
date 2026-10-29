@@ -44,6 +44,7 @@ export async function POST(req: NextRequest) {
     let contractType = 'contract';
     let shouldRedact = false;
     let fileName = 'Contract';
+    let dealContext: any = undefined;
 
     const contentType = req.headers.get('content-type') || '';
 
@@ -52,6 +53,14 @@ export async function POST(req: NextRequest) {
       const file = formData.get('file') as File | null;
       contractType = (formData.get('contractType') as string) || 'contract';
       shouldRedact = formData.get('redactPII') === 'true';
+      const rawDealContext = formData.get('dealContext') as string | null;
+      if (rawDealContext) {
+        try {
+          dealContext = JSON.parse(rawDealContext);
+        } catch {
+          // ignore parse error
+        }
+      }
 
       if (!file) {
         return NextResponse.json({ error: 'No contract file was provided in the upload.' }, { status: 400 });
@@ -68,6 +77,7 @@ export async function POST(req: NextRequest) {
       contractType = body.contractType || 'contract';
       shouldRedact = Boolean(body.redactPII);
       fileName = body.fileName || 'Pasted Contract';
+      dealContext = body.dealContext;
 
       if (!contractText || contractText.length < 50) {
         return NextResponse.json(
@@ -87,32 +97,59 @@ export async function POST(req: NextRequest) {
       .eq('id', user.id)
       .maybeSingle();
 
-    // Call Gemini Contract Engine
+    // Determine clean effective contract type
+    const effectiveContractType =
+      (dealContext?.contractType === 'Other' ? dealContext.customContractType : dealContext?.contractType) ||
+      contractType ||
+      'contract';
+
+    // Call Gemini Contract Engine with rich deal context
     const analysisResult = await analyzeContract({
       contractText: textToAnalyze,
-      contractType,
+      contractType: effectiveContractType,
       jurisdiction: profile?.jurisdiction || undefined,
       userRole: profile?.entity_type ? `${profile.entity_type} (${profile.services || ''})` : undefined,
+      dealContext,
     });
 
-    // Save Analysis Record to Supabase
-    const { data: analysis, error: insertAnalysisError } = await supabase
+    // Save Analysis Record to Supabase (with deal_context or raw_ai_output fallback)
+    const baseRecord = {
+      user_id: user.id,
+      title: analysisResult.contractTitle || fileName,
+      contract_type: effectiveContractType,
+      status: 'completed',
+      overall_risk: analysisResult.overallRiskLevel,
+      risk_score: analysisResult.overallScore,
+      summary: analysisResult.summary,
+      missing_protections: analysisResult.missingProtections,
+      raw_ai_output: { ...analysisResult, dealContext },
+      model: 'gemini-3.5-flash',
+      redacted: shouldRedact,
+    };
+
+    let analysis: any = null;
+    let insertAnalysisError: any = null;
+
+    // Try inserting with deal_context column first
+    const firstAttempt = await supabase
       .from('analyses')
-      .insert({
-        user_id: user.id,
-        title: analysisResult.contractTitle || fileName,
-        contract_type: contractType,
-        status: 'completed',
-        overall_risk: analysisResult.overallRiskLevel,
-        risk_score: analysisResult.overallScore,
-        summary: analysisResult.summary,
-        missing_protections: analysisResult.missingProtections,
-        raw_ai_output: analysisResult,
-        model: 'gemini-3.5-flash',
-        redacted: shouldRedact,
-      })
+      .insert({ ...baseRecord, deal_context: dealContext || null })
       .select('id')
       .single();
+
+    if (firstAttempt.error && firstAttempt.error.message.includes('deal_context')) {
+      // Column does not exist yet in Supabase, insert without deal_context column
+      const fallbackAttempt = await supabase
+        .from('analyses')
+        .insert(baseRecord)
+        .select('id')
+        .single();
+      analysis = fallbackAttempt.data;
+      insertAnalysisError = fallbackAttempt.error;
+    } else {
+      analysis = firstAttempt.data;
+      insertAnalysisError = firstAttempt.error;
+    }
 
     if (insertAnalysisError || !analysis) {
       console.error('Failed to insert analysis:', insertAnalysisError);

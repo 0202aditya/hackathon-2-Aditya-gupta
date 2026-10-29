@@ -119,7 +119,7 @@ export default function SettingsPage() {
 
   return (
     <AppShell>
-      <div className="max-w-190 mx-auto w-full px-4 sm:px-6 py-8 space-y-10">
+      <div className="max-w-280 mx-auto w-full px-4 sm:px-6 lg:px-8 py-8 space-y-10">
         {/* Header */}
         <div className="border-b border-(--border) pb-6 space-y-1">
           <h1 className="heading-2 text-(--foreground)">Settings</h1>

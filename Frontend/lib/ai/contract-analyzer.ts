@@ -40,11 +40,28 @@ export const ContractAnalysisResultSchema = z.object({
 
 export type ContractAnalysisResult = z.infer<typeof ContractAnalysisResultSchema>;
 
+export interface DealContext {
+  contractType?: string;
+  customContractType?: string;
+  paymentStructure?: string;
+  customPaymentStructure?: string;
+  paymentRange?: string;
+  customPaymentRange?: string;
+  clientType?: string;
+  customClientType?: string;
+  workDescription?: string;
+  duration?: string;
+  customDuration?: string;
+  priorities?: string[];
+  customPriority?: string;
+}
+
 export interface AnalyzeContractOptions {
   contractText: string;
   contractType?: string;
   jurisdiction?: string;
   userRole?: string;
+  dealContext?: DealContext;
 }
 
 const CANDIDATE_MODELS = [
@@ -182,12 +199,41 @@ Analyze the provided contract thoroughly:
    - 31 to 69 = Medium Risk (standard paper with moderate one-sided terms)
    - 70 to 100 = High Risk (severe liabilities, dangerous non-competes, predatory terms)
    IMPORTANT: Higher score means HIGHER risk.
+7. Tailor your risk rating, redlines, and negotiation email to the contractor's specific DEAL CONTEXT:
+   - If payment is fixed or low, heavily penalize unlimited liability or one-sided indemnity.
+   - If priorities include 'Keep my IP', flag ANY immediate or unconditional assignment of developer tools and IP.
+   - If priorities include 'Work for other clients', strictly challenge any non-compete, lockout, or exclusivity.
+   - Compare contract deliverable and acceptance terms against the user's stated 'Scope of Work'.
 `;
 
+  const dc = options.dealContext;
+  const effectiveContractType =
+    (dc?.contractType === 'Other' ? dc?.customContractType : dc?.contractType) ||
+    options.contractType ||
+    'Independent Contractor / Software Agreement';
+  const effectivePaymentStructure =
+    (dc?.paymentStructure === 'Other' ? dc?.customPaymentStructure : dc?.paymentStructure) || 'Not specified';
+  const effectivePaymentRange =
+    (dc?.paymentRange === 'Other' ? dc?.customPaymentRange : dc?.paymentRange) || 'Not specified';
+  const effectiveClientType =
+    (dc?.clientType === 'Other' ? dc?.customClientType : dc?.clientType) || 'Not specified';
+  const effectiveDuration =
+    (dc?.duration === 'Other' ? dc?.customDuration : dc?.duration) || 'Not specified';
+  const effectivePriorities =
+    dc?.priorities && dc.priorities.length > 0
+      ? dc.priorities.map((p) => (p === 'Other' && dc.customPriority ? dc.customPriority : p)).join(', ')
+      : 'Standard freelancer protections';
+
   const userPrompt = `
-Contract Type Context: ${options.contractType || 'Independent Contractor / Software Agreement'}
-User Jurisdiction: ${options.jurisdiction || 'Default / Not Specified'}
-Role: ${options.userRole || 'Contractor / Freelancer'}
+COMMERCIAL DEAL CONTEXT (Provided by Contractor):
+- Contract Type: ${effectiveContractType}
+- Compensation Model: ${effectivePaymentStructure} (${effectivePaymentRange})
+- Client Profile: ${effectiveClientType}
+- Scope of Work: ${dc?.workDescription || 'Not specified'}
+- Engagement Duration: ${effectiveDuration}
+- Contractor Top Priorities: ${effectivePriorities}
+- User Jurisdiction: ${options.jurisdiction || 'Default / Not Specified'}
+- Role: ${options.userRole || 'Contractor / Freelancer'}
 
 CONTRACT TEXT:
 ---
