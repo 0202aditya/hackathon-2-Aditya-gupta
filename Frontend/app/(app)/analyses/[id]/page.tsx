@@ -803,7 +803,7 @@ function AnalysisResultsContent({ analysisId }: { analysisId: string }) {
                     }}
                     className={`w-full text-left p-4.5 transition-colors flex items-start justify-between gap-3 ${
                       isSelected
-                        ? "bg-(--surface-raised) border-l-[3px] border-l-(--primary)"
+                        ? "bg-(--surface-raised) border-l-0.75 border-l-(--primary)"
                         : "hover:bg-(--surface-raised)/50"
                     }`}
                   >

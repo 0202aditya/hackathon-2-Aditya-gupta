@@ -92,7 +92,7 @@ export function AppShell({
             height={34}
             className="rounded-md shrink-0"
           />
-          <span className="font-serif font-semibold text-base tracking-tight text-(--foreground) whitespace-nowrap overflow-hidden transition-all duration-300 opacity-0 group-hover/sidebar:opacity-100 max-w-0 group-hover/sidebar:max-w-[190px]">
+          <span className="font-serif font-semibold text-base tracking-tight text-(--foreground) whitespace-nowrap overflow-hidden transition-all duration-300 opacity-0 group-hover/sidebar:opacity-100 max-w-0 group-hover/sidebar:max-w-47.5">
             Contract Auto-Redline
           </span>
         </div>
@@ -117,7 +117,7 @@ export function AppShell({
                 {/* Active left indicator bar */}
                 {active && (
                   <span
-                    className="absolute left-0 top-2 bottom-2 w-[3px] bg-(--primary) rounded-r-full"
+                    className="absolute left-0 top-2 bottom-2 w-0.75 bg-(--primary) rounded-r-full"
                     aria-hidden="true"
                   />
                 )}
@@ -129,7 +129,7 @@ export function AppShell({
                   strokeWidth={2}
                   aria-hidden="true"
                 />
-                <span className="whitespace-nowrap overflow-hidden transition-all duration-300 opacity-0 group-hover/sidebar:opacity-100 max-w-0 group-hover/sidebar:max-w-[160px]">
+                <span className="whitespace-nowrap overflow-hidden transition-all duration-300 opacity-0 group-hover/sidebar:opacity-100 max-w-0 group-hover/sidebar:max-w-40">
                   {item.label}
                 </span>
               </Link>
@@ -142,7 +142,7 @@ export function AppShell({
           <div className="flex items-center justify-between gap-2.5">
             {/* Expanded profile: Avatar + Email */}
             <div
-              className="flex items-center gap-2.5 min-w-0 flex-1 overflow-hidden transition-all duration-300 opacity-0 group-hover/sidebar:opacity-100 max-w-0 group-hover/sidebar:max-w-[175px]"
+              className="flex items-center gap-2.5 min-w-0 flex-1 overflow-hidden transition-all duration-300 opacity-0 group-hover/sidebar:opacity-100 max-w-0 group-hover/sidebar:max-w-43.75"
               title={`Signed in as: ${displayEmail}`}
             >
               <div className="w-8 h-8 rounded-full bg-(--surface-raised) border border-(--border) flex items-center justify-center font-bold text-xs text-(--primary) shrink-0">
@@ -243,7 +243,7 @@ export function AppShell({
             </nav>
 
             <div className="pt-4 border-t border-(--border) flex items-center justify-between">
-              <span className="text-xs text-(--muted) truncate max-w-[200px]">
+              <span className="text-xs text-(--muted) truncate max-w-50">
                 {displayEmail}
               </span>
               <button

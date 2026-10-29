@@ -132,7 +132,7 @@ export default function LandingPage() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 relative">
             {/* Desktop connecting line */}
             <div
-              className="hidden md:block absolute top-7 left-[15%] right-[15%] h-[1px] bg-(--border) z-0"
+              className="hidden md:block absolute top-7 left-[15%] right-[15%] h-px bg-(--border) z-0"
               aria-hidden="true"
             />
 
