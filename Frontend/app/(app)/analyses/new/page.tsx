@@ -162,7 +162,7 @@ export default function NewAnalysisPage() {
 
   return (
     <AppShell>
-      <div className="max-w-280 mx-auto w-full px-4 sm:px-6 lg:px-8 py-8 space-y-10">
+      <div className="max-w-280 mx-auto w-full px-4 sm:px-6 lg:px-8 py-8 space-y-10 animate-fade-up">
         {/* Header */}
         <div className="border-b border-(--border) pb-6 space-y-3">
           <div className="flex items-center justify-between gap-3 flex-wrap">
@@ -297,7 +297,7 @@ export default function NewAnalysisPage() {
                 })}
               </div>
               {contractType === "Other" && (
-                <div className="pt-1.5 animate-in fade-in duration-150">
+                <div className="pt-1.5 animate-dropdown">
                   <Input
                     placeholder="Enter contract type (e.g. Subcontractor, Advisory, IP Assignment)..."
                     value={customContractType}
@@ -337,7 +337,7 @@ export default function NewAnalysisPage() {
                   })}
                 </div>
                 {paymentStructure === "Other" && (
-                  <div className="pt-1.5 animate-in fade-in duration-150">
+                  <div className="pt-1.5 animate-dropdown">
                     <Input
                       placeholder="Enter payment structure (e.g. Milestone-based, Revenue share, Equity)..."
                       value={customPaymentStructure}
@@ -371,7 +371,7 @@ export default function NewAnalysisPage() {
                   })}
                 </div>
                 {paymentRange === "Other" && (
-                  <div className="pt-1.5 animate-in fade-in duration-150">
+                  <div className="pt-1.5 animate-dropdown">
                     <Input
                       placeholder="Enter custom project value or rate (e.g. $125/hr, $75k total)..."
                       value={customPaymentRange}
@@ -409,7 +409,7 @@ export default function NewAnalysisPage() {
                 })}
               </div>
               {clientType === "Other" && (
-                <div className="pt-1.5 animate-in fade-in duration-150">
+                <div className="pt-1.5 animate-dropdown">
                   <Input
                     placeholder="Enter client type (e.g. Non-profit organization, University, Venture capital)..."
                     value={customClientType}
@@ -483,7 +483,7 @@ export default function NewAnalysisPage() {
                 })}
               </div>
               {duration === "Other" && (
-                <div className="pt-1.5 animate-in fade-in duration-150">
+                <div className="pt-1.5 animate-dropdown">
                   <Input
                     placeholder="Enter expected timeline (e.g. 2 weeks, Multi-year roadmap)..."
                     value={customDuration}
@@ -539,7 +539,7 @@ export default function NewAnalysisPage() {
                 })}
               </div>
               {priorities.includes("Other") && (
-                <div className="pt-1.5 animate-in fade-in duration-150">
+                <div className="pt-1.5 animate-dropdown">
                   <Input
                     placeholder="Enter custom priority (e.g. Strict confidentiality, Payment in USD only)..."
                     value={customPriority}

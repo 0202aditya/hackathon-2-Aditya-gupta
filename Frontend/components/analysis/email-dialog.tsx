@@ -104,9 +104,9 @@ Best regards,
       role="dialog"
       aria-modal="true"
       aria-labelledby="email-dialog-title"
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs"
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-fade-in"
     >
-      <div className="w-full max-w-160 rounded-2xl bg-(--surface) border border-(--border) p-6 sm:p-8 space-y-5 shadow-2xl animate-in fade-in zoom-in-95 duration-150 max-h-[90vh] flex flex-col">
+      <div className="w-full max-w-160 rounded-2xl bg-(--surface) border border-(--border) p-6 sm:p-8 space-y-5 shadow-2xl animate-scale-in max-h-[90vh] flex flex-col">
         {/* Header */}
         <div className="flex items-start justify-between gap-4 pb-3 border-b border-(--border)">
           <div className="flex items-center gap-3">

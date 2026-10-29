@@ -77,7 +77,7 @@ export default function LandingPage() {
       <main className="flex-1 max-w-280 w-full mx-auto px-4 sm:px-6 py-12 lg:py-20 space-y-16 lg:space-y-28">
         
         {/* Section: Hero */}
-        <section className="flex flex-col lg:flex-row items-center justify-between gap-12 lg:gap-16 pt-4">
+        <section className="flex flex-col lg:flex-row items-center justify-between gap-12 lg:gap-16 pt-4 animate-fade-up">
           {/* Left Column: Text (about 50%) */}
           <div className="w-full lg:w-1/2 space-y-6 text-left">
             <h1 className="heading-landing text-(--foreground) tracking-tight">
@@ -91,13 +91,13 @@ export default function LandingPage() {
 
             <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 pt-2">
               <Link href="/analyses/new">
-                <Button variant="primary" size="lg" className="w-full sm:w-auto">
+                <Button variant="primary" size="lg" className="w-full sm:w-auto interactive-transition hover:scale-[1.02] cursor-pointer">
                   Review a contract
                 </Button>
               </Link>
 
               <a href="#example-redline">
-                <Button variant="outline" size="lg" className="w-full sm:w-auto">
+                <Button variant="outline" size="lg" className="w-full sm:w-auto interactive-transition hover:scale-[1.02] cursor-pointer">
                   See an example
                 </Button>
               </a>
@@ -109,8 +109,8 @@ export default function LandingPage() {
           </div>
 
           {/* Right Column: Hero Image (1200 x 900 transparent background with soft glow) */}
-          <div className="w-full lg:w-1/2 flex justify-center lg:justify-end">
-            <div className="relative w-full max-w-135 aspect-[4/3] rounded-3xl overflow-hidden">
+          <div className="w-full lg:w-1/2 flex justify-center lg:justify-end animate-fade-up animation-delay-150">
+            <div className="relative w-full max-w-135 aspect-[4/3] rounded-3xl overflow-hidden transition-transform duration-500 hover:scale-[1.015]">
               <Image
                 src="/images/hero.png"
                 alt="A contract with high and medium risk clauses highlighted, next to a suggested rewrite."
@@ -124,7 +124,7 @@ export default function LandingPage() {
         </section>
 
         {/* Section: How It Works */}
-        <section id="how-it-works" className="space-y-10 scroll-mt-24">
+        <section id="how-it-works" className="space-y-10 scroll-mt-24 animate-fade-up animation-delay-225">
           <h2 className="heading-2 text-(--foreground)">
             Three steps to a safer contract
           </h2>
@@ -155,8 +155,8 @@ export default function LandingPage() {
                   "Every risky clause explained, with replacement wording you can copy and send.",
               },
             ].map((s) => (
-              <div key={s.step} className="relative z-10 flex flex-col items-start space-y-4">
-                <div className="w-14 h-14 rounded-full bg-(--surface-raised) border border-(--border) flex items-center justify-center font-bold text-lg text-(--primary) shrink-0">
+              <div key={s.step} className="relative z-10 flex flex-col items-start space-y-4 group">
+                <div className="w-14 h-14 rounded-full bg-(--surface-raised) border border-(--border) group-hover:border-(--primary) flex items-center justify-center font-bold text-lg text-(--primary) shrink-0 interactive-transition group-hover:scale-105">
                   {s.step}
                 </div>
                 <div className="space-y-1.5">
@@ -173,7 +173,7 @@ export default function LandingPage() {
         </section>
 
         {/* Section: Example (The Memorable Moment) */}
-        <section className="space-y-8 scroll-mt-24">
+        <section className="space-y-8 scroll-mt-24 animate-fade-up animation-delay-225">
           <h2 className="heading-2 text-(--foreground)">
             Here&apos;s what a redline looks like
           </h2>
@@ -181,7 +181,7 @@ export default function LandingPage() {
         </section>
 
         {/* Section: What You Get */}
-        <section className="space-y-10">
+        <section className="space-y-10 animate-fade-up animation-delay-300">
           <h2 className="heading-2 text-(--foreground)">
             Everything you need to negotiate with confidence
           </h2>
@@ -193,11 +193,11 @@ export default function LandingPage() {
               return (
                 <div
                   key={item.title}
-                  className={`py-6 flex items-start gap-4 border-b border-(--border) ${
+                  className={`py-6 flex items-start gap-4 border-b border-(--border) group interactive-transition hover:bg-(--surface-raised)/25 rounded-xl px-2 ${
                     index % 2 === 0 ? "md:pr-6" : "md:pl-6"
                   }`}
                 >
-                  <div className="p-2 rounded-lg bg-(--surface-raised) border border-(--border) text-(--primary) shrink-0">
+                  <div className="p-2 rounded-lg bg-(--surface-raised) border border-(--border) text-(--primary) shrink-0 group-hover:scale-105 interactive-transition">
                     <Icon className="w-5 h-5" strokeWidth={1.75} aria-hidden="true" />
                   </div>
                   <div className="space-y-1">
@@ -213,7 +213,7 @@ export default function LandingPage() {
         </section>
 
         {/* Section: Privacy */}
-        <section id="privacy" className="space-y-8 scroll-mt-24">
+        <section id="privacy" className="space-y-8 scroll-mt-24 animate-fade-up animation-delay-300">
           <h2 className="heading-2 text-(--foreground)">
             Your contract stays yours
           </h2>
@@ -223,8 +223,8 @@ export default function LandingPage() {
               {privacyPoints.map((point) => {
                 const Icon = point.icon;
                 return (
-                  <div key={point.title} className="flex items-start gap-3.5">
-                    <Icon className="w-5 h-5 text-(--primary) shrink-0 mt-1" strokeWidth={1.75} />
+                  <div key={point.title} className="flex items-start gap-3.5 group">
+                    <Icon className="w-5 h-5 text-(--primary) shrink-0 mt-1 group-hover:scale-110 interactive-transition" strokeWidth={1.75} />
                     <p className="text-base leading-relaxed font-sans text-(--foreground)">
                       <span className="font-bold mr-1">{point.title}</span>
                       <span className="text-(--muted)">{point.subtitle}</span>
@@ -244,13 +244,13 @@ export default function LandingPage() {
         </section>
 
         {/* Section: Final Call to Action */}
-        <section className="rounded-3xl bg-(--surface-raised) border border-(--border) p-8 sm:p-12 text-center space-y-6">
+        <section className="rounded-3xl bg-(--surface-raised) border border-(--border) p-8 sm:p-12 text-center space-y-6 animate-fade-up animation-delay-450 shadow-xl">
           <h2 className="heading-2 text-(--foreground) max-w-150 mx-auto">
             Read it before you sign it.
           </h2>
           <div className="flex justify-center">
             <Link href="/analyses/new">
-              <Button variant="primary" size="lg">
+              <Button variant="primary" size="lg" className="interactive-transition hover:scale-105 cursor-pointer">
                 Review a contract
               </Button>
             </Link>

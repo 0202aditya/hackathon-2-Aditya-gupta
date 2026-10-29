@@ -24,6 +24,7 @@ import {
   Loader2,
   Briefcase,
   ChevronDown,
+  Calendar,
 } from "lucide-react";
 import { generateRedlineDocx } from "@/lib/export/docx-generator";
 
@@ -255,6 +256,18 @@ function AnalysisResultsContent({ analysisId }: { analysisId: string }) {
   const [showKeyboardHelp, setShowKeyboardHelp] = React.useState(false);
   const [exportNotification, setExportNotification] = React.useState<string | null>(null);
   const [isSummaryExpanded, setIsSummaryExpanded] = React.useState<boolean>(false);
+  const [isExportOpen, setIsExportOpen] = React.useState<boolean>(false);
+  const exportRef = React.useRef<HTMLDivElement>(null);
+
+  React.useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (exportRef.current && !exportRef.current.contains(event.target as Node)) {
+        setIsExportOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
   const [dealContext, setDealContext] = React.useState<any>(
     analysisId === "acme-msa"
       ? {
@@ -560,6 +573,39 @@ function AnalysisResultsContent({ analysisId }: { analysisId: string }) {
     }
   };
 
+  const handleExportIcs = () => {
+    try {
+      const icsLines = [
+        "BEGIN:VCALENDAR",
+        "VERSION:2.0",
+        "PRODID:-//Contract Auto-Redline//EN",
+        ...obligations.map((o) => [
+          "BEGIN:VEVENT",
+          `SUMMARY:${o.title} (${contractTitle})`,
+          `DESCRIPTION:${o.description.replace(/\n/g, " ")}`,
+          "STATUS:CONFIRMED",
+          "END:VEVENT",
+        ].join("\r\n")),
+        "END:VCALENDAR",
+      ].join("\r\n");
+
+      const blob = new Blob([icsLines], { type: "text/calendar;charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `${contractTitle.replace(/[^a-zA-Z0-9_-]/g, "_")}_Deadlines.ics`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      setExportNotification("Calendar (.ics) downloaded successfully!");
+      setTimeout(() => setExportNotification(null), 3500);
+    } catch (err) {
+      console.error("Export .ics error:", err);
+      setExportNotification("Failed to export calendar.");
+    }
+  };
+
   const handleExportPdf = () => {
     window.open(`/analyses/${analysisId}/report`, "_blank");
   };
@@ -662,7 +708,7 @@ function AnalysisResultsContent({ analysisId }: { analysisId: string }) {
 
   return (
     <AppShell>
-      <div className="max-w-310 mx-auto w-full px-4 sm:px-6 py-6 space-y-8">
+      <div className="max-w-310 mx-auto w-full px-4 sm:px-6 py-6 space-y-8 animate-fade-up">
         
         {/* Sticky Top Summary Bar */}
         <section className="sticky top-0 z-20 rounded-2xl bg-(--surface) border border-(--border) p-4 sm:p-5 shadow-xl backdrop-blur-md">
@@ -734,29 +780,55 @@ function AnalysisResultsContent({ analysisId }: { analysisId: string }) {
                   <span>Write email ({acceptedClauses.length})</span>
                 </Button>
 
-                <div className="relative group">
-                  <Button variant="secondary" size="sm" className="h-10 px-4 gap-2 text-sm font-bold whitespace-nowrap">
+                <div className="relative" ref={exportRef}>
+                  <Button
+                    variant="secondary"
+                    size="sm"
+                    onClick={() => setIsExportOpen((prev) => !prev)}
+                    className="h-10 px-4 gap-2 text-sm font-bold whitespace-nowrap interactive-transition cursor-pointer"
+                  >
                     <Download className="w-4 h-4" />
                     <span>Export</span>
+                    <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-200 ${isExportOpen ? "rotate-180" : ""}`} />
                   </Button>
-                  <div className="absolute right-0 top-full mt-1.5 w-52 rounded-xl bg-(--surface-raised) border border-(--border) shadow-2xl py-1.5 hidden group-hover:block z-30">
-                    <button
-                      type="button"
-                      onClick={handleExportDocx}
-                      className="w-full text-left px-4 py-2.5 text-xs font-sans text-(--foreground) hover:bg-(--surface) hover:text-(--primary) transition-colors flex items-center gap-2"
-                    >
-                      <Download className="w-4 h-4 text-(--primary)" />
-                      <span>Word (.docx) with redlines</span>
-                    </button>
-                    <button
-                      type="button"
-                      onClick={handleExportPdf}
-                      className="w-full text-left px-4 py-2.5 text-xs font-sans text-(--foreground) hover:bg-(--surface) hover:text-(--primary) transition-colors flex items-center gap-2"
-                    >
-                      <Printer className="w-4 h-4 text-(--risk-low)" />
-                      <span>PDF risk report</span>
-                    </button>
-                  </div>
+
+                  {isExportOpen && (
+                    <div className="absolute right-0 top-full mt-2 w-56 rounded-xl bg-(--surface-raised) border border-(--border) shadow-2xl py-2 z-30 animate-dropdown">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setIsExportOpen(false);
+                          handleExportDocx();
+                        }}
+                        className="w-full text-left px-4 py-2.5 text-xs font-sans font-medium text-(--foreground) hover:bg-(--surface) hover:text-(--primary) interactive-transition flex items-center gap-2.5 cursor-pointer"
+                      >
+                        <Download className="w-4 h-4 text-(--primary)" />
+                        <span>Word (.docx) with redlines</span>
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setIsExportOpen(false);
+                          handleExportIcs();
+                        }}
+                        className="w-full text-left px-4 py-2.5 text-xs font-sans font-medium text-(--foreground) hover:bg-(--surface) hover:text-(--primary) interactive-transition flex items-center gap-2.5 cursor-pointer"
+                      >
+                        <Calendar className="w-4 h-4 text-(--risk-medium)" />
+                        <span>Calendar (.ics) deadlines</span>
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setIsExportOpen(false);
+                          handleExportPdf();
+                        }}
+                        className="w-full text-left px-4 py-2.5 text-xs font-sans font-medium text-(--foreground) hover:bg-(--surface) hover:text-(--primary) interactive-transition flex items-center gap-2.5 cursor-pointer border-t border-(--border)/60 mt-1 pt-2"
+                      >
+                        <Printer className="w-4 h-4 text-(--risk-low)" />
+                        <span>PDF risk report</span>
+                      </button>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
@@ -805,7 +877,7 @@ function AnalysisResultsContent({ analysisId }: { analysisId: string }) {
             </div>
 
             {isDealContextOpen && (
-              <div className="space-y-4 pt-3 border-t border-(--border) animate-in fade-in duration-150">
+              <div className="space-y-4 pt-3 border-t border-(--border) animate-dropdown">
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
                   <div className="p-3.5 rounded-xl bg-(--surface-raised) border border-(--border) space-y-1">
                     <span className="text-zinc-400 block font-sans">Contract Type</span>

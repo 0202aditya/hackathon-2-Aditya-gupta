@@ -210,7 +210,7 @@ export default function DashboardPage() {
 
   return (
     <AppShell>
-      <div className="max-w-280 mx-auto w-full px-4 sm:px-6 py-8 space-y-8">
+      <div className="max-w-280 mx-auto w-full px-4 sm:px-6 py-8 space-y-8 animate-fade-up">
         {/* Header Bar */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-(--border)">
           <div>

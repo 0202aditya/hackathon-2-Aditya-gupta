@@ -114,7 +114,7 @@ export default function AnalysisReportPage({ params }: PageProps) {
   const dc = analysis?.deal_context;
 
   return (
-    <div className="min-h-screen bg-(--background) text-(--foreground) p-4 sm:p-8">
+    <div className="min-h-screen bg-(--background) text-(--foreground) p-4 sm:p-8 animate-fade-in">
       {/* Top action toolbar (hidden when printing) */}
       <div className="max-w-280 mx-auto mb-8 flex items-center justify-between gap-4 print:hidden">
         <Link href={`/analyses/${id}`}>
