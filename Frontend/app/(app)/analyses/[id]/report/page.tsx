@@ -44,6 +44,16 @@ interface PageProps {
   params: Promise<{ id: string }>;
 }
 
+function normalizeRiskScore(score: number, riskLevel: RiskLevel | string): number {
+  if (riskLevel === "high" && score <= 40) {
+    return 100 - score;
+  }
+  if (riskLevel === "low" && score >= 60) {
+    return 100 - score;
+  }
+  return score;
+}
+
 export default function AnalysisReportPage({ params }: PageProps) {
   const { id } = React.use(params);
   const [analysis, setAnalysis] = React.useState<ReportAnalysis | null>(null);
@@ -79,8 +89,9 @@ export default function AnalysisReportPage({ params }: PageProps) {
   }
 
   const title = analysis?.title || "Contract Risk Assessment Report";
-  const score = analysis?.risk_score ?? 15;
   const overallRisk = (analysis?.overall_risk as RiskLevel) || "high";
+  const rawScore = analysis?.risk_score ?? 85;
+  const score = normalizeRiskScore(rawScore, overallRisk);
   const summary = analysis?.summary || "Executive summary of contract review.";
   const clauses = analysis?.clauses || [];
   const missing = analysis?.missing_protections || [];

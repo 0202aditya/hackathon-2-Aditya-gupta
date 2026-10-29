@@ -174,6 +174,17 @@ const MOCK_CLAUSES: ClauseItem[] = [
   },
 ];
 
+// Helper to ensure High Risk = High Number (e.g. 70-100) and Low Risk = Low Number (e.g. 0-30)
+function normalizeRiskScore(score: number, riskLevel: RiskLevel | string): number {
+  if (riskLevel === "high" && score <= 40) {
+    return 100 - score;
+  }
+  if (riskLevel === "low" && score >= 60) {
+    return 100 - score;
+  }
+  return score;
+}
+
 function AnalysisResultsContent({ analysisId }: { analysisId: string }) {
   const searchParams = useSearchParams();
   const isAnalyzingInitial = searchParams.get("analyzing") === "true";
@@ -241,6 +252,7 @@ function AnalysisResultsContent({ analysisId }: { analysisId: string }) {
   const [isEmailModalOpen, setIsEmailModalOpen] = React.useState(false);
   const [showKeyboardHelp, setShowKeyboardHelp] = React.useState(false);
   const [exportNotification, setExportNotification] = React.useState<string | null>(null);
+  const [isSummaryExpanded, setIsSummaryExpanded] = React.useState<boolean>(false);
   const [aiNegotiationEmail, setAiNegotiationEmail] = React.useState<{
     subject: string;
     body: string;
@@ -273,8 +285,10 @@ function AnalysisResultsContent({ analysisId }: { analysisId: string }) {
 
         setContractTitle(a.title || "Contract Analysis");
         setContractType(a.contract_type || "Agreement");
-        setOverallScore(a.risk_score || 50);
-        setOverallRisk((a.overall_risk as RiskLevel) || "medium");
+        const rawScore = a.risk_score || 50;
+        const risk = (a.overall_risk as RiskLevel) || "medium";
+        setOverallRisk(risk);
+        setOverallScore(normalizeRiskScore(rawScore, risk));
         setSummary(a.summary || "");
 
         if (a.raw_ai_output?.negotiationEmail) {
@@ -651,12 +665,23 @@ function AnalysisResultsContent({ analysisId }: { analysisId: string }) {
                 <h1 className="text-lg sm:text-xl font-bold font-sans text-white leading-snug" title={contractTitle}>
                   {contractTitle}
                 </h1>
-                <p className="text-xs sm:text-sm text-zinc-300 leading-relaxed">
-                  <span className={`font-bold mr-1.5 ${overallRisk === 'high' ? 'text-(--risk-high)' : overallRisk === 'medium' ? 'text-(--risk-medium)' : 'text-(--risk-low)'}`}>
-                    {overallRisk.toUpperCase()} risk ({overallScore}/100):
-                  </span>
-                  {summary}
-                </p>
+                <div className="space-y-1">
+                  <p className={`text-xs sm:text-sm text-zinc-300 leading-relaxed ${!isSummaryExpanded ? "line-clamp-2" : ""}`}>
+                    <span className={`font-bold mr-1.5 ${overallRisk === 'high' ? 'text-(--risk-high)' : overallRisk === 'medium' ? 'text-(--risk-medium)' : 'text-(--risk-low)'}`}>
+                      {overallRisk.toUpperCase()} risk ({overallScore}/100):
+                    </span>
+                    {summary}
+                  </p>
+                  {summary && summary.length > 100 && (
+                    <button
+                      type="button"
+                      onClick={() => setIsSummaryExpanded((prev) => !prev)}
+                      className="text-xs font-bold text-blue-400 hover:text-blue-300 inline-flex items-center gap-1 transition-colors cursor-pointer"
+                    >
+                      <span>{isSummaryExpanded ? "Show less" : "Read more"}</span>
+                    </button>
+                  )}
+                </div>
               </div>
             </div>
 

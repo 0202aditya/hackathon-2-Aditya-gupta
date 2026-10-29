@@ -177,6 +177,11 @@ Analyze the provided contract thoroughly:
 3. Identify standard freelancer protections MISSING from this contract (e.g. kill fee, mutual indemnity cap, IP transfer upon full payment only).
 4. Extract all explicit obligations and deadlines.
 5. Compose a professional negotiation email proposing the redlines respectfully.
+6. Calculate 'overallScore' as a 0-100 Risk Score:
+   - 0 to 30 = Low Risk (safe, contractor-friendly terms)
+   - 31 to 69 = Medium Risk (standard paper with moderate one-sided terms)
+   - 70 to 100 = High Risk (severe liabilities, dangerous non-competes, predatory terms)
+   IMPORTANT: Higher score means HIGHER risk.
 `;
 
   const userPrompt = `
@@ -194,6 +199,14 @@ ${options.contractText}
     const { text } = await callGeminiWithRetry(ai, systemPrompt, userPrompt);
     const parsedJson = JSON.parse(text);
     const validated = ContractAnalysisResultSchema.parse(parsedJson);
+
+    // Enforce Higher Number = Higher Risk convention
+    if (validated.overallRiskLevel === 'high' && validated.overallScore <= 40) {
+      validated.overallScore = 100 - validated.overallScore;
+    } else if (validated.overallRiskLevel === 'low' && validated.overallScore >= 60) {
+      validated.overallScore = 100 - validated.overallScore;
+    }
+
     return validated;
   } catch (error: unknown) {
     console.error('Contract Analysis Pipeline Error:', error);

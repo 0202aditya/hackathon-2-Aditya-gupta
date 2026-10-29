@@ -76,6 +76,16 @@ interface DbAnalysisItem {
   risk_score?: number;
 }
 
+function normalizeRiskScore(score: number, riskLevel: RiskLevel | string): number {
+  if (riskLevel === "high" && score <= 40) {
+    return 100 - score;
+  }
+  if (riskLevel === "low" && score >= 60) {
+    return 100 - score;
+  }
+  return score;
+}
+
 export default function DashboardPage() {
   const router = useRouter();
   const [reviews, setReviews] = React.useState<ContractReviewItem[]>([]);
@@ -109,7 +119,7 @@ export default function DashboardPage() {
                   year: "numeric",
                 }),
                 riskLevel: (item.overall_risk as RiskLevel) || "medium",
-                riskScore: item.risk_score || 50,
+                riskScore: normalizeRiskScore(item.risk_score || 50, item.overall_risk || "medium"),
               }))
             );
           } else {
