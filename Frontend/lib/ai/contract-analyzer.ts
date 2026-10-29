@@ -61,6 +61,7 @@ export interface AnalyzeContractOptions {
   contractType?: string;
   jurisdiction?: string;
   userRole?: string;
+  nonNegotiables?: string;
   dealContext?: DealContext;
 }
 
@@ -204,6 +205,9 @@ Analyze the provided contract thoroughly:
    - If priorities include 'Keep my IP', flag ANY immediate or unconditional assignment of developer tools and IP.
    - If priorities include 'Work for other clients', strictly challenge any non-compete, lockout, or exclusivity.
    - Compare contract deliverable and acceptance terms against the user's stated 'Scope of Work'.
+8. CONTRACTOR NON-NEGOTIABLES / MUST-KEEPS:
+   - If the contractor has specified permanent non-negotiables / must-keeps (e.g., retaining pre-existing code/frameworks, strict payment terms, liability caps, specific termination notice), treat ANY clause in the contract that directly violates, restricts, or conflicts with these terms as an elevated HIGH-RISK violation.
+   - You MUST explicitly highlight these violations in 'issueRationale' and propose replacement language in 'suggestedRevision' that firmly safeguards the contractor's non-negotiable boundaries.
 `;
 
   const dc = options.dealContext;
@@ -232,6 +236,7 @@ COMMERCIAL DEAL CONTEXT (Provided by Contractor):
 - Scope of Work: ${dc?.workDescription || 'Not specified'}
 - Engagement Duration: ${effectiveDuration}
 - Contractor Top Priorities: ${effectivePriorities}
+- Contractor Non-Negotiables (Must-Keeps from User Profile): ${options.nonNegotiables || 'None specified'}
 - User Jurisdiction: ${options.jurisdiction || 'Default / Not Specified'}
 - Role: ${options.userRole || 'Contractor / Freelancer'}
 

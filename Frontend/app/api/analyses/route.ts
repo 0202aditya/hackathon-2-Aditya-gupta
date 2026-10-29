@@ -109,6 +109,7 @@ export async function POST(req: NextRequest) {
       contractType: effectiveContractType,
       jurisdiction: profile?.jurisdiction || undefined,
       userRole: profile?.entity_type ? `${profile.entity_type} (${profile.services || ''})` : undefined,
+      nonNegotiables: profile?.non_negotiables || undefined,
       dealContext,
     });
 
