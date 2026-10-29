@@ -241,6 +241,13 @@ function AnalysisResultsContent({ analysisId }: { analysisId: string }) {
   const [isEmailModalOpen, setIsEmailModalOpen] = React.useState(false);
   const [showKeyboardHelp, setShowKeyboardHelp] = React.useState(false);
   const [exportNotification, setExportNotification] = React.useState<string | null>(null);
+  const [aiNegotiationEmail, setAiNegotiationEmail] = React.useState<{
+    subject: string;
+    body: string;
+  } | null>(analysisId === "acme-msa" ? {
+    subject: "Proposed Adjustments - Master Services Agreement (MSA)",
+    body: `Hi Alex,\n\nThank you for sending over the Master Services Agreement for our upcoming development work. I'm excited about collaborating on this project and helping build out the platform.\n\nI've reviewed the agreement in detail. Overall the core scope is well aligned, but to ensure standard risk allocation for independent contracting, I've outlined a few key revisions below:\n\n1. Limitation of Liability (Clause 8): Capping total liability to fees paid in the preceding 12 months rather than unlimited exposure.\n2. Intellectual Property (Clause 5): Clarifying that IP ownership transfers upon full payment of relevant invoices, and reserving standard pre-existing developer utilities.\n3. Non-Compete / Exclusivity: Ensuring non-solicitation bounds are reasonably defined.\n\nCould you let me know if these adjustments work for your team? I can also mark up the original Word document directly if that's more convenient.\n\nLooking forward to getting started!\n\nBest regards,\nIndependent Contractor`,
+  } : null);
 
   const [isLoadingFromDb, setIsLoadingFromDb] = React.useState(analysisId !== "acme-msa");
   const [fetchError, setFetchError] = React.useState<string | null>(null);
@@ -269,6 +276,10 @@ function AnalysisResultsContent({ analysisId }: { analysisId: string }) {
         setOverallScore(a.risk_score || 50);
         setOverallRisk((a.overall_risk as RiskLevel) || "medium");
         setSummary(a.summary || "");
+
+        if (a.raw_ai_output?.negotiationEmail) {
+          setAiNegotiationEmail(a.raw_ai_output.negotiationEmail);
+        }
 
         if (a.missing_protections && Array.isArray(a.missing_protections)) {
           setMissingProtections(a.missing_protections);
@@ -372,21 +383,63 @@ function AnalysisResultsContent({ analysisId }: { analysisId: string }) {
     [analysisId]
   );
 
-  // Jump to Next Unresolved Issue
-  const handleNextIssue = () => {
-    const nextUnresolved = clauses.find(
+  // Advance to next clause in sequence (cycling forward)
+  const handleNextClause = React.useCallback(() => {
+    const list = filteredClauses.length > 0 ? filteredClauses : clauses;
+    if (list.length === 0) return;
+    const currentIndex = list.findIndex((c) => c.id === selectedId);
+    const nextIndex = currentIndex >= 0 ? (currentIndex + 1) % list.length : 0;
+    setSelectedId(list[nextIndex].id);
+    setIsEditing(false);
+  }, [filteredClauses, clauses, selectedId]);
+
+  // Jump to Next Unresolved (pending) Issue forward, or cycle
+  const handleNextIssue = React.useCallback(() => {
+    const list = filteredClauses.length > 0 ? filteredClauses : clauses;
+    if (list.length === 0) return;
+    const currentIndex = list.findIndex((c) => c.id === selectedId);
+
+    // 1. Look forward from current index for next pending high/medium risk clause
+    const after = list.slice(currentIndex + 1);
+    const nextPendingAfter = after.find(
       (c) =>
         (c.riskLevel === "high" || c.riskLevel === "medium") &&
-        c.decision === "pending" &&
-        c.id !== selectedId
+        c.decision === "pending"
     );
-    if (nextUnresolved) {
-      setSelectedId(nextUnresolved.id);
-    } else {
-      const anyOther = clauses.find((c) => c.id !== selectedId);
-      if (anyOther) setSelectedId(anyOther.id);
+
+    if (nextPendingAfter) {
+      setSelectedId(nextPendingAfter.id);
+      setIsEditing(false);
+      return;
     }
-  };
+
+    // 2. Wrap around and check from the beginning up to current index
+    const before = list.slice(0, currentIndex > 0 ? currentIndex : 0);
+    const nextPendingBefore = before.find(
+      (c) =>
+        (c.riskLevel === "high" || c.riskLevel === "medium") &&
+        c.decision === "pending"
+    );
+
+    if (nextPendingBefore) {
+      setSelectedId(nextPendingBefore.id);
+      setIsEditing(false);
+      return;
+    }
+
+    // 3. If any other pending clause exists (low risk), pick it
+    const anyPending = list.find((c) => c.decision === "pending" && c.id !== selectedId);
+    if (anyPending) {
+      setSelectedId(anyPending.id);
+      setIsEditing(false);
+      return;
+    }
+
+    // 4. If all pending are resolved, cycle forward to the next clause
+    const nextIndex = currentIndex >= 0 ? (currentIndex + 1) % list.length : 0;
+    setSelectedId(list[nextIndex].id);
+    setIsEditing(false);
+  }, [filteredClauses, clauses, selectedId]);
 
   // Keyboard navigation: J/K to move, A to accept, C to copy
   React.useEffect(() => {
@@ -917,7 +970,7 @@ function AnalysisResultsContent({ analysisId }: { analysisId: string }) {
                   <Button
                     variant="secondary"
                     size="sm"
-                    onClick={handleNextIssue}
+                    onClick={handleNextClause}
                     className="h-10 px-4 gap-2 text-sm font-bold"
                   >
                     <span>Next clause</span>
@@ -1065,6 +1118,7 @@ function AnalysisResultsContent({ analysisId }: { analysisId: string }) {
         onClose={() => setIsEmailModalOpen(false)}
         acceptedClauses={acceptedClauses}
         contractTitle={contractTitle}
+        aiNegotiationEmail={aiNegotiationEmail}
       />
     </AppShell>
   );
