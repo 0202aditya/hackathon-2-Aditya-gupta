@@ -632,10 +632,12 @@ function AnalysisResultsContent({ analysisId }: { analysisId: string }) {
         <section className="sticky top-0 z-20 rounded-2xl bg-(--surface) border border-(--border) p-4 sm:p-5 shadow-xl backdrop-blur-md">
           <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-4">
             
-            {/* Title & Score (responsive flex with truncation prevention) */}
-            <div className="flex items-center gap-4 min-w-0 flex-1">
-              <ScoreRing score={overallScore} size={62} strokeWidth={5} />
-              <div className="space-y-1 min-w-0 flex-1">
+            {/* Title & Score (responsive flex with full text readability) */}
+            <div className="flex items-start gap-4 min-w-0 flex-1">
+              <div className="shrink-0 mt-0.5">
+                <ScoreRing score={overallScore} size={62} strokeWidth={5} />
+              </div>
+              <div className="space-y-1.5 min-w-0 flex-1">
                 <div className="flex items-center gap-2 flex-wrap">
                   <Link href="/dashboard" className="text-xs text-zinc-400 hover:text-white flex items-center gap-1 font-medium transition-colors">
                     <ArrowLeft className="w-3.5 h-3.5" />
@@ -646,10 +648,10 @@ function AnalysisResultsContent({ analysisId }: { analysisId: string }) {
                     {contractType}
                   </span>
                 </div>
-                <h1 className="text-lg sm:text-xl font-bold font-sans text-white truncate" title={contractTitle}>
+                <h1 className="text-lg sm:text-xl font-bold font-sans text-white leading-snug" title={contractTitle}>
                   {contractTitle}
                 </h1>
-                <p className="text-xs sm:text-sm text-zinc-300 truncate">
+                <p className="text-xs sm:text-sm text-zinc-300 leading-relaxed">
                   <span className={`font-bold mr-1.5 ${overallRisk === 'high' ? 'text-(--risk-high)' : overallRisk === 'medium' ? 'text-(--risk-medium)' : 'text-(--risk-low)'}`}>
                     {overallRisk.toUpperCase()} risk ({overallScore}/100):
                   </span>
