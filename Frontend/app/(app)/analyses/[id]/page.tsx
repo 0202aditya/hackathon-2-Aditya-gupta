@@ -24,7 +24,6 @@ import {
   Loader2,
   Briefcase,
   ChevronDown,
-  Calendar,
 } from "lucide-react";
 import { generateRedlineDocx } from "@/lib/export/docx-generator";
 
@@ -573,39 +572,6 @@ function AnalysisResultsContent({ analysisId }: { analysisId: string }) {
     }
   };
 
-  const handleExportIcs = () => {
-    try {
-      const icsLines = [
-        "BEGIN:VCALENDAR",
-        "VERSION:2.0",
-        "PRODID:-//Contract Auto-Redline//EN",
-        ...obligations.map((o) => [
-          "BEGIN:VEVENT",
-          `SUMMARY:${o.title} (${contractTitle})`,
-          `DESCRIPTION:${o.description.replace(/\n/g, " ")}`,
-          "STATUS:CONFIRMED",
-          "END:VEVENT",
-        ].join("\r\n")),
-        "END:VCALENDAR",
-      ].join("\r\n");
-
-      const blob = new Blob([icsLines], { type: "text/calendar;charset=utf-8" });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = `${contractTitle.replace(/[^a-zA-Z0-9_-]/g, "_")}_Deadlines.ics`;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
-      setExportNotification("Calendar (.ics) downloaded successfully!");
-      setTimeout(() => setExportNotification(null), 3500);
-    } catch (err) {
-      console.error("Export .ics error:", err);
-      setExportNotification("Failed to export calendar.");
-    }
-  };
-
   const handleExportPdf = () => {
     window.open(`/analyses/${analysisId}/report`, "_blank");
   };
@@ -774,10 +740,10 @@ function AnalysisResultsContent({ analysisId }: { analysisId: string }) {
                   variant="primary"
                   size="sm"
                   onClick={() => setIsEmailModalOpen(true)}
-                  className="h-10 px-4 gap-2 font-bold text-sm whitespace-nowrap shadow-sm"
+                  className="h-10 px-4 gap-2 font-bold text-sm whitespace-nowrap shadow-sm cursor-pointer"
                 >
                   <Mail className="w-4 h-4" />
-                  <span>Write email ({acceptedClauses.length})</span>
+                  <span>Email Generated</span>
                 </Button>
 
                 <div className="relative" ref={exportRef}>
@@ -804,17 +770,6 @@ function AnalysisResultsContent({ analysisId }: { analysisId: string }) {
                       >
                         <Download className="w-4 h-4 text-(--primary)" />
                         <span>Word (.docx) with redlines</span>
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setIsExportOpen(false);
-                          handleExportIcs();
-                        }}
-                        className="w-full text-left px-4 py-2.5 text-xs font-sans font-medium text-(--foreground) hover:bg-(--surface) hover:text-(--primary) interactive-transition flex items-center gap-2.5 cursor-pointer"
-                      >
-                        <Calendar className="w-4 h-4 text-(--risk-medium)" />
-                        <span>Calendar (.ics) deadlines</span>
                       </button>
                       <button
                         type="button"

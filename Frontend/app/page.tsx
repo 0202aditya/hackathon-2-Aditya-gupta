@@ -10,7 +10,7 @@ import {
   FileEdit,
   AlertCircle,
   Mail,
-  Calendar,
+  Briefcase,
   Lock,
   EyeOff,
   Trash2,
@@ -41,12 +41,12 @@ export default function LandingPage() {
     {
       icon: Mail,
       title: "Negotiation email.",
-      description: "A polite draft covering the changes you accept.",
+      description: "An AI-crafted negotiation email ready to paste and send to clients.",
     },
     {
-      icon: Calendar,
-      title: "Deadline reminders.",
-      description: "Renewal and notice dates added to your calendar.",
+      icon: Briefcase,
+      title: "Commercial deal context.",
+      description: "Risks and redlines tailored to your specific budget, timeline, and IP priorities.",
     },
   ];
 
