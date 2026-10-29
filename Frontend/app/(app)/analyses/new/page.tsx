@@ -16,9 +16,20 @@ import {
   Loader2,
   AlertCircle,
 } from "lucide-react";
+import { createClient } from "@/lib/supabase/client";
 
 export default function NewAnalysisPage() {
   const router = useRouter();
+  const [userEmail, setUserEmail] = React.useState<string | null>(null);
+
+  React.useEffect(() => {
+    const supabase = createClient();
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      if (user?.email) {
+        setUserEmail(user.email);
+      }
+    });
+  }, []);
 
   // Contract tab: "upload" | "paste"
   const [activeTab, setActiveTab] = React.useState<"upload" | "paste">("upload");
@@ -112,13 +123,21 @@ export default function NewAnalysisPage() {
   };
 
   return (
-    <AppShell userEmail="contractor@example.com">
+    <AppShell>
       <div className="max-w-195 mx-auto w-full px-4 sm:px-6 py-8 space-y-10">
         {/* Header */}
         <div className="border-b border-(--border) pb-6 space-y-2">
-          <span className="text-xs uppercase tracking-wider text-(--primary) font-bold">
-            Step 1 of Review
-          </span>
+          <div className="flex items-center justify-between gap-3 flex-wrap">
+            <span className="text-xs uppercase tracking-wider text-(--primary) font-bold">
+              Step 1 of Review
+            </span>
+            {userEmail && (
+              <span className="text-xs px-2.5 py-1 rounded-full bg-(--surface-raised) border border-(--border) text-zinc-300 font-sans font-medium flex items-center gap-1.5" title={`Account: ${userEmail}`}>
+                <span className="w-2 h-2 rounded-full bg-emerald-400" />
+                <span>{userEmail}</span>
+              </span>
+            )}
+          </div>
           <h1 className="heading-2 text-(--foreground)">
             Review a contract
           </h1>

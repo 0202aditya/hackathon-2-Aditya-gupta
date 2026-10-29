@@ -545,7 +545,7 @@ function AnalysisResultsContent({ analysisId }: { analysisId: string }) {
   // Error Loading Screen
   if (fetchError) {
     return (
-      <AppShell userEmail="contractor@example.com">
+      <AppShell>
         <div className="min-h-[70vh] flex items-center justify-center p-4">
           <div className="max-w-md w-full rounded-2xl bg-(--surface) border border-(--border) p-8 text-center space-y-5">
             <AlertCircle className="w-12 h-12 text-(--danger) mx-auto" />
@@ -565,7 +565,7 @@ function AnalysisResultsContent({ analysisId }: { analysisId: string }) {
   // Fast Sleek Loader when opening an already analyzed contract
   if (isLoadingFromDb) {
     return (
-      <AppShell userEmail="contractor@example.com">
+      <AppShell>
         <div className="min-h-[75vh] flex flex-col items-center justify-center p-4 gap-4">
           <Loader2 className="w-10 h-10 animate-spin text-(--primary)" />
           <p className="text-base font-sans font-medium text-zinc-300">
@@ -579,7 +579,7 @@ function AnalysisResultsContent({ analysisId }: { analysisId: string }) {
   // 3-Stage Animated Screen ONLY when freshly analyzing a new contract (?analyzing=true)
   if (isAnalyzingInitial && analyzingStage < 4) {
     return (
-      <AppShell userEmail="contractor@example.com">
+      <AppShell>
         <div className="min-h-[80vh] flex items-center justify-center p-4">
           <div className="w-full max-w-120 rounded-2xl bg-(--surface) border border-(--border) p-8 sm:p-10 text-center space-y-8 shadow-2xl">
             <div className="w-16 h-16 rounded-full bg-[rgba(134,168,255,0.12)] border border-[rgba(134,168,255,0.25)] flex items-center justify-center text-(--primary) mx-auto animate-pulse">
@@ -639,7 +639,7 @@ function AnalysisResultsContent({ analysisId }: { analysisId: string }) {
   const lowCount = clauses.filter((c) => c.riskLevel === "low").length;
 
   return (
-    <AppShell userEmail="contractor@example.com">
+    <AppShell>
       <div className="max-w-310 mx-auto w-full px-4 sm:px-6 py-6 space-y-8">
         
         {/* Sticky Top Summary Bar */}

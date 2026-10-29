@@ -17,6 +17,7 @@ import {
   Layers,
   Loader2,
 } from "lucide-react";
+import { createClient } from "@/lib/supabase/client";
 
 interface ContractReviewItem {
   id: string;
@@ -93,6 +94,16 @@ export default function DashboardPage() {
   const [deletingId, setDeletingId] = React.useState<string | null>(null);
   const [isDeleting, setIsDeleting] = React.useState(false);
   const [isUsingMocks, setIsUsingMocks] = React.useState(false);
+  const [userEmail, setUserEmail] = React.useState<string | null>(null);
+
+  React.useEffect(() => {
+    const supabase = createClient();
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      if (user?.email) {
+        setUserEmail(user.email);
+      }
+    });
+  }, []);
 
   React.useEffect(() => {
     let isMounted = true;
@@ -198,12 +209,20 @@ export default function DashboardPage() {
   };
 
   return (
-    <AppShell userEmail="contractor@example.com">
+    <AppShell>
       <div className="max-w-280 mx-auto w-full px-4 sm:px-6 py-8 space-y-8">
         {/* Header Bar */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-(--border)">
           <div>
-            <h1 className="heading-2 text-(--foreground)">Your reviews</h1>
+            <div className="flex items-center gap-3 flex-wrap">
+              <h1 className="heading-2 text-(--foreground)">Your reviews</h1>
+              {userEmail && (
+                <span className="text-xs px-2.5 py-1 rounded-full bg-(--surface-raised) border border-(--border) text-zinc-300 font-sans font-medium flex items-center gap-1.5" title={`Account: ${userEmail}`}>
+                  <span className="w-2 h-2 rounded-full bg-emerald-400" />
+                  <span>{userEmail}</span>
+                </span>
+              )}
+            </div>
             <p className="text-sm text-(--muted) mt-1">
               Review what you signed, see flagged risks, and check replacement language.
             </p>

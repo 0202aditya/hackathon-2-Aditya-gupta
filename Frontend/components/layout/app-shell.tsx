@@ -34,16 +34,26 @@ export function AppShell({
   const [currentUserEmail, setCurrentUserEmail] = React.useState<string | null>(propUserEmail || null);
 
   React.useEffect(() => {
-    if (!propUserEmail) {
-      supabase.auth.getUser().then(({ data: { user } }) => {
-        if (user?.email) {
-          setCurrentUserEmail(user.email);
-        }
-      });
-    }
-  }, [propUserEmail, supabase]);
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      if (user?.email) {
+        setCurrentUserEmail(user.email);
+      }
+    });
 
-  const displayEmail = currentUserEmail || propUserEmail || "account@contractredline.com";
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (session?.user?.email) {
+        setCurrentUserEmail(session.user.email);
+      }
+    });
+
+    return () => {
+      subscription.unsubscribe();
+    };
+  }, [supabase]);
+
+  const displayEmail = currentUserEmail || propUserEmail || "Account";
 
   const handleSignOut = async () => {
     if (onSignOut) {
@@ -68,9 +78,9 @@ export function AppShell({
 
   return (
     <div className="min-h-screen flex flex-col md:flex-row bg-(--background) text-(--foreground)">
-      {/* Desktop Sidebar: Collapsible on hover (w-16 collapsed -> w-60 expanded) */}
+      {/* Desktop Sidebar: Collapsible on hover (w-16 collapsed -> w-64 expanded) */}
       <aside
-        className="group/sidebar hidden md:flex flex-col w-16 hover:w-60 shrink-0 border-r border-(--border) bg-(--surface) h-screen sticky top-0 z-30 transition-[width] duration-300 ease-in-out overflow-x-hidden shadow-xl"
+        className="group/sidebar hidden md:flex flex-col w-16 hover:w-64 shrink-0 border-r border-(--border) bg-(--surface) h-screen sticky top-0 z-30 transition-[width] duration-300 ease-in-out overflow-x-hidden shadow-xl"
         aria-label="Sidebar Navigation"
       >
         {/* App Logo & Title */}
@@ -82,7 +92,7 @@ export function AppShell({
             height={34}
             className="rounded-md shrink-0"
           />
-          <span className="font-serif font-semibold text-base tracking-tight text-(--foreground) whitespace-nowrap overflow-hidden transition-all duration-300 opacity-0 group-hover/sidebar:opacity-100 max-w-0 group-hover/sidebar:max-w-[180px]">
+          <span className="font-serif font-semibold text-base tracking-tight text-(--foreground) whitespace-nowrap overflow-hidden transition-all duration-300 opacity-0 group-hover/sidebar:opacity-100 max-w-0 group-hover/sidebar:max-w-[190px]">
             Contract Auto-Redline
           </span>
         </div>
@@ -129,19 +139,37 @@ export function AppShell({
 
         {/* User profile & sign-out at bottom */}
         <div className="p-3 border-t border-(--border) bg-(--surface) shrink-0">
-          <div className="flex items-center justify-between gap-2">
-            <div className="min-w-0 overflow-hidden whitespace-nowrap transition-all duration-300 opacity-0 group-hover/sidebar:opacity-100 max-w-0 group-hover/sidebar:max-w-[140px]">
-              <p className="text-xs leading-4 font-sans text-(--foreground) truncate font-bold">
-                {displayEmail}
-              </p>
-              <p className="text-[11px] leading-3 text-(--muted) truncate mt-0.5">
-                Pro Contractor
-              </p>
+          <div className="flex items-center justify-between gap-2.5">
+            {/* Expanded profile: Avatar + Email */}
+            <div
+              className="flex items-center gap-2.5 min-w-0 flex-1 overflow-hidden transition-all duration-300 opacity-0 group-hover/sidebar:opacity-100 max-w-0 group-hover/sidebar:max-w-[175px]"
+              title={`Signed in as: ${displayEmail}`}
+            >
+              <div className="w-8 h-8 rounded-full bg-(--surface-raised) border border-(--border) flex items-center justify-center font-bold text-xs text-(--primary) shrink-0">
+                {(displayEmail[0] || "U").toUpperCase()}
+              </div>
+              <div className="min-w-0 flex-1">
+                <p className="text-xs leading-4 font-sans text-white truncate font-bold" title={displayEmail}>
+                  {displayEmail}
+                </p>
+                <p className="text-[11px] leading-3 text-zinc-400 truncate mt-0.5">
+                  Pro Contractor
+                </p>
+              </div>
             </div>
+
+            {/* Collapsed avatar icon: visible only when NOT hovered */}
+            <div
+              className="w-8 h-8 rounded-full bg-(--surface-raised) border border-(--border) flex items-center justify-center font-bold text-xs text-(--primary) shrink-0 group-hover/sidebar:hidden"
+              title={`Signed in as: ${displayEmail}`}
+            >
+              {(displayEmail[0] || "U").toUpperCase()}
+            </div>
+
             <button
               type="button"
               onClick={handleSignOut}
-              className="p-2 rounded-lg text-(--muted) hover:text-(--risk-high) hover:bg-(--surface-raised) min-h-10 min-w-10 flex items-center justify-center transition-colors cursor-pointer shrink-0"
+              className="p-2 rounded-lg text-zinc-400 hover:text-(--risk-high) hover:bg-(--surface-raised) min-h-10 min-w-10 flex items-center justify-center transition-colors cursor-pointer shrink-0"
               title="Sign out"
               aria-label="Sign out"
             >
